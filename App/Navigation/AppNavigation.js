@@ -1,9 +1,21 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import LaunchScreen from '../Containers/LaunchScreen'
+import HomeScreen from '../Containers/HomeScreen'
+import SettingScreen from '../Containers/SettingScreen'
 
 const Stack = createStackNavigator()
+const Tab = createBottomTabNavigator()
+function MainScreen () {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='Settings' component={SettingScreen} />
+    </Tab.Navigator>
+  )
+}
 function AppNavigation () {
   return (
     <NavigationContainer>
@@ -11,7 +23,7 @@ function AppNavigation () {
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
-          gestureDirection: 'horizontal',
+          gestureDirection: 'horizontal'
           // cardStyle: { backgroundColor: 'transparent' },
           // cardStyleInterpolator: ({ current, next, layouts }) => {
           //   return {
@@ -36,6 +48,7 @@ function AppNavigation () {
         }}
       >
         <Stack.Screen name='LaunchScreen' component={LaunchScreen} />
+        <Stack.Screen name='MainScreen' component={MainScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

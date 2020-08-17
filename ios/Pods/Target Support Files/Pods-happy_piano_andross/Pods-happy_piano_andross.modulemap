@@ -1,5 +1,5 @@
-module Pods_react_native_andross {
-  umbrella header "Pods-react_native_andross-umbrella.h"
+module Pods_money_dairy {
+  umbrella header "Pods-money_dairy-umbrella.h"
 
   export *
   module * { export * }

@@ -12,36 +12,36 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		42D5057A2370906A00703521 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42D505792370906A00703521 /* File.swift */; };
-		5A4957AF9D00E57F199D562A /* libPods-react_native_andross.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D784F4EA10DFFD537F45C6 /* libPods-react_native_andross.a */; };
+		5A4957AF9D00E57F199D562A /* libPods-money_dairy.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15D784F4EA10DFFD537F45C6 /* libPods-money_dairy.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* react_native_androssTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = react_native_androssTests.m; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* react_native_andross.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = react_native_andross.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = react_native_andross/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = react_native_andross/AppDelegate.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* money_dairyTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = money_dairyTests.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* money_dairy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = money_dairy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = money_dairy/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = money_dairy/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = react_native_andross/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = react_native_andross/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = react_native_andross/main.m; sourceTree = "<group>"; };
-		15D784F4EA10DFFD537F45C6 /* libPods-react_native_andross.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-react_native_andross.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		1B652C39E0EA2052F6C389B2 /* Pods-react_native_andross-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-react_native_andross-tvOSTests/Pods-react_native_andross-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		1F4A341BB5E4A40B118C3750 /* Pods-react_native_androssTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_androssTests.release.xcconfig"; path = "Target Support Files/Pods-react_native_androssTests/Pods-react_native_androssTests.release.xcconfig"; sourceTree = "<group>"; };
-		2798857180F3FC2FD074FDA6 /* libPods-react_native_androssTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-react_native_androssTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		3BA1E7660B3D898D6243BB79 /* Pods-react_native_androssTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_androssTests.debug.xcconfig"; path = "Target Support Files/Pods-react_native_androssTests/Pods-react_native_androssTests.debug.xcconfig"; sourceTree = "<group>"; };
-		42D505782370906900703521 /* react_native_andross-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "react_native_andross-Bridging-Header.h"; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = money_dairy/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = money_dairy/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = money_dairy/main.m; sourceTree = "<group>"; };
+		15D784F4EA10DFFD537F45C6 /* libPods-money_dairy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-money_dairy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B652C39E0EA2052F6C389B2 /* Pods-money_dairy-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-money_dairy-tvOSTests/Pods-money_dairy-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1F4A341BB5E4A40B118C3750 /* Pods-money_dairyTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairyTests.release.xcconfig"; path = "Target Support Files/Pods-money_dairyTests/Pods-money_dairyTests.release.xcconfig"; sourceTree = "<group>"; };
+		2798857180F3FC2FD074FDA6 /* libPods-money_dairyTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-money_dairyTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3BA1E7660B3D898D6243BB79 /* Pods-money_dairyTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairyTests.debug.xcconfig"; path = "Target Support Files/Pods-money_dairyTests/Pods-money_dairyTests.debug.xcconfig"; sourceTree = "<group>"; };
+		42D505782370906900703521 /* money_dairy-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "money_dairy-Bridging-Header.h"; sourceTree = "<group>"; };
 		42D505792370906A00703521 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		47F043FC2002841B9F9EF6B1 /* Pods-react_native_andross-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-react_native_andross-tvOSTests/Pods-react_native_andross-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		66E3B902A822A77FD1123AFC /* Pods-react_native_andross-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-react_native_andross-tvOS/Pods-react_native_andross-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		7D51D372ED486852A7A4586B /* Pods-react_native_andross.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross.release.xcconfig"; path = "Target Support Files/Pods-react_native_andross/Pods-react_native_andross.release.xcconfig"; sourceTree = "<group>"; };
-		B505BA039E5F3C005B6AE4AB /* Pods-react_native_andross.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross.debug.xcconfig"; path = "Target Support Files/Pods-react_native_andross/Pods-react_native_andross.debug.xcconfig"; sourceTree = "<group>"; };
-		C4AA0A5235EF6BE144006CE9 /* libPods-react_native_andross-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-react_native_andross-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CCBCCB11D0D278901EE322C4 /* libPods-react_native_andross-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-react_native_andross-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		47F043FC2002841B9F9EF6B1 /* Pods-money_dairy-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-money_dairy-tvOSTests/Pods-money_dairy-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		66E3B902A822A77FD1123AFC /* Pods-money_dairy-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-money_dairy-tvOS/Pods-money_dairy-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		7D51D372ED486852A7A4586B /* Pods-money_dairy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy.release.xcconfig"; path = "Target Support Files/Pods-money_dairy/Pods-money_dairy.release.xcconfig"; sourceTree = "<group>"; };
+		B505BA039E5F3C005B6AE4AB /* Pods-money_dairy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy.debug.xcconfig"; path = "Target Support Files/Pods-money_dairy/Pods-money_dairy.debug.xcconfig"; sourceTree = "<group>"; };
+		C4AA0A5235EF6BE144006CE9 /* libPods-money_dairy-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-money_dairy-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CCBCCB11D0D278901EE322C4 /* libPods-money_dairy-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-money_dairy-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FE64127B7F63DB5194D12A96 /* Pods-react_native_andross-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-react_native_andross-tvOS.release.xcconfig"; path = "Target Support Files/Pods-react_native_andross-tvOS/Pods-react_native_andross-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		FE64127B7F63DB5194D12A96 /* Pods-money_dairy-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-money_dairy-tvOS.release.xcconfig"; path = "Target Support Files/Pods-money_dairy-tvOS/Pods-money_dairy-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,20 +49,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5A4957AF9D00E57F199D562A /* libPods-react_native_andross.a in Frameworks */,
+				5A4957AF9D00E57F199D562A /* libPods-money_dairy.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* react_native_androssTests */ = {
+		00E356EF1AD99517003FC87E /* money_dairyTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* react_native_androssTests.m */,
+				00E356F21AD99517003FC87E /* money_dairyTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = react_native_androssTests;
+			path = money_dairyTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -73,7 +73,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* react_native_andross */ = {
+		13B07FAE1A68108700A75B9A /* money_dairy */ = {
 			isa = PBXGroup;
 			children = (
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -84,7 +84,7 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = react_native_andross;
+			name = money_dairy;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -92,10 +92,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				15D784F4EA10DFFD537F45C6 /* libPods-react_native_andross.a */,
-				C4AA0A5235EF6BE144006CE9 /* libPods-react_native_andross-tvOS.a */,
-				CCBCCB11D0D278901EE322C4 /* libPods-react_native_andross-tvOSTests.a */,
-				2798857180F3FC2FD074FDA6 /* libPods-react_native_androssTests.a */,
+				15D784F4EA10DFFD537F45C6 /* libPods-money_dairy.a */,
+				C4AA0A5235EF6BE144006CE9 /* libPods-money_dairy-tvOS.a */,
+				CCBCCB11D0D278901EE322C4 /* libPods-money_dairy-tvOSTests.a */,
+				2798857180F3FC2FD074FDA6 /* libPods-money_dairyTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -103,14 +103,14 @@
 		69A426FC1A6A04EE2553A401 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B505BA039E5F3C005B6AE4AB /* Pods-react_native_andross.debug.xcconfig */,
-				7D51D372ED486852A7A4586B /* Pods-react_native_andross.release.xcconfig */,
-				66E3B902A822A77FD1123AFC /* Pods-react_native_andross-tvOS.debug.xcconfig */,
-				FE64127B7F63DB5194D12A96 /* Pods-react_native_andross-tvOS.release.xcconfig */,
-				1B652C39E0EA2052F6C389B2 /* Pods-react_native_andross-tvOSTests.debug.xcconfig */,
-				47F043FC2002841B9F9EF6B1 /* Pods-react_native_andross-tvOSTests.release.xcconfig */,
-				3BA1E7660B3D898D6243BB79 /* Pods-react_native_androssTests.debug.xcconfig */,
-				1F4A341BB5E4A40B118C3750 /* Pods-react_native_androssTests.release.xcconfig */,
+				B505BA039E5F3C005B6AE4AB /* Pods-money_dairy.debug.xcconfig */,
+				7D51D372ED486852A7A4586B /* Pods-money_dairy.release.xcconfig */,
+				66E3B902A822A77FD1123AFC /* Pods-money_dairy-tvOS.debug.xcconfig */,
+				FE64127B7F63DB5194D12A96 /* Pods-money_dairy-tvOS.release.xcconfig */,
+				1B652C39E0EA2052F6C389B2 /* Pods-money_dairy-tvOSTests.debug.xcconfig */,
+				47F043FC2002841B9F9EF6B1 /* Pods-money_dairy-tvOSTests.release.xcconfig */,
+				3BA1E7660B3D898D6243BB79 /* Pods-money_dairyTests.debug.xcconfig */,
+				1F4A341BB5E4A40B118C3750 /* Pods-money_dairyTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -126,13 +126,13 @@
 			isa = PBXGroup;
 			children = (
 				42D505792370906A00703521 /* File.swift */,
-				13B07FAE1A68108700A75B9A /* react_native_andross */,
+				13B07FAE1A68108700A75B9A /* money_dairy */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* react_native_androssTests */,
+				00E356EF1AD99517003FC87E /* money_dairyTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				69A426FC1A6A04EE2553A401 /* Pods */,
-				42D505782370906900703521 /* react_native_andross-Bridging-Header.h */,
+				42D505782370906900703521 /* money_dairy-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -142,7 +142,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* react_native_andross.app */,
+				13B07F961A680F5B00A75B9A /* money_dairy.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -150,9 +150,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13B07F861A680F5B00A75B9A /* react_native_andross */ = {
+		13B07F861A680F5B00A75B9A /* money_dairy */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "react_native_andross" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "money_dairy" */;
 			buildPhases = (
 				194BEB3E96776E50077CFA8A /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -166,9 +166,9 @@
 			);
 			dependencies = (
 			);
-			name = react_native_andross;
-			productName = react_native_andross;
-			productReference = 13B07F961A680F5B00A75B9A /* react_native_andross.app */;
+			name = money_dairy;
+			productName = money_dairy;
+			productReference = 13B07F961A680F5B00A75B9A /* money_dairy.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "react_native_andross" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "money_dairy" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -200,7 +200,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* react_native_andross */,
+				13B07F861A680F5B00A75B9A /* money_dairy */,
 			);
 		};
 /* End PBXProject section */
@@ -247,7 +247,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-react_native_andross-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-money_dairy-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -260,7 +260,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-react_native_andross/Pods-react_native_andross-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-money_dairy/Pods-money_dairy-resources.sh",
 				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/Entypo.ttf",
@@ -301,7 +301,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-react_native_andross/Pods-react_native_andross-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-money_dairy/Pods-money_dairy-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -345,7 +345,7 @@
 				13B07FB21A68108700A75B9A /* Base */,
 			);
 			name = LaunchScreen.xib;
-			path = react_native_andross;
+			path = money_dairy;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -353,23 +353,23 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B505BA039E5F3C005B6AE4AB /* Pods-react_native_andross.debug.xcconfig */;
+			baseConfigurationReference = B505BA039E5F3C005B6AE4AB /* Pods-money_dairy.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = SG8GPF3XLG;
-				INFOPLIST_FILE = react_native_andross/Info.plist;
+				INFOPLIST_FILE = money_dairy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.react_native_andross.happy-piano-andross";
-				PRODUCT_NAME = react_native_andross;
-				SWIFT_OBJC_BRIDGING_HEADER = "react_native_andross-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.money_dairy.happy-piano-andross";
+				PRODUCT_NAME = money_dairy;
+				SWIFT_OBJC_BRIDGING_HEADER = "money_dairy-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -379,22 +379,22 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D51D372ED486852A7A4586B /* Pods-react_native_andross.release.xcconfig */;
+			baseConfigurationReference = 7D51D372ED486852A7A4586B /* Pods-money_dairy.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = SG8GPF3XLG;
-				INFOPLIST_FILE = react_native_andross/Info.plist;
+				INFOPLIST_FILE = money_dairy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.react_native_andross.happy-piano-andross";
-				PRODUCT_NAME = react_native_andross;
-				SWIFT_OBJC_BRIDGING_HEADER = "react_native_andross-Bridging-Header.h";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.money_dairy.happy-piano-andross";
+				PRODUCT_NAME = money_dairy;
+				SWIFT_OBJC_BRIDGING_HEADER = "money_dairy-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -503,7 +503,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "react_native_andross" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "money_dairy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -512,7 +512,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "react_native_andross" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "money_dairy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

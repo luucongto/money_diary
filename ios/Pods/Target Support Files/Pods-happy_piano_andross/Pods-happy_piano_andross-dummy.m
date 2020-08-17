@@ -1,5 +1,5 @@
 #import <Foundation/Foundation.h>
-@interface PodsDummy_Pods_react_native_andross : NSObject
+@interface PodsDummy_Pods_money_dairy : NSObject
 @end
-@implementation PodsDummy_Pods_react_native_andross
+@implementation PodsDummy_Pods_money_dairy
 @end

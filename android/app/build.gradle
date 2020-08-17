@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.react_native_andross"
+        applicationId "com.money_dairy"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
@@ -173,7 +173,7 @@ android {
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
 
-            outputFileName = new File("react_native_andross_" + variant.versionName + ".apk");
+            outputFileName = new File("money_dairy_" + variant.versionName + ".apk");
 
         }
     }

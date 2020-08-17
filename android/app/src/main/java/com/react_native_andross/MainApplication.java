@@ -1,4 +1,4 @@
-package com.react_native_andross;
+package com.money_dairy;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;

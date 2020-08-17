@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "react_native_andross-tvOS.app"
-               BlueprintName = "react_native_andross-tvOS"
-               ReferencedContainer = "container:react_native_andross.xcodeproj">
+               BuildableName = "money_dairy-tvOS.app"
+               BlueprintName = "money_dairy-tvOS"
+               ReferencedContainer = "container:money_dairy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "react_native_andross-tvOSTests.xctest"
-               BlueprintName = "react_native_andross-tvOSTests"
-               ReferencedContainer = "container:react_native_andross.xcodeproj">
+               BuildableName = "money_dairy-tvOSTests.xctest"
+               BlueprintName = "money_dairy-tvOSTests"
+               ReferencedContainer = "container:money_dairy.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "react_native_andross-tvOSTests.xctest"
-               BlueprintName = "react_native_andross-tvOSTests"
-               ReferencedContainer = "container:react_native_andross.xcodeproj">
+               BuildableName = "money_dairy-tvOSTests.xctest"
+               BlueprintName = "money_dairy-tvOSTests"
+               ReferencedContainer = "container:money_dairy.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "react_native_andross-tvOS.app"
-            BlueprintName = "react_native_andross-tvOS"
-            ReferencedContainer = "container:react_native_andross.xcodeproj">
+            BuildableName = "money_dairy-tvOS.app"
+            BlueprintName = "money_dairy-tvOS"
+            ReferencedContainer = "container:money_dairy.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "react_native_andross-tvOS.app"
-            BlueprintName = "react_native_andross-tvOS"
-            ReferencedContainer = "container:react_native_andross.xcodeproj">
+            BuildableName = "money_dairy-tvOS.app"
+            BlueprintName = "money_dairy-tvOS"
+            ReferencedContainer = "container:money_dairy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "react_native_andross-tvOS.app"
-            BlueprintName = "react_native_andross-tvOS"
-            ReferencedContainer = "container:react_native_andross.xcodeproj">
+            BuildableName = "money_dairy-tvOS.app"
+            BlueprintName = "money_dairy-tvOS"
+            ReferencedContainer = "container:money_dairy.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

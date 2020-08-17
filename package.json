@@ -1,5 +1,5 @@
 {
-  "name": "react_native_andross",
+  "name": "money_dairy",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -28,13 +28,14 @@
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/bottom-tabs": "^5.8.0",
     "@react-navigation/compat": "^5.2.5",
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.0",
     "apisauce": "^1.1.1",
     "dayjs": "^1.8.16",
     "lodash": "^4.17.15",
-    "native-base": "^2.13.8",
+    "native-base": "^2.13.13",
     "react": "16.9.0",
     "react-autobind": "^1.0.6",
     "react-native": "0.61.2",

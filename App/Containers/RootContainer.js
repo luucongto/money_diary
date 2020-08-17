@@ -12,7 +12,7 @@ import styles from './Styles/RootContainerStyles'
 class RootContainer extends Component {
   componentDidMount () {
     // if redux persist is not active fire startup action
-    Orientation.lockToLandscape()
+    Orientation.lockToPortrait()
     StatusBar.setHidden(true)
     if (!ReduxPersist.active) {
       this.props.startup()

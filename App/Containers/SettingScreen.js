@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-// import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
-
 // import { Images, Metrics } from '../Themes'
 
 import I18n from 'react-native-i18n'
@@ -10,7 +8,7 @@ import I18n from 'react-native-i18n'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 import autoBind from 'react-autobind'
-class LaunchScreen extends Component {
+class Screen extends Component {
   constructor (props) {
     super(props)
 
@@ -20,18 +18,10 @@ class LaunchScreen extends Component {
     autoBind(this)
   }
 
-  componentDidMount () {
-    setTimeout(() => this.goNext(), 3000)
-  }
-
-  goNext () {
-    this.props.navigation.replace('MainScreen')
-  }
-
   renderPhone () {
     return (
       <View style={styles.mainContainer}>
-        <Text style={styles.tab_txt}>{I18n.t('copyright')}</Text>
+        <Text style={styles.tab_txt}>Setting</Text>
       </View>
     )
   }
@@ -54,4 +44,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LaunchScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(Screen)

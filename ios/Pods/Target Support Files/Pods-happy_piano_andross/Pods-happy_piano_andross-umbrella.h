@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_react_native_androssVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_react_native_androssVersionString[];
+FOUNDATION_EXPORT double Pods_money_dairyVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_money_dairyVersionString[];
 
