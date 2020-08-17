@@ -1,0 +1,6 @@
+module Pods_react_native_andross {
+  umbrella header "Pods-react_native_andross-umbrella.h"
+
+  export *
+  module * { export * }
+}
