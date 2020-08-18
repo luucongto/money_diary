@@ -24,7 +24,15 @@ export default {
     //   .startOf('hour')
     //   .fromNow() // 23 phút trước
   },
-
+  getDay (time) {
+    return dayjs(time).format('DD')
+  },
+  startOf (param = 'month') {
+    return dayjs().startOf(param)
+  },
+  endOf (param = 'month') {
+    return dayjs().endOf(param)
+  },
   log (params) {
     if (__DEV__) console.tron.log(arguments)
   },

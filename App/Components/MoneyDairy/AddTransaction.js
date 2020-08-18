@@ -1,17 +1,17 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import { Image } from 'react-native'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon } from 'native-base'
+import { Card, Button, CardItem, Content, Form, Item, Picker, Icon, Text } from 'native-base'
 import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 import CategoryIcon from './CategoryIcon'
 import { Images } from '../../Themes'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Containers/Utils'
-export default class Item extends Component {
+import autoBind from 'react-autobind'
+export default class AddTransaction extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      isOpen: false
+      isOpen: false,
+      selected2: undefined
     }
     this._transX = new Value(70)
     this._config = {
@@ -21,6 +21,7 @@ export default class Item extends Component {
     }
 
     this.onPress = this.onPress.bind(this)
+    autoBind(this)
   }
 
   onPress () {
@@ -39,31 +40,39 @@ export default class Item extends Component {
     this.setState({ isOpen: !this.state.isOpen })
   }
 
+  onValueChange2 (value) {
+    this.setState({
+      selected2: value
+    })
+  }
+
   render () {
-    const transaction = this.props.transaction
     return (
       <Card>
         <Animated.View style={{ flex: 0, height: this._transX }}>
           <TouchableOpacity onPress={() => this.onPress()}>
             <CardItem>
-              <Left>
-                <Text style={{ backgroundColor: 'gray', height: 50, width: 50, borderRadius: 50, textAlign: 'center', textAlignVertical: 'center', color: 'white' }}> {Utils.getDay(transaction.date)} </Text>
-                <Body>
-                  <Text>{transaction.category}</Text>
-                </Body>
-              </Left>
-              <Right>
-                <Text>{transaction.amount}</Text>
-              </Right>
+              <Text>Add new</Text>
             </CardItem>
-            {this.state.isOpen &&
-              <CardItem>
-                <Body>
-                  <Text note>{transaction.note}</Text>
-                  <Text note>{transaction.wallet}</Text>
-                </Body>
-              </CardItem>}
           </TouchableOpacity>
+          {this.state.isOpen &&
+            <Form>
+              <Item picker>
+                <Picker
+                  mode='dropdown'
+                  iosIcon={<Icon name='arrow-down' />}
+                  style={{ width: undefined }}
+                  placeholder='Select your SIM'
+                  placeholderStyle={{ color: '#bfc6ea' }}
+                  placeholderIconColor='#007aff'
+                  selectedValue={this.state.selected2}
+                  onValueChange={this.onValueChange2.bind(this)}
+                >
+                  {this.props.wallets.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.label} />)}
+
+                </Picker>
+              </Item>
+            </Form>}
         </Animated.View>
       </Card>
     )
