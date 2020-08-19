@@ -9,6 +9,7 @@ import styles from './Styles/LaunchScreenStyles'
 import ListItem from '../Components/MoneyDairy/ListItem'
 import AddTransaction from '../Components/MoneyDairy/AddTransaction'
 import { Transaction, Wallet, Category } from '../Realm'
+import autoBind from 'react-autobind'
 class Screen extends Component {
   constructor (props) {
     super(props)
@@ -17,6 +18,7 @@ class Screen extends Component {
       start: {},
       items: []
     }
+    autoBind(this)
   }
 
   componentDidMount () {
@@ -24,19 +26,24 @@ class Screen extends Component {
     Category.initializeDatas()
     Transaction.initializeTransactions()
     const items = Transaction.getbyPeriod(Utils.startOf(), Utils.endOf())
+    this.setState({ items, wallets: Wallet.find(), categories: Category.find() })
+  }
+
+  updateTransactions () {
+    const items = Transaction.getbyPeriod(Utils.startOf(), Utils.endOf())
     this.setState({ items })
   }
 
   renderPhone () {
     const renderItems = this.state.items.map(item => {
       return (
-        <ListItem key={item.id} transaction={item} />
+        <ListItem key={item.id} transaction={item} wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
       )
     })
     return (
       <Container>
         <Content>
-          <AddTransaction wallets={Wallet.list()} />
+          <AddTransaction wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
           {renderItems}
         </Content>
       </Container>

@@ -5,7 +5,8 @@ const schema = {
   properties: {
     id: { type: 'int', default: 0 },
     label: { type: 'string', default: '' },
-    icon: { type: 'string', default: '' }
+    icon: { type: 'string', default: '' },
+    color: { type: 'string', default: '' }
   }
 }
 

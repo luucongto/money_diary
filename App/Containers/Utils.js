@@ -24,8 +24,14 @@ export default {
     //   .startOf('hour')
     //   .fromNow() // 23 phút trước
   },
+  formatDateForRealmQuery (time) {
+    return dayjs(time).format('YYYY-MM-DD@HH:mm:ss')
+  },
   getDay (time) {
     return dayjs(time).format('DD')
+  },
+  getDate (time) {
+    return dayjs(time).format('YYYY-MM-DD')
   },
   startOf (param = 'month') {
     return dayjs().startOf(param)
@@ -42,6 +48,9 @@ export default {
     } catch (e) {
       return obj
     }
+  },
+  numberWithCommas (x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   },
   validateEmail (email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
