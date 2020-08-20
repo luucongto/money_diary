@@ -4,11 +4,11 @@ import RealmWrapper from './RealmWrapper'
 class Wallet extends RealmWrapper {
   static schema = schema
   static initializeDatas = () => {
-    const id = this.realm.objects(schema.name).max('id')
-    if (id > 0) {
+    const id = Wallet.realm.objects(schema.name).max('id')
+    if (id) {
       return
     }
-    this.bulkInsert(require('./data/wallet.json'))
+    Wallet.bulkInsert(require('./data/wallet.json'))
   }
 }
 

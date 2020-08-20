@@ -7,9 +7,9 @@ import Category from './Category'
 class Transaction extends RealmWrapper {
   static schema = schema
   static initializeTransactions = () => {
-    const realm = this.realm
+    const realm = Transaction.realm
     const id = realm.objects(schema.name).max('id')
-    if (id > 0) {
+    if (id) {
       return
     }
     realm.write(() => {
@@ -19,26 +19,26 @@ class Transaction extends RealmWrapper {
     })
   }
 
-  static getbyPeriod = (startDate, endDate) => {
+  static getbyPeriod = (startDate: string, endDate:string) => {
     // return this.find('date > $0 and date < $1', [new Date(startDate), new Date(endDate)])
-    return this.find(`date > ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`, { sort: { date: true } })
+    return Transaction.find(`date > ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`, { sort: { date: true } })
   }
 
-  static beforeInsert (params) {
+  static beforeInsert (params: any) {
     if (!params.date) {
       params.date = new Date()
     }
     const realm = this.realm
     const id = realm.objects(schema.name).max('id')
-    params.id = id + 1
+    params.id = id || 0 + 1
     Utils.log('insert', params)
     return params
   }
 
-  static afterUpdate = (doc) => {
+  static afterUpdate = (doc: any) => {
   }
 
-  static appendFind = (doc) => {
+  static appendFind = (doc: any) => {
     const wallet = Wallet.findOne({ label: doc.wallet })
     const category = Category.findOne({ label: doc.category })
     doc.walletColor = wallet ? wallet.color : 'black'

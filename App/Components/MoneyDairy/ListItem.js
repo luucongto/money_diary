@@ -4,7 +4,7 @@ import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Containers/Utils'
 import autoBind from 'react-autobind'
-import { Transaction, Wallet, Category } from '../../Realm'
+import { Transaction } from '../../Realm'
 export default class ListItem extends Component {
   constructor (props) {
     super(props)

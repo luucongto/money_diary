@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
-import { Card, Button, CardItem, Content, Form, Item, Picker, Icon, Text, DatePicker, Input } from 'native-base'
+import { Card, Button, CardItem, Form, Item, Picker, Icon, Text, DatePicker, Input } from 'native-base'
 import Animated, { Easing, timing, Value } from 'react-native-reanimated'
-import CategoryIcon from './CategoryIcon'
-import { Images } from '../../Themes'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Utils from '../../Containers/Utils'
+// import Utils from '../../Containers/Utils'
 import autoBind from 'react-autobind'
 import { Transaction } from '../../Realm'
 export default class AddTransaction extends Component {

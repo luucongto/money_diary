@@ -3,7 +3,7 @@ import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
 
-import I18n from 'react-native-i18n'
+// import I18n from 'react-native-i18n'
 // import Utils from './Utils'
 // Styles
 import styles from './Styles/LaunchScreenStyles'

@@ -4,11 +4,11 @@ import RealmWrapper from './RealmWrapper'
 class Category extends RealmWrapper {
   static schema = schema
   static initializeDatas = () => {
-    const id = this.realm.objects(schema.name).max('id')
-    if (id > 0) {
+    const id = Category.realm.objects(schema.name).max('id')
+    if (id) {
       return
     }
-    this.bulkInsert(data)
+    Category.bulkInsert(data)
   }
 }
 
