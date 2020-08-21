@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 // import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
-
+import ApiConfig from '../Config/ApiConfig'
 // import moment from 'moment'
 export default {
   timeFormat (time) {
@@ -55,5 +55,19 @@ export default {
   validateEmail (email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return re.test(String(email).toLowerCase())
+  },
+  appendCdn (url) {
+    if (url && !url.startsWith('http')) {
+      return this.resolve(ApiConfig.assetUrl, url)
+    }
+    return url
+  },
+  resolve (host, end) {
+    var result = host + '/' + end
+    result.replace('//', '/')
+    return result
+  },
+  clamp (num, min, max) {
+    return num <= min ? min : num >= max ? max : num
   }
 }

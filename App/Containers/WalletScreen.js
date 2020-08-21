@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
 import { Container, Content } from 'native-base'
 // import I18n from 'react-native-i18n'
-import Utils from './Utils'
+import Utils from '../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import WalletItem from '../Components/MoneyDairy/WalletItem'

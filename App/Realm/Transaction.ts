@@ -1,7 +1,7 @@
 import schema from './schemas/Transaction'
 import data from './data/transaction.json'
 import RealmWrapper from './RealmWrapper'
-import Utils from '../Containers/Utils'
+import Utils from '../Utils/Utils'
 import Wallet from './Wallet'
 import Category from './Category'
 class Transaction extends RealmWrapper {

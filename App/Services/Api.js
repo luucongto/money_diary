@@ -1,6 +1,6 @@
 import apisauce from 'apisauce'
 import ApiConfig from '../Config/ApiConfig'
-import Utils from '../Containers/Utils'
+import Utils from '../Utils/Utils'
 import { Transaction } from '../Realm'
 const autoBind = require('react-autobind')
 class API {

@@ -1,6 +1,6 @@
 // import { NavigationActions } from 'react-navigation'
 import { NavigationActions } from '@react-navigation/compat'
-import Utils from '../Containers/Utils'
+import Utils from '../Utils/Utils'
 // gets the current screen from navigation state
 const getCurrentRouteName = (navigationState) => {
   if (!navigationState) {

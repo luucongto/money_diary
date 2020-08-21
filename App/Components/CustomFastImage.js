@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import FastImage from 'react-native-fast-image'
 import autoBind from 'react-autobind'
-import Utils from '../Containers/Utils'
+import Utils from '../Utils/Utils'
 class CustomFastImage extends Component {
   constructor (props) {
     super(props)
