@@ -12,11 +12,7 @@ class Transaction extends RealmWrapper {
     if (id) {
       return
     }
-    realm.write(() => {
-      const items = realm.objects(schema.name)
-      realm.delete(items)
-      data.rows.forEach(item => realm.create(schema.name, item))
-    })
+    Transaction.bulkInsert(data.rows)
   }
 
   static getbyPeriod = (startDate: string, endDate:string) => {
@@ -28,10 +24,30 @@ class Transaction extends RealmWrapper {
       params.date = new Date()
     }
     const realm = this.realm
-    const id = realm.objects(schema.name).max('id')
+    const id = params.id ? params.id : realm.objects(schema.name).max('id')
     params.id = id || 0 + 1
-    Utils.log('insert', params)
+    Utils.log('Transaction insert', params)
     return params
+  }
+
+  static _updateWalletAmount (doc:any) {
+    const wallet = Wallet.get(doc.wallet)
+    if (wallet) {
+      Wallet.update({ label: wallet.label }, { amount: wallet.amount + doc.amount }, true)
+      Utils.log('wallet update', wallet.label, wallet.amount)
+    } else {
+      Utils.log('wallet not exist', doc.wallet)
+    }
+    return doc
+  }
+
+  static afterInsert (doc: any) {
+    Utils.log('afterinsert', doc)
+    return Transaction._updateWalletAmount(doc)
+  }
+
+  static afterUpdate (doc: any) {
+    return Transaction._updateWalletAmount(doc)
   }
 }
 

@@ -6,8 +6,7 @@ import { Container, Content } from 'native-base'
 import Utils from './Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import ListItem from '../Components/MoneyDairy/ListItem'
-import AddTransaction from '../Components/MoneyDairy/AddTransaction'
+import WalletItem from '../Components/MoneyDairy/WalletItem'
 import { Wallet } from '../Realm'
 import autoBind from 'react-autobind'
 class Screen extends Component {
@@ -16,31 +15,29 @@ class Screen extends Component {
 
     this.state = {
       start: {},
-      items: []
+      wallets: []
     }
     autoBind(this)
   }
 
   componentDidMount () {
     this.setState({ wallets: Wallet.find() })
-    this.updateTransactions()
   }
 
   updateTransactions () {
-    const items = Wallet.find()
-    this.setState({ items })
+    const wallets = Wallet.find()
+    this.setState({ wallets })
   }
 
   renderPhone () {
-    const renderItems = this.state.items.map(item => {
+    const renderItems = this.state.wallets.map(item => {
       return (
-        <ListItem key={item.id} transaction={item} wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
+        <WalletItem key={item.id} item={item} />
       )
     })
     return (
       <Container>
         <Content>
-          <AddTransaction wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
           {renderItems}
         </Content>
       </Container>
@@ -54,9 +51,6 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    start: state.startup,
-    user: state.user,
-    login: state.login.data
   }
 }
 

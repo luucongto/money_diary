@@ -8,6 +8,7 @@ import Utils from './Utils'
 // import styles from './Styles/LaunchScreenStyles'
 import ListItem from '../Components/MoneyDairy/ListItem'
 import AddTransaction from '../Components/MoneyDairy/AddTransaction'
+import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
 class Screen extends Component {
@@ -26,7 +27,13 @@ class Screen extends Component {
     Category.initializeDatas()
     Transaction.initializeTransactions()
     this.setState({ wallets: Wallet.find(), categories: Category.find() })
-    this.updateTransactions()
+    this.props.transactionRequest()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.transaction.data) {
+      this.setState({ items: nextProps.transaction.data })
+    }
   }
 
   updateTransactions () {
@@ -57,14 +64,13 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    start: state.startup,
-    user: state.user,
-    login: state.login.data
+    transaction: state.transaction
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params))
   }
 }
 

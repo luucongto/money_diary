@@ -25,11 +25,12 @@ class RealmWrapper {
   }
 
   static find (conditions = null, option = {}) {
+    const className = this
     let objects = []
     if (!conditions) {
-      objects = realm.objects(this.schema.name)
+      objects = realm.objects(className.schema.name)
     } else {
-      objects = realm.objects(this.schema.name).filtered(conditions, {})
+      objects = realm.objects(className.schema.name).filtered(conditions, {})
     }
     // set find option
     if (!_.isEmpty(option)) {
@@ -46,7 +47,7 @@ class RealmWrapper {
         objects = objects.slice(offset, limit)
       }
     }
-    if (objects.length) { objects = objects.map(each => { return this.appendFind(each) }) }
+    if (objects.length) { objects = objects.map(each => { return className.appendFind(each) }) }
     return objects.length ? objects : []
   }
 
@@ -76,82 +77,105 @@ class RealmWrapper {
   }
 
   static findOne (conditions = {}) {
+    const className = this
     let results = null
     if (_.isEmpty(conditions)) {
-      results = this.find(null, { limit: 1 })
+      results = className.find(null, { limit: 1 })
     } else {
-      results = this.find(this._buildFilter(conditions), { limit: 1 })
+      results = className.find(className._buildFilter(conditions), { limit: 1 })
     }
 
     return results.length ? results[0] : null
   }
 
-  static insert (params) {
-    var className = this
-    className.realm.write(() => {
-      params = this.beforeInsert(params)
+  static insert (params, inTx = false) {
+    const className = this
+    const action = () => {
+      params = className.beforeInsert(params)
       const o = className.realm.create(className.schema.name, params)
-      return this.afterInsert(o)
-    })
+      return className.afterInsert(o)
+    }
+    if (inTx) {
+      return action()
+    } else {
+      className.realm.write(action)
+    }
   }
 
-  static bulkInsert (items) {
-    this.realm.write(() => {
+  static bulkInsert (items, inTx = false) {
+    const className = this
+    const action = () => {
       items.forEach(item => {
-        const params = this.beforeInsert(item)
-        this.realm.create(this.schema.name, params)
+        className.insert(item, true)
       })
-    })
+    }
+    if (inTx) {
+      return action()
+    } else {
+      className.realm.write(action)
+    }
   }
 
-  static update (filter = {}, modifier = {}) {
+  static update (filter = {}, modifier = {}, inTx = false) {
+    const className = this
     if (_.isEmpty(modifier)) return false
-    modifier = this.beforeUpdate(modifier)
+    modifier = className.beforeUpdate(modifier)
     if (_.isEmpty(modifier)) return false
-    var className = this
-    let objects = className.realm.objects(this.schema.name)
+    let objects = className.realm.objects(className.schema.name)
     if (!_.isEmpty(filter)) {
-      const filterStr = this._buildFilter(filter)
+      const filterStr = className._buildFilter(filter)
+      if (filterStr) {
+        objects = objects.filtered(filterStr)
+      }
+    }
+    const action = () => {
+      if (!objects.length) {
+        return 0
+      }
+      _.each(objects, o => {
+        if (_.isObject(o)) {
+          _.each(modifier, (v, k) => {
+            o[k] = v
+          })
+          className.afterUpdate(o)
+        }
+      })
+      return objects.length
+    }
+    if (inTx) {
+      return action()
+    } else {
+      className.realm.write(action)
+    }
+  }
+
+  static remove (filter = {}, inTx = false) {
+    var className = this
+
+    let objects = className.realm.objects(className.schema.name)
+    if (!_.isEmpty(filter)) {
+      const filterStr = className._buildFilter(filter)
       if (filterStr) {
         objects = objects.filtered(filterStr)
       }
     }
 
-    if (objects.length) {
-      className.realm.write(() => {
-        _.each(objects, o => {
-          if (_.isObject(o)) {
-            _.each(modifier, (v, k) => {
-              o[k] = v
-            })
-            this.afterUpdate(o)
-          }
-        })
-      })
-    }
-    return objects.length
-  }
-
-  static remove (filter = {}) {
-    var className = this
-    let objects = className.realm.objects(this.schema.name)
-    if (!_.isEmpty(filter)) {
-      const filterStr = this._buildFilter(filter)
-      if (filterStr) {
-        objects = objects.filtered(filterStr)
-      }
-    }
-
-    if (objects.length) {
-      className.realm.write(() => {
+    const action = () => {
+      if (objects.length) {
         _.each(objects, o => {
           if (_.isObject(o)) {
             className.realm.delete(o)
           }
         })
-      })
+      }
+      return objects.length
     }
-    return objects.length
+
+    if (inTx) {
+      return action()
+    } else {
+      className.realm.write(action)
+    }
   }
 }
 

@@ -6,6 +6,7 @@ import ReduxPersist from '../Config/ReduxPersist'
 
 /* ------------- Assemble The Reducers ------------- */
 export const reducers = combineReducers({
+  transaction: require('./TransactionRedux').reducer,
   user: require('./UserRedux').reducer,
   startup: require('./StartupRedux').reducer,
   login: require('./LoginRedux').reducer

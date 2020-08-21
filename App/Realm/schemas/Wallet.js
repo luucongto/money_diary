@@ -6,7 +6,8 @@ const schema = {
     id: { type: 'int', default: 0 },
     label: { type: 'string', default: '' },
     icon: { type: 'string', default: '' },
-    color: { type: 'string', default: '' }
+    color: { type: 'string', default: '' },
+    amount: { type: 'int', default: 0 }
   }
 }
 

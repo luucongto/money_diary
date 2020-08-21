@@ -16,6 +16,10 @@ class Wallet extends RealmWrapper {
     const color = item ? item.color : 'black'
     return color
   }
+
+  static get = (label: string) => {
+    return Wallet.findOne({ label })
+  }
 }
 
 export default Wallet

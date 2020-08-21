@@ -1,105 +1,14 @@
 var fs = require('fs')
 var changeCase = require('change-case')
-const name = process.argv[2].trim()
-const temp = `
-import { createReducer, createActions } from 'reduxsauce'
-import Immutable from 'seamless-immutable'
+const name = process.argv[2].trim().replace('Redux', '')
+const templateRedux = require('./templateRedux')
+const templateSaga = require('./templateSaga')
 
-/* ------------- Types and Action Creators ------------- */
+const temp = templateRedux(name)
+const tempSaga = templateSaga(name)
 
-const { Types, Creators } = createActions({
-  ${changeCase.camelCase(name)}Request: ['params'],
-  ${changeCase.camelCase(name)}Success: ['data'],
-  ${changeCase.camelCase(name)}Update: ['params'],
-  ${changeCase.camelCase(name)}UpdateSuccess: ['data'],
-  ${changeCase.camelCase(name)}Failure: ['error'],
-  clearData: null
-})
-
-export const ${changeCase.pascalCase(name)}Types = Types
-export default Creators
-
-/* ------------- Initial State ------------- */
-
-export const INITIAL_STATE = Immutable({
-  data: [],
-  objects: {},
-  error: null,
-  fetching: false
-})
-
-/* ------------- Reducers ------------- */
-
-export const ${changeCase.camelCase(name)}Request = state => state.merge({ fetching: true, error: null })
-export const ${changeCase.camelCase(name)}Success = (state, { data }) => {
-  data.forEach(element => {
-      state = state.setIn(['objects', element.id], element)
-  })
-  state = state.setIn(['fetching'], false)
-  state = state.setIn(['data'], data)
-  return state
-}
-export const ${changeCase.camelCase(name)}Update = state => state.merge({ fetching: true, error: null })
-export const ${changeCase.camelCase(name)}UpdateSuccess = (state, { data }) => {
-  data.forEach(element => {
-      state = state.setIn(['objects', element.id], element)
-  })
-  state = state.setIn(['fetching'], false)
-  return state
-}
-
-export const ${changeCase.camelCase(name)}Failure = (state, { error }) => state.merge({ fetching: false, error})
-
-/* ------------- Hookup Reducers To Types ------------- */
-
-export const reducer = createReducer(INITIAL_STATE, {
-  [Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST]: ${changeCase.camelCase(name)}Request,
-  [Types.${changeCase.snakeCase(name).toUpperCase()}_SUCCESS]: ${changeCase.camelCase(name)}Success,
-  [Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE]: ${changeCase.camelCase(name)}Update,
-  [Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE_SUCCESS]: ${changeCase.camelCase(name)}UpdateSuccess,
-  [Types.${changeCase.snakeCase(name).toUpperCase()}_FAILURE]: ${changeCase.camelCase(name)}Failure
-})
-`
-
-const tempSaga =
-`import { call, put } from 'redux-saga/effects'
-import ${changeCase.pascalCase(name)}Actions from '../Redux/${changeCase.pascalCase(name)}Redux'
-import LoginActions from '../Redux/LoginRedux'
-export function * ${changeCase.camelCase(name)} (api, {params}) {
-  try {
-    const res = yield call(api, params)
-    if (res && res.message === 'Unauthenticated.') {
-      yield put(LoginActions.loginFailure())
-      return
-    }
-    if (res.error) {
-      yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}Failure(res.message))
-    } else {
-      yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}Success(res.data))
-    }
-  } catch (error) {
-    yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}Failure(error.message))
-  }
-}
-
-export function * ${changeCase.camelCase(name)}Update (api, {params}) {
-  try {
-    const res = yield call(api, params)
-    if (res && res.message === 'Unauthenticated.') {
-      yield put(LoginActions.loginFailure())
-      return
-    }
-    if (res.error) {
-      yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}Failure(res.message))
-    } else {
-      yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}UpdateSuccess(res.data))
-    }
-  } catch (error) {
-    yield put(${changeCase.pascalCase(name)}Actions.${changeCase.camelCase(name)}Failure(error.message))
-  }
-}
-`
-
+const namePascal = changeCase.pascalCase(name)
+const nameCamel = changeCase.camelCase(name)
 // insert into index.saga
 const readline = require('readline')
 const appendSagas = () => {
@@ -117,16 +26,18 @@ const appendSagas = () => {
       if (line === TypesLine) {
         inserted = true
         newFileStrs.push(line)
-        newFileStrs.push(`import { ${changeCase.pascalCase(name)}Types } from '../Redux/${changeCase.pascalCase(name)}Redux'`)
+        newFileStrs.push(`import { ${namePascal}Types } from '../Redux/${namePascal}Redux'`)
       } else if (line === SagasLine) {
         newFileStrs.push(line)
         inserted = true
-        newFileStrs.push(`import { ${changeCase.camelCase(name)}, ${changeCase.camelCase(name)}Update  } from './${changeCase.pascalCase(name)}Saga'`)
+        newFileStrs.push(`import { ${nameCamel}, ${nameCamel}Update, ${nameCamel}Create, ${nameCamel}Delete  } from './${namePascal}Saga'`)
       } else if (line.trim() === connect) {
         newFileStrs.push(line)
         inserted = true
-        newFileStrs.push(`    takeLatest(${changeCase.pascalCase(name)}Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST, ${changeCase.camelCase(name)}, api.${changeCase.camelCase(name)}),`)
-        newFileStrs.push(`    takeLatest(${changeCase.pascalCase(name)}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE, ${changeCase.camelCase(name)}Update, api.${changeCase.camelCase(name)}Update),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST, ${nameCamel}, api.${nameCamel}),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE, ${nameCamel}Update, api.${nameCamel}Update),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_CREATE, ${nameCamel}Create, api.${nameCamel}Create),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_DELETE, ${nameCamel}Delete, api.${nameCamel}Delete),`)
       } else {
         newFileStrs.push(line)
       }
@@ -153,7 +64,7 @@ const appendReducers = () => {
       if (line.trim() === reducerLine) {
         newFileStrs.push(line)
         inserted = true
-        newFileStrs.push(`  ${changeCase.camelCase(name)}: require('./${changeCase.pascalCase(name)}Redux').reducer,`)
+        newFileStrs.push(`  ${nameCamel}: require('./${namePascal}Redux').reducer,`)
       } else {
         newFileStrs.push(line)
       }
@@ -178,9 +89,9 @@ try {
       fs.writeFileSync('./App/Sagas/index.js', sagas.newFileStrs.join('\n') + '\n')
     }
   })
-  fs.writeFileSync(`./App/Redux/${changeCase.pascalCase(name)}Redux.js`, temp)
-  fs.writeFileSync(`./App/Sagas/${changeCase.pascalCase(name)}Saga.js`, tempSaga)
-  console.log('DONE:', `./App/Redux/${changeCase.pascalCase(name)}Redux.js`, `./App/Sagas/${changeCase.pascalCase(name)}Sagas.js`)
+  fs.writeFileSync(`./App/Redux/${namePascal}Redux.js`, temp)
+  fs.writeFileSync(`./App/Sagas/${namePascal}Saga.js`, tempSaga)
+  console.log('DONE:', `./App/Redux/${namePascal}Redux.js`, `./App/Sagas/${namePascal}Sagas.js`)
 } catch (e) {
   console.log(e)
 }

@@ -31,7 +31,7 @@ export default class ListItem extends Component {
     this.setState({ chosenDate: newDate })
   }
 
-  componentWillReceiveProps (nextProp) {
+  UNSAFE_componentWillReceiveProps (nextProp) {
     if (nextProp.transaction) {
       const transaction = nextProp.transaction
       this.setState({
@@ -94,7 +94,6 @@ export default class ListItem extends Component {
     if (!transaction) {
       return null
     }
-    Utils.log('this.state.amount', this.state.amount)
     return (
       <Card>
         <Animated.View style={{ flex: 0, height: this._transX, borderColor: Wallet.getColor(transaction.wallet), borderWidth: 2 }}>

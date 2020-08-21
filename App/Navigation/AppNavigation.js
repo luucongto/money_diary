@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import LaunchScreen from '../Containers/LaunchScreen'
 import HomeScreen from '../Containers/HomeScreen'
+import WalletScreen from '../Containers/WalletScreen'
 import SettingScreen from '../Containers/SettingScreen'
 
 const Stack = createStackNavigator()
@@ -12,6 +13,7 @@ function MainScreen () {
   return (
     <Tab.Navigator>
       <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='Wallet' component={WalletScreen} />
       <Tab.Screen name='Settings' component={SettingScreen} />
     </Tab.Navigator>
   )
