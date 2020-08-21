@@ -20,7 +20,6 @@ class Transaction extends RealmWrapper {
   }
 
   static getbyPeriod = (startDate: string, endDate:string) => {
-    // return this.find('date > $0 and date < $1', [new Date(startDate), new Date(endDate)])
     return Transaction.find(`date > ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`, { sort: { date: true } })
   }
 
@@ -33,17 +32,6 @@ class Transaction extends RealmWrapper {
     params.id = id || 0 + 1
     Utils.log('insert', params)
     return params
-  }
-
-  static afterUpdate = (doc: any) => {
-  }
-
-  static appendFind = (doc: any) => {
-    const wallet = Wallet.findOne({ label: doc.wallet })
-    const category = Category.findOne({ label: doc.category })
-    doc.walletColor = wallet ? wallet.color : 'black'
-    doc.categoryColor = category ? category.color : 'red'
-    return doc
   }
 }
 

@@ -10,6 +10,12 @@ class Category extends RealmWrapper {
     }
     Category.bulkInsert(data)
   }
+
+  static getColor = (label: string) => {
+    const item = Category.findOne({ label })
+    const color = item ? item.color : 'black'
+    return color
+  }
 }
 
 export default Category

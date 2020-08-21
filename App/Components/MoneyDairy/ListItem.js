@@ -1,25 +1,26 @@
 import React, { Component } from 'react'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input } from 'native-base'
+import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch } from 'native-base'
 import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Containers/Utils'
 import autoBind from 'react-autobind'
-import { Transaction } from '../../Realm'
+import { Transaction, Wallet, Category } from '../../Realm'
 export default class ListItem extends Component {
   constructor (props) {
     super(props)
     const transaction = this.props.transaction
     this.state = {
       isOpen: false,
-      selectedWallet: transaction.wallet,
-      selectedCategory: transaction.category,
-      chosenDate: new Date(transaction.date),
-      amount: transaction.amount
+      selectedWallet: transaction?.wallet,
+      selectedCategory: transaction?.category,
+      chosenDate: new Date(transaction?.date),
+      amount: transaction?.amount,
+      selectedInclude: transaction?.include
     }
     this._transX = new Value(70)
     this._config = {
       duration: 300,
-      toValue: 320,
+      toValue: 370,
       easing: Easing.inOut(Easing.ease)
     }
 
@@ -28,6 +29,19 @@ export default class ListItem extends Component {
 
   setDate (newDate) {
     this.setState({ chosenDate: newDate })
+  }
+
+  componentWillReceiveProps (nextProp) {
+    if (nextProp.transaction) {
+      const transaction = nextProp.transaction
+      this.setState({
+        selectedWallet: transaction?.wallet,
+        selectedCategory: transaction?.category,
+        chosenDate: new Date(transaction?.date),
+        amount: transaction?.amount,
+        selectedInclude: transaction?.include
+      })
+    }
   }
 
   onPress () {
@@ -63,8 +77,10 @@ export default class ListItem extends Component {
       amount: this.state.amount,
       date: new Date(this.state.chosenDate),
       wallet: this.state.selectedWallet,
-      category: this.state.selectedCategory
+      category: this.state.selectedCategory,
+      include: this.state.selectedInclude
     })
+    this.onPress()
     this.props.updateTransactions()
   }
 
@@ -75,15 +91,58 @@ export default class ListItem extends Component {
 
   render () {
     const transaction = this.props.transaction
+    if (!transaction) {
+      return null
+    }
+    Utils.log('this.state.amount', this.state.amount)
     return (
       <Card>
-        <Animated.View style={{ flex: 0, height: this._transX, borderColor: transaction.walletColor, borderWidth: 2 }}>
-          <TouchableOpacity onPress={() => this.onPress()}>
-            <CardItem>
+        <Animated.View style={{ flex: 0, height: this._transX, borderColor: Wallet.getColor(transaction.wallet), borderWidth: 2 }}>
+          <TouchableOpacity onPress={() => !this.state.isOpen && this.onPress()}>
+            <CardItem style={{ opacity: transaction.include ? 1 : 0.3 }}>
               <Left>
-                <Text style={{ backgroundColor: transaction.categoryColor, height: 50, width: 50, borderRadius: 50, textAlign: 'center', textAlignVertical: 'center', color: 'white' }}> {Utils.getDay(transaction.date)} </Text>
+                <Item style={{ backgroundColor: Category.getColor(transaction.category), height: 50, width: 50, borderRadius: 50, textAlign: 'center', textAlignVertical: 'center', color: 'white' }}>
+                  <Text style={{ position: 'absolute', left: 0, backgroundColor: Category.getColor(transaction.category), height: 50, width: 50, borderRadius: 50, textAlign: 'center', textAlignVertical: 'center', color: 'white' }}>{Utils.getDay(this.state.chosenDate)}</Text>
+                  {
+                    this.state.isOpen && (
+                      <DatePicker
+                        defaultDate={this.state.chosenDate}
+                        minimumDate={new Date(2016, 1, 1)}
+                        maximumDate={new Date(2030, 12, 31)}
+                        locale='en'
+                        timeZoneOffsetInMinutes={undefined}
+                        modalTransparent={false}
+                        animationType='fade'
+                        androidMode='default'
+                        placeHolderText={Utils.getDay(this.state.chosenDate)}
+                        textStyle={{ color: 'green', opacity: 0 }}
+                        placeHolderTextStyle={{ width: 50, height: 50, textAlign: 'center', textAlignVertical: 'center', color: 'green', opacity: 0 }}
+                        onDateChange={this.setDate.bind(this)}
+                        disabled={false}
+                      />
+                    )
+                  }
+
+                </Item>
                 <Body>
-                  <Text>{transaction.category}</Text>
+                  {this.state.isOpen
+                    ? (
+                      <Item picker>
+                        <Picker
+                          mode='dropdown'
+                          iosIcon={<Icon name='arrow-down' />}
+                          style={{ width: undefined }}
+                          placeholder='Select Category'
+                          placeholderStyle={{ color: '#bfc6ea' }}
+                          placeholderIconColor='#007aff'
+                          selectedValue={this.state.selectedCategory}
+                          onValueChange={this.onValueChangeCategory.bind(this)}
+                        >
+                          {this.props.categories.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.label} />)}
+                        </Picker>
+                      </Item>
+                    )
+                    : <Text>{transaction.category}</Text>}
                 </Body>
               </Left>
               <Right>
@@ -108,40 +167,28 @@ export default class ListItem extends Component {
 
                 </Picker>
               </Item>
-              <Item picker>
-                <Picker
-                  mode='dropdown'
-                  iosIcon={<Icon name='arrow-down' />}
-                  style={{ width: undefined }}
-                  placeholder='Select Category'
-                  placeholderStyle={{ color: '#bfc6ea' }}
-                  placeholderIconColor='#007aff'
-                  selectedValue={this.state.selectedCategory}
-                  onValueChange={this.onValueChangeCategory.bind(this)}
-                >
-                  {this.props.categories.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.label} />)}
 
-                </Picker>
-              </Item>
-              <Item picker>
-                <DatePicker
-                  defaultDate={this.state.chosenDate}
-                  minimumDate={new Date(2016, 1, 1)}
-                  maximumDate={new Date(2030, 12, 31)}
-                  locale='en'
-                  timeZoneOffsetInMinutes={undefined}
-                  modalTransparent={false}
-                  animationType='fade'
-                  androidMode='default'
-                  placeHolderText={Utils.getDate(this.state.chosenDate)}
-                  textStyle={{ color: 'green' }}
-                  placeHolderTextStyle={{ color: 'green' }}
-                  onDateChange={this.setDate.bind(this)}
-                  disabled={false}
-                />
+              <Item picker />
+              <Item regular>
+                <Input value={Utils.numberWithCommas(this.state.amount.toString())} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
               </Item>
               <Item regular>
-                <Input value={this.state.amount} />
+                <Left>
+                  <Button style={{ backgroundColor: '#FF9501' }}>
+                    <Icon active name='airplane' />
+                  </Button>
+                </Left>
+                <Body>
+                  <Text>Airplane Mode</Text>
+                </Body>
+                <Right>
+                  <Switch
+                    value={this.state.selectedInclude} onValueChange={value => {
+                      Utils.log('swithc', value)
+                      this.setState({ selectedInclude: value })
+                    }}
+                  />
+                </Right>
               </Item>
               <Item regular>
                 <Button success onPress={this.update.bind()}>
@@ -150,6 +197,11 @@ export default class ListItem extends Component {
                 <Button danger onPress={this.delete.bind()}>
                   <Text>Delete</Text>
                 </Button>
+                <Right>
+                  <Button info onPress={this.onPress.bind()}>
+                    <Text>X</Text>
+                  </Button>
+                </Right>
               </Item>
             </Form>}
 

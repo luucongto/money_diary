@@ -10,6 +10,12 @@ class Wallet extends RealmWrapper {
     }
     Wallet.bulkInsert(require('./data/wallet.json'))
   }
+
+  static getColor = (label: string) => {
+    const item = Wallet.findOne({ label })
+    const color = item ? item.color : 'black'
+    return color
+  }
 }
 
 export default Wallet

@@ -8,7 +8,7 @@ import Utils from './Utils'
 // import styles from './Styles/LaunchScreenStyles'
 import ListItem from '../Components/MoneyDairy/ListItem'
 import AddTransaction from '../Components/MoneyDairy/AddTransaction'
-import { Transaction, Wallet, Category } from '../Realm'
+import { Wallet } from '../Realm'
 import autoBind from 'react-autobind'
 class Screen extends Component {
   constructor (props) {
@@ -22,15 +22,12 @@ class Screen extends Component {
   }
 
   componentDidMount () {
-    Wallet.initializeDatas()
-    Category.initializeDatas()
-    Transaction.initializeTransactions()
-    this.setState({ wallets: Wallet.find(), categories: Category.find() })
+    this.setState({ wallets: Wallet.find() })
     this.updateTransactions()
   }
 
   updateTransactions () {
-    const items = Transaction.getbyPeriod(Utils.startOf(), Utils.endOf())
+    const items = Wallet.find()
     this.setState({ items })
   }
 
