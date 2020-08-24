@@ -6,7 +6,7 @@ import { Container, Content } from 'native-base'
 import Utils from '../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import ListItem from '../Components/MoneyDairy/ListItem'
+import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
 import AddTransaction from '../Components/MoneyDairy/AddTransaction'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
@@ -44,13 +44,12 @@ class Screen extends Component {
   renderPhone () {
     const renderItems = this.state.items.map(item => {
       return (
-        <ListItem key={item.id} transaction={item} wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
+        <TransactionComponent key={item.id} transaction={item} wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
       )
     })
     return (
       <Container>
         <Content>
-          <AddTransaction wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
           {renderItems}
         </Content>
       </Container>

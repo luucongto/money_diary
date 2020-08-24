@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch } from 'native-base'
+import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch, List, ListItem } from 'native-base'
 import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Utils/Utils'
 import autoBind from 'react-autobind'
 import { Transaction, Wallet, Category } from '../../Realm'
-export default class ListItem extends Component {
+export default class TransactionComponent extends Component {
   constructor (props) {
     super(props)
     const transaction = this.props.transaction
@@ -31,7 +31,7 @@ export default class ListItem extends Component {
     this.setState({ chosenDate: newDate })
   }
 
-  UNSAFE_componentWillReceiveProps (nextProp) {
+  componentWillReceiveProps (nextProp) {
     if (nextProp.transaction) {
       const transaction = nextProp.transaction
       this.setState({
@@ -89,7 +89,27 @@ export default class ListItem extends Component {
     this.props.updateTransactions()
   }
 
+  _renderNormal () {
+    const transaction = this.props.transaction
+    if (!transaction) {
+      return null
+    }
+    return (
+      <ListItem avatar>
+        <Left />
+        <Body>
+          <Text>{transaction.category}</Text>
+          <Text note>{transaction.note}</Text>
+        </Body>
+        <Right>
+          <Text note>{Utils.numberWithCommas(transaction.amount)}</Text>
+        </Right>
+      </ListItem>
+    )
+  }
+
   render () {
+    return this._renderNormal()
     const transaction = this.props.transaction
     if (!transaction) {
       return null
