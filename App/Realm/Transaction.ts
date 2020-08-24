@@ -3,7 +3,6 @@ import data from './data/transaction.json'
 import RealmWrapper from './RealmWrapper'
 import Utils from '../Utils/Utils'
 import Wallet from './Wallet'
-import Category from './Category'
 class Transaction extends RealmWrapper {
   static schema = schema
   static initializeTransactions = () => {
@@ -26,23 +25,28 @@ class Transaction extends RealmWrapper {
     const realm = this.realm
     const id = params.id ? params.id : realm.objects(schema.name).max('id')
     params.id = id || 0 + 1
-    Utils.log('Transaction insert', params)
     return params
   }
 
   static _updateWalletAmount (doc:any) {
     const wallet = Wallet.get(doc.wallet)
     if (wallet) {
-      Wallet.update({ label: wallet.label }, { amount: wallet.amount + doc.amount }, true)
-      Utils.log('wallet update', wallet.label, wallet.amount)
-    } else {
-      Utils.log('wallet not exist', doc.wallet)
+      const walletUpdateData = {
+        amount: wallet.amount + doc.amount,
+        income: wallet.income,
+        outcome: wallet.outcome
+      }
+      if (doc.amount > 0) {
+        walletUpdateData.income = wallet.income + doc.amount
+      } else {
+        walletUpdateData.outcome = wallet.outcome + doc.amount
+      }
+      Wallet.update({ label: wallet.label }, walletUpdateData, true)
     }
     return doc
   }
 
   static afterInsert (doc: any) {
-    Utils.log('afterinsert', doc)
     return Transaction._updateWalletAmount(doc)
   }
 

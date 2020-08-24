@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
-// import { Images, Metrics } from '../Themes'
-
-// import I18n from 'react-native-i18n'
-// import Utils from './Utils'
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes
+} from '@react-native-community/google-signin'
+import GDrive from 'react-native-google-drive-api-wrapper'
 // Styles
-import styles from './Styles/LaunchScreenStyles'
+import Utils from '../Utils/Utils'
 import autoBind from 'react-autobind'
 class Screen extends Component {
   constructor (props) {
@@ -16,13 +17,59 @@ class Screen extends Component {
       start: {}
     }
     autoBind(this)
+    GoogleSignin.configure({
+      scopes: ['https://www.googleapis.com/auth/drive.file']
+    })
   }
+
+  async signIn () {
+    try {
+      await GoogleSignin.hasPlayServices()
+      const userInfo = await GoogleSignin.signIn()
+      Utils.log('userInfo', userInfo)
+      const tokens = await GoogleSignin.getTokens()
+      Utils.log(tokens)
+      // GDrive.setAccessToken(tokens.accessToken)
+      // GDrive.init()
+      // Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
+      // const folderRes = await GDrive.files.safeCreateFolder({
+      //   name: 'MoneyDairy',
+      //   parents: ['root']
+      // })
+      // const result = await GDrive.files.createFileMultipart(
+      //   'My text file contents',
+      //   'application/json', {
+      //     parents: [folderRes],
+      //     name: 'money_diary.json'
+      //   },
+      //   false)
+      // Utils.log('result', result)
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        Utils.log('error', error)
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Utils.log('error', error)
+        // operation (f.e. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Utils.log('error', error)
+        // play services not available or outdated
+      } else {
+        Utils.log('error', error)
+        // some other error happened
+      }
+    }
+  };
 
   renderPhone () {
     return (
-      <View style={styles.mainContainer}>
-        <Text style={styles.tab_txt}>Setting</Text>
-      </View>
+      <GoogleSigninButton
+        style={{ width: 192, height: 48 }}
+        size={GoogleSigninButton.Size.Wide}
+        color={GoogleSigninButton.Color.Dark}
+        onPress={this.signIn.bind(this)}
+        disabled={this.state.isSigninInProgress}
+      />
     )
   }
 
@@ -33,9 +80,6 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    start: state.startup,
-    user: state.user,
-    login: state.login.data
   }
 }
 
