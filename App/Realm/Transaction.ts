@@ -24,7 +24,7 @@ class Transaction extends RealmWrapper {
     }
     const realm = this.realm
     const id = params.id ? params.id : realm.objects(schema.name).max('id')
-    params.id = id || 0 + 1
+    params.id = (id || 0) + 1
     return params
   }
 

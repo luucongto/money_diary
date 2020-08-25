@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { View } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, ListItem, Text } from 'native-base'
+import { Container, Content, ListItem, Text, Fab, Icon, Button } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
-import AddTransaction from '../Components/MoneyDairy/AddTransaction'
+import AddTransactionModal from '../Components/MoneyDairy/AddTransactionModal'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
@@ -59,6 +59,11 @@ class Screen extends Component {
     setTimeout(() => this.refreshTransactions(), 100)
   }
 
+  transactionCreate (transaction) {
+    this.props.transactionCreateRequest(transaction)
+    setTimeout(() => this.refreshTransactions(), 100)
+  }
+
   renderPhone () {
     let lastDate = null
     const renderItems = this.state.items.map(item => {
@@ -99,6 +104,24 @@ class Screen extends Component {
           transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
+        <AddTransactionModal
+          setRef={(ref) => { this.addTransactionModalRef = ref }}
+          wallets={this.state.wallets}
+          categories={this.state.categories}
+          refreshTransactions={this.refreshTransactions}
+          transactionCreate={this.transactionCreate.bind(this)}
+        />
+        <Fab
+          active={this.state.active}
+          direction='up'
+          containerStyle={{ }}
+          style={{ backgroundColor: '#5067FF' }}
+          position='bottomRight'
+          onPress={() => this.addTransactionModalRef.setModalVisible(true)}
+        >
+          <Text>+</Text>
+
+        </Fab>
       </Container>
     )
   }
