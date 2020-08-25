@@ -26,9 +26,6 @@ class Screen extends Component {
   }
 
   componentDidMount () {
-    Wallet.initializeDatas()
-    Category.initializeDatas()
-    // Transaction.initializeTransactions()
     this.setState({ wallets: Wallet.find(), categories: Category.find() })
     this.props.transactionRequest()
   }

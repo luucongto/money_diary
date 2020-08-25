@@ -1,7 +1,7 @@
 import apisauce from 'apisauce'
 import ApiConfig from '../Config/ApiConfig'
 import Utils from '../Utils/Utils'
-import { Transaction } from '../Realm'
+import { Transaction, Wallet, Category } from '../Realm'
 const autoBind = require('react-autobind')
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {
@@ -102,9 +102,18 @@ class API {
     })
   }
 
+  startup () {
+    Utils.log('api.startup')
+    Wallet.initializeDatas()
+    Category.initializeDatas()
+    Transaction.initializeTransactions()
+    return { data: true }
+  }
+
   // Custom API ---------------------------------------------------------
   transaction (params) {
-    return { data: Transaction.getbyPeriod(Utils.startOf(), Utils.endOf()) }
+    // return { data: Transaction.getbyPeriod(Utils.startOf(), Utils.endOf()) }
+    return { data: Transaction.find(null, { sort: { date: true } }) }
   }
 
   transactionUpdate (params) {

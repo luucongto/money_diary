@@ -29,7 +29,7 @@ export default function * root () {
     takeLatest(TransactionTypes.TRANSACTION_DELETE_REQUEST, transactionDelete, api.transactionDelete),
     // some sagas receive extra parameters in addition to an action
     // some sagas only receive an action
-    takeLatest(StartupTypes.STARTUP_REQUEST, startup, api),
+    takeLatest(StartupTypes.STARTUP_REQUEST, startup, api.startup),
     takeLatest(UserTypes.USER_REQUEST, user, api.user)
   ])
 }

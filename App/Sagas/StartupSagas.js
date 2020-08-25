@@ -1,4 +1,4 @@
-import { put, select } from 'redux-saga/effects'
+import { put, select, call } from 'redux-saga/effects'
 import { loginTokenSelector } from '../Redux/LoginRedux'
 import StartupActions from '../Redux/StartupRedux'
 // import { is } from 'ramda'
@@ -35,6 +35,12 @@ export function * startup (api) {
   // if (!is(String, avatar)) {
   //   yield put(GithubActions.userRequest('GantMan'))
   // }
+
+  const res = yield call(api)
+  if (!res) {
+    yield put(StartupActions.startupFailure(res))
+    return
+  }
   const loginToken = yield select(loginTokenSelector)
   if (loginToken) { api.authenticated(loginToken) }
   yield put(StartupActions.startupSuccess(true))
