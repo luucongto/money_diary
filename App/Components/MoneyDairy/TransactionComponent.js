@@ -17,13 +17,6 @@ export default class TransactionComponent extends Component {
       amount: transaction?.amount,
       selectedInclude: transaction?.include
     }
-    this._transX = new Value(70)
-    this._config = {
-      duration: 300,
-      toValue: 370,
-      easing: Easing.inOut(Easing.ease)
-    }
-
     autoBind(this)
   }
 
@@ -42,22 +35,6 @@ export default class TransactionComponent extends Component {
         selectedInclude: transaction?.include
       })
     }
-  }
-
-  onPress () {
-    if (this.state.isOpen) {
-      this._animClose = timing(this._transX, {
-        duration: 300,
-        toValue: 70,
-        easing: Easing.inOut(Easing.ease)
-      })
-      this._animClose.start()
-    } else {
-      this._animOpen = timing(this._transX, this._config)
-
-      this._animOpen.start()
-    }
-    this.setState({ isOpen: !this.state.isOpen })
   }
 
   onValueChangeWallet (value) {

@@ -24,20 +24,38 @@ class Screen extends Component {
     this.setState({ wallets: Wallet.find() })
   }
 
+  componentWillReceiveProps (nextProps) {
+    Utils.log('Wallet', nextProps)
+  }
+
   updateTransactions () {
     const wallets = Wallet.find()
     this.setState({ wallets })
   }
 
+  openWalletDetailModal (wallet) {
+
+  }
+
   renderPhone () {
+    const totalWallet = {
+      label: 'Total',
+      amount: 0,
+      income: 0,
+      outcome: 0
+    }
     const renderItems = this.state.wallets.map(item => {
+      totalWallet.amount += item.amount
+      totalWallet.income += item.income
+      totalWallet.outcome += item.outcome
       return (
-        <WalletItem key={item.id} item={item} />
+        <WalletItem key={item.id} item={item} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
       )
     })
     return (
       <Container>
         <Content>
+          <WalletItem item={totalWallet} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
           {renderItems}
         </Content>
       </Container>
@@ -51,6 +69,7 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    transaction: state.transaction
   }
 }
 

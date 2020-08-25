@@ -33,7 +33,7 @@ class AddTransactionModal extends Component {
 
   onValueChangeWallet (value) {
     this.setState({
-      selectedWallet: value
+      wallet: value
     })
   }
 

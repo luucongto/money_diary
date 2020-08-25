@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch } from 'native-base'
-import Animated, { Easing, timing, Value } from 'react-native-reanimated'
+import { Body, Text, Right, ListItem } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Utils/Utils'
 import autoBind from 'react-autobind'
-import { Transaction, Wallet, Category } from '../../Realm'
-export default class ListItem extends Component {
+export default class WalletComponent extends Component {
   constructor (props) {
     super(props)
     this.state = {
@@ -20,15 +18,24 @@ export default class ListItem extends Component {
   render () {
     const wallet = this.props.item
     if (!wallet) return null
+    const amount = wallet.amount
+    const income = wallet.income
+    const outcome = wallet.outcome
     return (
-      <Card>
-        <Item>
-          <Text>{wallet.label}</Text>
-        </Item>
-        <Item>
-          <Text>{Utils.numberWithCommas(wallet.amount)}</Text>
-        </Item>
-      </Card>
+      <TouchableOpacity onPress={() => this.props.openWalletDetailModal(wallet)}>
+        <ListItem avatar>
+          <Body>
+            <Text>{wallet.label}</Text>
+            <Text note style={{ color: income > 0 ? 'green' : 'red' }}>Income {Utils.numberWithCommas(income)}</Text>
+            <Text note style={{ color: outcome > 0 ? 'green' : 'red' }}>Outcome {Utils.numberWithCommas(outcome)}</Text>
+          </Body>
+          <Right>
+            <Text style={{ color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
+
+          </Right>
+        </ListItem>
+      </TouchableOpacity>
+
     )
   }
 }
