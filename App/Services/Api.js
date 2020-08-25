@@ -106,6 +106,12 @@ class API {
   transaction (params) {
     return { data: Transaction.getbyPeriod(Utils.startOf(), Utils.endOf()) }
   }
+
+  transactionUpdate (params) {
+    const id = params.id
+    delete (params.id)
+    return { data: Transaction.update({ id: id }, params) }
+  }
 }
 
 const api = new API()

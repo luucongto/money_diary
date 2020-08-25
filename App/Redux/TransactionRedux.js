@@ -40,9 +40,13 @@ export const transactionSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
 
-  data.forEach(element => {
-    state = state.setIn(['objects', element.id], element)
-  })
+  if (Array.isArray(data)) {
+    data.forEach(element => {
+      state = state.setIn(['objects', element.id], element)
+    })
+  } else if (data && data.id) {
+    state = state.setIn(['objects', data.id], data)
+  }
   state = state.setIn(['data'], data)
 
   return state
@@ -52,7 +56,13 @@ export const transactionCreateRequest = (state, { params }) => state.merge({ fet
 export const transactionCreateSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
-  state = state.setIn(['objects', data.id], data)
+  if (Array.isArray(data)) {
+    data.forEach(element => {
+      state = state.setIn(['objects', element.id], element)
+    })
+  } else if (data && data.id) {
+    state = state.setIn(['objects', data.id], data)
+  }
   return state
 }
 
@@ -60,7 +70,14 @@ export const transactionUpdateRequest = (state, { params }) => state.merge({ fet
 export const transactionUpdateSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
-  state = state.setIn(['objects', data.id], data)
+  if (Array.isArray(data)) {
+    data.forEach(element => {
+      state = state.setIn(['objects', element.id], element)
+    })
+  } else if (data && data.id) {
+    state = state.setIn(['objects', data.id], data)
+  }
+
   return state
 }
 
@@ -68,11 +85,17 @@ export const transactionDeleteRequest = (state, { params }) => state.merge({ fet
 export const transactionDeleteSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
-  state = state.setIn(['objects', data.id], null)
+  if (Array.isArray(data)) {
+    data.forEach(element => {
+      state = state.setIn(['objects', element.id], element)
+    })
+  } else if (data && data.id) {
+    state = state.setIn(['objects', data.id], data)
+  }
   return state
 }
 
-export const transactionFailure = (state, { error }) => state.merge({ fetching: false, error})
+export const transactionFailure = (state, { error }) => state.merge({ fetching: false, error })
 
 /* ------------- Hookup Reducers To Types ------------- */
 const types = { [Types.TRANSACTION_FAILURE]: transactionFailure }

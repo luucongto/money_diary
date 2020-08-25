@@ -2939,7 +2939,7 @@ babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-core@^6.26.0, babel-core@^6.26.3:
+babel-core@^6.25.0, babel-core@^6.26.0, babel-core@^6.26.3:
   version "6.26.3"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.26.3.tgz#b2e2f09e342d0f0c88e2f02e067794125e75c207"
   integrity sha512-6jyFLuDmeidKmUEb3NM+/yawG0M2bDZ9Z1qbZP59cyHLz8kYGKYwpJP0UwUKKUiTRNvxfLesJnTedqczP7cTDA==
@@ -3213,6 +3213,16 @@ babel-plugin-emotion@^10.0.20, babel-plugin-emotion@^10.0.27:
     escape-string-regexp "^1.0.5"
     find-root "^1.1.0"
     source-map "^0.5.7"
+
+babel-plugin-flow-react-proptypes@^9.1.1:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-flow-react-proptypes/-/babel-plugin-flow-react-proptypes-9.2.0.tgz#d32594b5c85ea90cb625e10f9954d114526ddeae"
+  integrity sha512-gmClrDpTB1H27mh+6/8iliV5BzGic5F9DO7INAd/30sSkg4XZd7LTbv4z06usuUHS8SzXibwotk8ct51IZ5OaQ==
+  dependencies:
+    babel-core "^6.25.0"
+    babel-template "^6.25.0"
+    babel-traverse "^6.25.0"
+    babel-types "^6.25.0"
 
 babel-plugin-ignite-ignore-reactotron@^0.3.0:
   version "0.3.0"
@@ -3882,7 +3892,7 @@ babel-runtime@^6.18.0, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
     core-js "^2.4.0"
     regenerator-runtime "^0.11.0"
 
-babel-template@^6.24.1, babel-template@^6.26.0:
+babel-template@^6.24.1, babel-template@^6.25.0, babel-template@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-6.26.0.tgz#de03e2d16396b069f46dd9fff8521fb1a0e35e02"
   integrity sha1-3gPi0WOWsGn0bdn/+FIfsaDjXgI=
@@ -3893,7 +3903,7 @@ babel-template@^6.24.1, babel-template@^6.26.0:
     babylon "^6.18.0"
     lodash "^4.17.4"
 
-babel-traverse@^6.24.1, babel-traverse@^6.26.0:
+babel-traverse@^6.24.1, babel-traverse@^6.25.0, babel-traverse@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-traverse/-/babel-traverse-6.26.0.tgz#46a9cbd7edcc62c8e5c064e2d2d8d0f4035766ee"
   integrity sha1-RqnL1+3MYsjlwGTi0tjQ9ANXZu4=
@@ -3908,7 +3918,7 @@ babel-traverse@^6.24.1, babel-traverse@^6.26.0:
     invariant "^2.2.2"
     lodash "^4.17.4"
 
-babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.26.0:
+babel-types@^6.19.0, babel-types@^6.24.1, babel-types@^6.25.0, babel-types@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-types/-/babel-types-6.26.0.tgz#a3b073f94ab49eb6fa55cd65227a334380632497"
   integrity sha1-o7Bz+Uq0nrb6Vc1lInozQ4BjJJc=
@@ -11288,6 +11298,13 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
+react-native-animatable@1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-animatable/-/react-native-animatable-1.3.3.tgz#a13a4af8258e3bb14d0a9d839917e9bb9274ec8a"
+  integrity sha512-2ckIxZQAsvWn25Ho+DK3d1mXIgj7tITkrS4pYDvx96WyOttSvzzFeQnM2od0+FUMzILbdHDsDEqZvnz1DYNQ1w==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-clean-project@^3.2.4:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/react-native-clean-project/-/react-native-clean-project-3.4.0.tgz#a5ce4e1d49195326ad9d8129369eed9da0a10e8a"
@@ -11361,6 +11378,23 @@ react-native-iphone-x-helper@^1.0.3, react-native-iphone-x-helper@^1.2.1:
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.1.tgz#645e2ffbbb49e80844bb4cbbe34a126fda1e6772"
   integrity sha512-/VbpIEp8tSNNHIvstuA3Swx610whci1Zpc9mqNkqn14DkMbw+ORviln2u0XyHG1kPvvwTNGZY6QpeFwxYaSdbQ==
 
+react-native-modal@^11.5.6:
+  version "11.5.6"
+  resolved "https://registry.yarnpkg.com/react-native-modal/-/react-native-modal-11.5.6.tgz#bb25a78c35a5e24f45de060e5f64284397d38a87"
+  integrity sha512-APGNfbvgC4hXbJqcSADu79GLoMKIHUmgR3fDQ7rCGZNBypkStSP8imZ4PKK/OzIZZfjGU9aP49jhMgGbhY9KHA==
+  dependencies:
+    prop-types "^15.6.2"
+    react-native-animatable "1.3.3"
+
+react-native-modals@^0.19.9:
+  version "0.19.9"
+  resolved "https://registry.yarnpkg.com/react-native-modals/-/react-native-modals-0.19.9.tgz#90e78bed3d2cabb28f555ec26a0c89c24e565633"
+  integrity sha512-blBIiWEnn+DEZEqc8xmmb53Osc3vU7QD0A3QOT0ALovQdbDHOw5nBqKNIehl3+eC2ddyJEehf9KiE9fbn9b7QQ==
+  dependencies:
+    babel-plugin-flow-react-proptypes "^9.1.1"
+    prop-types "^15.6.0"
+    react-native-root-siblings "^3.2.2"
+
 react-native-orientation@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/react-native-orientation/-/react-native-orientation-3.1.3.tgz#d45803841fe94b6cce9acbe904fd5ca191a3711e"
@@ -11372,6 +11406,14 @@ react-native-reanimated@^1.13.0:
   integrity sha512-uadP/0QO+4TCsyPSvzRdl+76NPM7Bp8M25KQLB4Hg3tWBMjhrMrETnzNi33L/OPfmhU+7rceyi0QPe/DxKT5bQ==
   dependencies:
     fbjs "^1.0.0"
+
+react-native-root-siblings@^3.2.2:
+  version "3.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-root-siblings/-/react-native-root-siblings-3.2.3.tgz#df5a1cff3a3a1f433f57320e1cae719f1b15a3f2"
+  integrity sha512-wOCCtKJteaSIW3K++hzhkfdWRikTqjrG34DnhNDVSzKatuNQyFY1fPBD1YFT/3+kxOIUmNsJdiaPMao9QgoZMA==
+  dependencies:
+    prop-types "^15.6.2"
+    static-container "^1.0.0"
 
 react-native-safe-area-context@^3.1.4:
   version "3.1.4"
@@ -12752,6 +12794,11 @@ standard@^14.3.1:
     eslint-plugin-react "~7.14.2"
     eslint-plugin-standard "~4.0.0"
     standard-engine "^12.0.0"
+
+static-container@^1.0.0:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/static-container/-/static-container-1.5.1.tgz#9d7a94e04dea864539a7b6a1304843ada740dc19"
+  integrity sha512-OFChfLKIvSzaMA3otS5CEabJTIzHFPhMxogIT+io4F207PXTvS6woFyjXIyXyqMIYAhryePGeFZYC6uLcG1lpA==
 
 static-extend@^0.1.1:
   version "0.1.2"

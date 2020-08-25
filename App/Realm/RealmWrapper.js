@@ -1,6 +1,6 @@
 import realm from './schemas/realm'
 import _ from 'lodash'
-
+import Utils from '../Utils/Utils'
 class RealmWrapper {
   static schema = null
   static realm = realm
@@ -16,7 +16,7 @@ class RealmWrapper {
     return params
   }
 
-  static afterUpdate (doc) {
+  static afterUpdate (doc, modifier) {
     return doc
   }
 
@@ -137,7 +137,7 @@ class RealmWrapper {
           _.each(modifier, (v, k) => {
             o[k] = v
           })
-          className.afterUpdate(o)
+          className.afterUpdate(o, modifier)
         }
       })
       return objects.length
@@ -146,6 +146,7 @@ class RealmWrapper {
       return action()
     } else {
       className.realm.write(action)
+      return objects.length
     }
   }
 

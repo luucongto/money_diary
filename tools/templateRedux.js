@@ -1,8 +1,12 @@
 var changeCase = require('change-case')
 function apiFunc (name, functionName, successAction = `
-  data.forEach(element => {
-    state = state.setIn(['objects', element.id], element)
-  })
+  if (Array.isArray(data)) {
+    data.forEach(element => {
+      state = state.setIn(['objects', element.id], element)
+    })
+  } else if (data && data.id) {
+    state = state.setIn(['objects', data.id], data)
+  }
   state = state.setIn(['data'], data)
 `) {
   const nameCamel = changeCase.camelCase(name + functionName)

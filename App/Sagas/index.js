@@ -24,9 +24,9 @@ export default function * root () {
   yield all([
     // tool generated sagas
     takeLatest(TransactionTypes.TRANSACTION_REQUEST, transaction, api.transaction),
-    // takeLatest(TransactionTypes.TRANSACTION_UPDATE, transactionUpdate, api.transactionUpdate),
-    // takeLatest(TransactionTypes.TRANSACTION_CREATE, transactionCreate, api.transactionCreate),
-    // takeLatest(TransactionTypes.TRANSACTION_DELETE, transactionDelete, api.transactionDelete),
+    takeLatest(TransactionTypes.TRANSACTION_UPDATE_REQUEST, transactionUpdate, api.transactionUpdate),
+    // takeLatest(TransactionTypes.TRANSACTION_CREATE_REQUEST, transactionCreate, api.transactionCreate),
+    // takeLatest(TransactionTypes.TRANSACTION_DELETE_REQUEST, transactionDelete, api.transactionDelete),
     // some sagas receive extra parameters in addition to an action
     // some sagas only receive an action
     takeLatest(StartupTypes.STARTUP_REQUEST, startup, api),

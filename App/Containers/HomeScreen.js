@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import { View } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content } from 'native-base'
+import { Container, Content, ListItem, Text } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 // Styles
@@ -11,13 +12,15 @@ import AddTransaction from '../Components/MoneyDairy/AddTransaction'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
+import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
 class Screen extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
       start: {},
-      items: []
+      items: [],
+      currentTransaction: null
     }
     autoBind(this)
   }
@@ -36,22 +39,59 @@ class Screen extends Component {
     }
   }
 
-  updateTransactions () {
-    const items = Transaction.getbyPeriod(Utils.startOf(), Utils.endOf())
-    this.setState({ items })
+  refreshTransactions () {
+    this.props.transactionRequest()
+  }
+
+  openTransactionDetailModal (transaction) {
+    this.setState({ currentTransaction: transaction }, () => {
+      this.transactionDetailModalRef.setModalVisible(true)
+    })
+  }
+
+  transactionUpdate (transaction) {
+    this.props.transactionUpdateRequest(transaction)
   }
 
   renderPhone () {
+    let lastDate = null
     const renderItems = this.state.items.map(item => {
-      return (
-        <TransactionComponent key={item.id} transaction={item} wallets={this.state.wallets} categories={this.state.categories} updateTransactions={this.updateTransactions} />
-      )
+      const date = Utils.getDate(item.date)
+      const itemView = (
+        <TransactionComponent
+          key={item.id}
+          transaction={item}
+          wallets={this.state.wallets}
+          categories={this.state.categories}
+          refreshTransactions={this.refreshTransactions}
+          openTransactionDetailModal={this.openTransactionDetailModal.bind(this)}
+        />)
+      if (lastDate !== date) {
+        lastDate = date
+        return (
+          <View>
+            <ListItem itemDivider>
+              <Text>{date}</Text>
+            </ListItem>
+            {itemView}
+          </View>
+        )
+      }
+      return itemView
     })
     return (
       <Container>
         <Content>
           {renderItems}
         </Content>
+        <TransactionDetailModal
+          transaction={this.state.currentTransaction}
+          setRef={(ref) => { this.transactionDetailModalRef = ref }}
+          wallets={this.state.wallets}
+          categories={this.state.categories}
+          refreshTransactions={this.refreshTransactions}
+          transactionUpdate={this.transactionUpdate.bind(this)}
+        />
       </Container>
     )
   }
@@ -69,7 +109,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params))
+    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
+    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params))
   }
 }
 

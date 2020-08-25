@@ -35,9 +35,9 @@ const appendSagas = () => {
         newFileStrs.push(line)
         inserted = true
         newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST, ${nameCamel}, api.${nameCamel}),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE, ${nameCamel}Update, api.${nameCamel}Update),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_CREATE, ${nameCamel}Create, api.${nameCamel}Create),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_DELETE, ${nameCamel}Delete, api.${nameCamel}Delete),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE_REQUEST, ${nameCamel}Update, api.${nameCamel}Update),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_CREATE_REQUEST, ${nameCamel}Create, api.${nameCamel}Create),`)
+        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_DELETE_REQUEST, ${nameCamel}Delete, api.${nameCamel}Delete),`)
       } else {
         newFileStrs.push(line)
       }
