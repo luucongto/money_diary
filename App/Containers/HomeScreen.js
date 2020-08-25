@@ -51,6 +51,12 @@ class Screen extends Component {
 
   transactionUpdate (transaction) {
     this.props.transactionUpdateRequest(transaction)
+    setTimeout(() => this.refreshTransactions(), 100)
+  }
+
+  transactionDelete (transaction) {
+    this.props.transactionDeleteRequest(transaction)
+    setTimeout(() => this.refreshTransactions(), 100)
   }
 
   renderPhone () {
@@ -90,6 +96,7 @@ class Screen extends Component {
           wallets={this.state.wallets}
           categories={this.state.categories}
           refreshTransactions={this.refreshTransactions}
+          transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
       </Container>
@@ -110,7 +117,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
-    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params))
+    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params)),
+    transactionDeleteRequest: (params) => dispatch(TransactionRedux.transactionDeleteRequest(params)),
+    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
   }
 }
 

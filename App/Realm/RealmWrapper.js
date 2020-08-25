@@ -159,8 +159,9 @@ class RealmWrapper {
       if (filterStr) {
         objects = objects.filtered(filterStr)
       }
+    } else {
+      return 0
     }
-
     const action = () => {
       if (objects.length) {
         _.each(objects, o => {
@@ -176,6 +177,7 @@ class RealmWrapper {
       return action()
     } else {
       className.realm.write(action)
+      return objects.length
     }
   }
 }

@@ -112,6 +112,15 @@ class API {
     delete (params.id)
     return { data: Transaction.update({ id: id }, params) }
   }
+
+  transactionCreate (params) {
+    return { data: Transaction.insert(params) }
+  }
+
+  transactionDelete (params) {
+    const id = params.id
+    return { data: Transaction.remove({ id: id }) }
+  }
 }
 
 const api = new API()

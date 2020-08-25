@@ -74,14 +74,14 @@ class TransactionDetailModal extends Component {
     if (!_.isEmpty(updateData)) {
       updateData.id = this.props.transaction.id
       this.props.transactionUpdate(updateData)
-      this.props.refreshTransactions()
     }
 
     this.setModalVisible(false)
   }
 
   delete () {
-    // Transaction.remove({ id: this.props.transaction.id })
+    this.props.transactionDelete({ id: this.props.transaction.id })
+    this.setModalVisible(false)
   }
 
   render () {
