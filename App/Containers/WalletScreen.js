@@ -21,7 +21,8 @@ class Screen extends Component {
   }
 
   componentDidMount () {
-    this.setState({ wallets: Wallet.find() })
+    const wallets = Wallet.find()
+    this.setState({ wallets })
   }
 
   componentWillReceiveProps (nextProps) {
@@ -29,12 +30,12 @@ class Screen extends Component {
   }
 
   updateTransactions () {
-    const wallets = Wallet.find()
+    const wallets = Wallet.findWithAmount()
     this.setState({ wallets })
   }
 
   openWalletDetailModal (wallet) {
-
+    this.props.navigation.navigate('TransactionScreen', { wallet: wallet })
   }
 
   renderPhone () {

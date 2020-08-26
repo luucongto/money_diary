@@ -2,6 +2,7 @@ import dayjs from 'dayjs'
 // import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
+import _ from 'lodash'
 // import moment from 'moment'
 export default {
   timeFormat (time) {
@@ -25,7 +26,7 @@ export default {
     //   .fromNow() // 23 phút trước
   },
   formatDateForRealmQuery (time) {
-    return dayjs(time).format('YYYY-MM-DD@HH:mm:ss')
+    return dayjs(time).format('YYYY-MM-DD@00:00:00')
   },
   getDay (time) {
     return dayjs(time).format('DD')
@@ -33,11 +34,26 @@ export default {
   getDate (time) {
     return dayjs(time).format('YYYY-MM-DD')
   },
-  startOf (param = 'month') {
-    return dayjs().startOf(param)
+  startOf (param = 'month', date) {
+    return dayjs(date, 'YYYY-MM').startOf(param).add(1, 'day')
   },
-  endOf (param = 'month') {
-    return dayjs().endOf(param)
+  endOf (param = 'month', date) {
+    return dayjs(date, 'YYYY-MM').endOf(param)
+  },
+  getAllMonthsBetweenDates (startDateStr, endDateStr) {
+    var startDate = dayjs(startDateStr)
+    var endDate = dayjs(endDateStr)
+
+    var result = []
+
+    if (endDate.isBefore(startDate)) {
+      return result
+    }
+    for (var i = 0; i < 30 && startDate.isBefore(endDate); i++) {
+      result.push(startDate.format('YYYY-MM'))
+      startDate = startDate.add(1, 'month')
+    }
+    return result
   },
   log (params) {
     if (__DEV__) console.tron.log(arguments)
@@ -69,5 +85,11 @@ export default {
   },
   clamp (num, min, max) {
     return num <= min ? min : num >= max ? max : num
+  },
+  createMapFromArray (arrays, key, value) {
+    return _.chain(arrays)
+      .keyBy(key)
+      .mapValues(value)
+      .value()
   }
 }

@@ -9,17 +9,23 @@ import GDrive from 'react-native-google-drive-api-wrapper'
 // Styles
 import Utils from '../Utils/Utils'
 import autoBind from 'react-autobind'
+import LoginRedux from '../Redux/LoginRedux'
+import { Container, Content, ListItem, Right, Button, Left, Text } from 'native-base'
 class Screen extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      start: {}
     }
     autoBind(this)
     GoogleSignin.configure({
       scopes: ['https://www.googleapis.com/auth/drive.file']
     })
+  }
+
+  async signOut () {
+    await GoogleSignin.signOut()
+    this.props.logoutSuccess()
   }
 
   async signIn () {
@@ -29,6 +35,9 @@ class Screen extends Component {
       Utils.log('userInfo', userInfo)
       const tokens = await GoogleSignin.getTokens()
       Utils.log(tokens)
+      if (tokens) {
+        this.props.loginSuccess(tokens)
+      }
       // GDrive.setAccessToken(tokens.accessToken)
       // GDrive.init()
       // Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
@@ -61,15 +70,34 @@ class Screen extends Component {
     }
   };
 
-  renderPhone () {
+  _renderLoginButton () {
     return (
       <GoogleSigninButton
-        style={{ width: 192, height: 48 }}
+        style={{ width: '100%', height: 68 }}
         size={GoogleSigninButton.Size.Wide}
         color={GoogleSigninButton.Color.Dark}
         onPress={this.signIn.bind(this)}
         disabled={this.state.isSigninInProgress}
       />
+    )
+  }
+
+  renderPhone () {
+    return (
+      <Container>
+        <Content>
+          <ListItem>
+            {!this.props.login && this._renderLoginButton()}
+          </ListItem>
+          {this.props.login && (
+            <ListItem noBorder noIndent>
+              <Button onPress={() => this.signOut()}><Text>Logout</Text></Button>
+              <Button><Text>Backup</Text></Button>
+              <Button><Text>Synchronize</Text></Button>
+            </ListItem>)}
+        </Content>
+      </Container>
+
     )
   }
 
@@ -80,11 +108,14 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    login: state.login.data
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    loginSuccess: (params) => dispatch(LoginRedux.loginSuccess(params)),
+    logoutSuccess: (params) => dispatch(LoginRedux.logoutSuccess(params))
   }
 }
 

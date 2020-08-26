@@ -10,6 +10,7 @@ import I18n from 'react-native-i18n'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 import autoBind from 'react-autobind'
+import Utils from '../Utils/Utils'
 class LaunchScreen extends Component {
   constructor (props) {
     super(props)
@@ -21,10 +22,11 @@ class LaunchScreen extends Component {
   }
 
   componentDidMount () {
-    setTimeout(() => this.goNext(), 3000)
+    setTimeout(() => this.goNext(), 1000)
   }
 
   goNext () {
+    Utils.log('goNext')
     this.props.navigation.replace('MainScreen')
   }
 
@@ -43,9 +45,7 @@ class LaunchScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    start: state.startup,
-    user: state.user,
-    login: state.login.data
+    start: state.startup
   }
 }
 

@@ -30,7 +30,11 @@ class RealmWrapper {
     if (!conditions) {
       objects = realm.objects(className.schema.name)
     } else {
-      objects = realm.objects(className.schema.name).filtered(conditions, {})
+      if (typeof (conditions) === 'object') {
+        objects = realm.objects(className.schema.name).filtered(className._buildFilter(conditions), {})
+      } else {
+        objects = realm.objects(className.schema.name).filtered(conditions, {})
+      }
     }
     // set find option
     if (!_.isEmpty(option)) {

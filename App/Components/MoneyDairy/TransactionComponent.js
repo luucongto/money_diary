@@ -1,61 +1,66 @@
 import React, { Component } from 'react'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch, List, ListItem } from 'native-base'
-import Animated, { Easing, timing, Value } from 'react-native-reanimated'
+import { View } from 'react-native'
+import { Body, Text, Right, ListItem } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Utils/Utils'
 import autoBind from 'react-autobind'
-import { Transaction, Wallet, Category } from '../../Realm'
+import { Transaction } from '../../Realm'
 export default class TransactionComponent extends Component {
   constructor (props) {
     super(props)
     const transaction = this.props.transaction
     this.state = {
       isOpen: false,
-      selectedWallet: transaction?.wallet,
-      selectedCategory: transaction?.category,
-      chosenDate: new Date(transaction?.date),
+      wallet: transaction?.wallet,
+      category: transaction?.category,
+      date: new Date(transaction?.date),
       amount: transaction?.amount,
-      selectedInclude: transaction?.include
+      include: transaction?.include
     }
     autoBind(this)
   }
 
   setDate (newDate) {
-    this.setState({ chosenDate: newDate })
+    this.setState({ date: newDate })
+  }
+
+  shouldComponentUpdate (nextProps) {
+    return nextProps.transaction && nextProps.transaction !== this.state.transaction
   }
 
   componentWillReceiveProps (nextProp) {
     if (nextProp.transaction) {
       const transaction = nextProp.transaction
       this.setState({
-        selectedWallet: transaction?.wallet,
-        selectedCategory: transaction?.category,
-        chosenDate: new Date(transaction?.date),
+        transaction: transaction,
+        wallet: transaction?.wallet,
+        category: transaction?.category,
+        date: new Date(transaction?.date),
         amount: transaction?.amount,
-        selectedInclude: transaction?.include
+        include: transaction?.include
       })
     }
   }
 
   onValueChangeWallet (value) {
     this.setState({
-      selectedWallet: value
+      wallet: value
     })
   }
 
   onValueChangeCategory (value) {
     this.setState({
-      selectedCategory: value
+      category: value
     })
   }
 
   update () {
     Transaction.update({ id: this.props.transaction.id }, {
       amount: this.state.amount,
-      date: new Date(this.state.chosenDate),
-      wallet: this.state.selectedWallet,
-      category: this.state.selectedCategory,
-      include: this.state.selectedInclude
+      date: new Date(this.state.date),
+      wallet: this.state.wallet,
+      category: this.state.category,
+      include: this.state.include
     })
     this.onPress()
     this.props.updateTransactions()
@@ -72,17 +77,26 @@ export default class TransactionComponent extends Component {
       return null
     }
     return (
-      <TouchableOpacity onPress={() => this.props.openTransactionDetailModal(transaction)}>
-        <ListItem avatar style={{ opacity: transaction.include ? 1 : 0.15 }}>
-          <Body>
-            <Text>{transaction.category}</Text>
-            <Text note>{transaction.note}</Text>
-          </Body>
+
+      <ListItem noIndent style={{ opacity: transaction.include ? 1 : 0.15 }}>
+        <View
+          style={{
+            backgroundColor: this.props.walletColorsMapping[transaction.wallet],
+            width: 10,
+            height: '100%'
+          }}
+        />
+        <Body>
+          <Text style={{ color: this.props.categoryColorsMapping[transaction.category] }}>{transaction.category}</Text>
+          <Text note>{transaction.note}</Text>
+        </Body>
+        <TouchableOpacity onPress={() => this.props.openTransactionDetailModal(transaction)}>
           <Right>
-            <Text note style={{ color: transaction.amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(transaction.amount)}</Text>
+            <Text note style={{ textAlign: 'right', width: 200, color: transaction.amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(transaction.amount)}</Text>
           </Right>
-        </ListItem>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </ListItem>
+
     )
   }
 

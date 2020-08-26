@@ -112,8 +112,13 @@ class API {
 
   // Custom API ---------------------------------------------------------
   transaction (params) {
-    // return { data: Transaction.getbyPeriod(Utils.startOf(), Utils.endOf()) }
-    return { data: Transaction.find(null, { sort: { date: true } }) }
+    if (params && params.month) {
+      const startDate = Utils.startOf('month', params.month)
+      const endDate = Utils.endOf('month', params.month)
+      Utils.log('query', startDate, endDate)
+      return { data: Transaction.getbyPeriod(startDate, endDate) }
+    }
+    return { data: Transaction.find(params, { sort: { date: true } }) }
   }
 
   transactionUpdate (params) {

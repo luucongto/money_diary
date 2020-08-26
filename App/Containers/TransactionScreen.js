@@ -1,43 +1,66 @@
 import React, { Component } from 'react'
-import { View, SectionList, RefreshControl } from 'react-native'
+import { View, SectionList } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, ListItem, Text, Fab, Icon, Button } from 'native-base'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { Container, Content, ListItem, Text, Fab, Icon, Button, Header, Left, Right, Body, Title } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
-import { Metrics } from '../Themes'
 // Styles
-// import styles from './Styles/LaunchScreenStyles'
 import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
 import AddTransactionModal from '../Components/MoneyDairy/AddTransactionModal'
 import TransactionRedux from '../Redux/TransactionRedux'
-import { Transaction, Wallet, Category } from '../Realm'
+import { Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
 import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
 import _ from 'lodash'
-import TransactionList from '../Components/MoneyDairy/TransactionLists'
-class Screen extends Component {
+
+class TransactionScreen extends Component {
   constructor (props) {
     super(props)
-    const months = Transaction.getMonths()
-    const tabs = months.map(month => { return { key: month, title: month } })
+    const walletLabel = props?.route?.params?.wallet?.label
+    this.state = {
+      start: {},
+      items: [],
+      currentTransaction: null,
+      walletLabel
+    }
+    Utils.log('TransactionScreen', props)
+    autoBind(this)
+  }
+
+  componentDidMount () {
     const wallets = Wallet.find()
     const categories = Category.find()
     const walletColorsMapping = Utils.createMapFromArray(wallets, 'label', 'color')
     const categoryColorsMapping = Utils.createMapFromArray(categories, 'label', 'color')
-    this.state = {
-      wallets,
-      categories,
-      walletColorsMapping,
-      categoryColorsMapping,
-      start: {},
-      items: [],
-      tabIndex: tabs.length - 1,
-      tabs,
-      currentTransaction: null
+    this.setState({ wallets, categories, walletColorsMapping, categoryColorsMapping })
+    this.refreshTransactions()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.transaction.data) {
+      this.setState({ items: this._groupTransactionByDate(nextProps.transaction.data) })
     }
-    autoBind(this)
+  }
+
+  _groupTransactionByDate (items) {
+    const result = []
+    const groups = _.groupBy(items, item => Utils.getDate(item.date))
+    _.each(groups, (v, k) => {
+      result.push({
+        title: k,
+        data: v
+      })
+    })
+    return result
+  }
+
+  refreshTransactions () {
+    if (this.state.walletLabel !== 'Total') {
+      this.props.transactionRequest({ wallet: this.state.walletLabel })
+    } else {
+      this.props.transactionRequest()
+    }
   }
 
   openTransactionDetailModal (transaction) {
@@ -61,48 +84,49 @@ class Screen extends Component {
     setTimeout(() => this.refreshTransactions(), 100)
   }
 
-  _setTabIndex (index) {
-    this.setState({ tabIndex: index })
-  }
+  _renderItem ({ item, index }) {
+    const itemView = (
+      <TransactionComponent
+        key={item.id}
+        transaction={item}
+        wallets={this.state.wallets}
+        categories={this.state.categories}
+        walletColorsMapping={this.state.walletColorsMapping}
+        categoryColorsMapping={this.state.categoryColorsMapping}
+        refreshTransactions={this.refreshTransactions}
+        openTransactionDetailModal={this.openTransactionDetailModal.bind(this)}
+      />)
 
-  _renderTabs () {
-    return (
-      <TabView
-        swipeEnabled
-        navigationState={{ index: this.state.tabIndex, routes: this.state.tabs }}
-        renderScene={(params) => this._renderOneTab(params)}
-        onIndexChange={index => this._setTabIndex(index)}
-        initialLayout={{ width: Metrics.screenWidth }}
-        renderTabBar={props => <TabBar {...props} scrollEnabled tabStyle={{ width: 100 }} />}
-      />
-    )
-  }
-
-  _renderOneTab ({ route }) {
-    const thisTabIndex = this.state.tabs.indexOf(route)
-    const {
-      wallets,
-      categories,
-      walletColorsMapping,
-      categoryColorsMapping
-    } = this.state
-    return (
-      <TransactionList
-        {...this.props}
-        wallets={wallets}
-        categories={categories}
-        walletColorsMapping={walletColorsMapping}
-        categoryColorsMapping={categoryColorsMapping}
-        tab={route}
-        isThisTabVisible={this.state.tabIndex === thisTabIndex}
-      />
-    )
+    return itemView
   }
 
   renderPhone () {
+    Utils.log('items', this.state.items)
     return (
       <Container>
-        {this._renderTabs()}
+        <Header>
+          <Left>
+            <Button transparent onPress={() => this.props.navigation.goBack()}>
+              <Icon name='arrow-back' />
+            </Button>
+          </Left>
+          <Body>
+            <Title>{this.state.walletLabel}</Title>
+            <Title note>{this.state.items.length}</Title>
+          </Body>
+        </Header>
+        <Content>
+          <SectionList
+            sections={this.state.items}
+            keyExtractor={(item, index) => item + index}
+            renderItem={this._renderItem.bind(this)}
+            renderSectionHeader={({ section: { title } }) => (
+              <ListItem itemDivider>
+                <Text>{title}</Text>
+              </ListItem>
+            )}
+          />
+        </Content>
         <TransactionDetailModal
           transaction={this.state.currentTransaction}
           setRef={(ref) => { this.transactionDetailModalRef = ref }}
@@ -141,8 +165,7 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transactions: state.transaction.data,
-    transactionParams: state.transaction.params
+    transaction: state.transaction
   }
 }
 
@@ -155,4 +178,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+export default connect(mapStateToProps, mapDispatchToProps)(TransactionScreen)

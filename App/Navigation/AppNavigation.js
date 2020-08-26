@@ -6,7 +6,7 @@ import LaunchScreen from '../Containers/LaunchScreen'
 import HomeScreen from '../Containers/HomeScreen'
 import WalletScreen from '../Containers/WalletScreen'
 import SettingScreen from '../Containers/SettingScreen'
-
+import TransactionScreen from '../Containers/TransactionScreen'
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 function MainScreen () {
@@ -51,6 +51,7 @@ function AppNavigation () {
       >
         <Stack.Screen name='LaunchScreen' component={LaunchScreen} />
         <Stack.Screen name='MainScreen' component={MainScreen} />
+        <Stack.Screen name='TransactionScreen' component={TransactionScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

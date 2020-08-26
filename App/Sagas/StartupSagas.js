@@ -41,7 +41,6 @@ export function * startup (api) {
     yield put(StartupActions.startupFailure(res))
     return
   }
-  const loginToken = yield select(loginTokenSelector)
-  if (loginToken) { api.authenticated(loginToken) }
+
   yield put(StartupActions.startupSuccess(true))
 }
