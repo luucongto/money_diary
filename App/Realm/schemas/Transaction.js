@@ -6,8 +6,8 @@ const schema = {
     amount: { type: 'int', default: 0 },
     note: { type: 'string', default: '' },
     date: 'date',
-    category: { type: 'string', default: '' },
-    wallet: { type: 'string', default: '' },
+    category: { type: 'int', default: 0 },
+    wallet: { type: 'int', default: 0 },
     event: { type: 'string', default: '' },
     include: { type: 'bool', default: true }
   }

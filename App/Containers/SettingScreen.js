@@ -5,12 +5,14 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-// import GDrive from 'react-native-google-drive-api-wrapper'
+import GDrive from 'react-native-google-drive-api-wrapper'
 // Styles
 import Utils from '../Utils/Utils'
 import autoBind from 'react-autobind'
 import LoginRedux from '../Redux/LoginRedux'
-import { Container, Content, ListItem, Button, Text } from 'native-base'
+import { Container, Content, ListItem, Button, Text, View } from 'native-base'
+import { Wallet, Transaction, Category } from '../Realm'
+import Api from '../Services/Api'
 class Screen extends Component {
   constructor (props) {
     super(props)
@@ -28,6 +30,69 @@ class Screen extends Component {
     this.props.logoutSuccess()
   }
 
+  asyncSetState (state) {
+    return new Promise((resolve, reject) => {
+      this.setState(state, () => {
+        resolve()
+      })
+    })
+  }
+
+  async backup () {
+    await this.asyncSetState({ doingBackup: true })
+    const tokens = this.props.login
+    const backupContents = {
+      wallets: Wallet.find(),
+      categories: Category.find(),
+      transactions: Transaction.find()
+    }
+    GDrive.setAccessToken(tokens.accessToken)
+    GDrive.init()
+    Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
+    const folderRes = await GDrive.files.safeCreateFolder({
+      name: 'MoneyDairy',
+      parents: ['root']
+    })
+    const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+    if (currentFileId) {
+      await GDrive.files.delete(currentFileId)
+    }
+    const result = await GDrive.files.createFileMultipart(
+      JSON.stringify(backupContents),
+      'application/json', {
+        parents: [folderRes],
+        name: 'money_diary.json'
+      },
+      false)
+    Utils.log('result', result)
+    await this.asyncSetState({ doingBackup: false })
+  }
+
+  async download () {
+    await this.asyncSetState({ doingDownload: true })
+    const tokens = this.props.login
+    GDrive.setAccessToken(tokens.accessToken)
+    GDrive.init()
+    Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
+    const folderRes = await GDrive.files.safeCreateFolder({
+      name: 'MoneyDairy',
+      parents: ['root']
+    })
+    const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+    if (!currentFileId) {
+      Utils.log('no fileid', currentFileId)
+      await this.asyncSetState({ doingDownload: false })
+      return
+    }
+    Utils.log('downloading', currentFileId)
+    try {
+      const result = await Api.downloadFile(currentFileId, tokens.accessToken)
+      Utils.log('result', result, result.wallets)
+    } catch (error) {
+      Utils.log('download error', error)
+    }
+  }
+
   async signIn () {
     try {
       await GoogleSignin.hasPlayServices()
@@ -38,21 +103,6 @@ class Screen extends Component {
       if (tokens) {
         this.props.loginSuccess(tokens)
       }
-      // GDrive.setAccessToken(tokens.accessToken)
-      // GDrive.init()
-      // Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
-      // const folderRes = await GDrive.files.safeCreateFolder({
-      //   name: 'MoneyDairy',
-      //   parents: ['root']
-      // })
-      // const result = await GDrive.files.createFileMultipart(
-      //   'My text file contents',
-      //   'application/json', {
-      //     parents: [folderRes],
-      //     name: 'money_diary.json'
-      //   },
-      //   false)
-      // Utils.log('result', result)
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         // user cancelled the login flow
@@ -90,11 +140,17 @@ class Screen extends Component {
             {!this.props.login && this._renderLoginButton()}
           </ListItem>
           {this.props.login && (
-            <ListItem noBorder noIndent>
-              <Button onPress={() => this.signOut()}><Text>Logout</Text></Button>
-              <Button><Text>Backup</Text></Button>
-              <Button><Text>Synchronize</Text></Button>
-            </ListItem>)}
+            <View>
+              <ListItem noBorder noIndent>
+                <Button onPress={() => this.signOut()}><Text>Logout</Text></Button>
+              </ListItem>
+              <ListItem noBorder noIndent>
+                {this.state.doingBackup ? <Text>Doing backup</Text> : <Button onPress={() => this.backup()}><Text>Backup</Text></Button>}
+              </ListItem>
+              <ListItem noBorder noIndent>
+                <Button onPress={() => this.download()}><Text>Download</Text></Button>
+              </ListItem>
+            </View>)}
         </Content>
       </Container>
 

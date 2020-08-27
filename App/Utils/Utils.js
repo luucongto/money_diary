@@ -87,6 +87,11 @@ export default {
     return num <= min ? min : num >= max ? max : num
   },
   createMapFromArray (arrays, key, value) {
+    if (!value) {
+      return _.chain(arrays)
+        .keyBy(key)
+        .value()
+    }
     return _.chain(arrays)
       .keyBy(key)
       .mapValues(value)

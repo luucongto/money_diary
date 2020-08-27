@@ -8,7 +8,7 @@ class AddTransactionModal extends Component {
     super(props)
     this.state = {
       visible: false,
-      wallet: this.props.wallets ? this.props.wallets[0].label : null,
+      wallet: this.props.wallets ? this.props.wallets[0].id : 0,
       category: this.props.categories ? this.props.categories[0].label : null,
       date: new Date(),
       amount: 0,
@@ -43,7 +43,7 @@ class AddTransactionModal extends Component {
 
   addTransaction () {
     const data = {
-      wallet: this.state.wallet ? this.state.wallet : this.props.wallets[0].label,
+      wallet: this.state.wallet ? this.state.wallet : this.props.wallets[0].id,
       category: this.state.category ? this.state.category : this.props.categories[0].label,
       amount: this.state.amount || 0,
       date: this.state.date,
@@ -51,7 +51,7 @@ class AddTransactionModal extends Component {
     }
     this.props.transactionCreate(data)
     this.setState({
-      wallet: this.props.wallets ? this.props.wallets[0].label : null,
+      wallet: this.props.wallets ? this.props.wallets[0].id : null,
       category: this.props.categories ? this.props.categories[0].label : null,
       date: new Date(),
       amount: 0,
@@ -129,7 +129,7 @@ class AddTransactionModal extends Component {
                     selectedValue={this.state.category}
                     onValueChange={this.onValueChangeCategory.bind(this)}
                   >
-                    {this.props.categories.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.label} />)}
+                    {this.props.categories.map(category => <Picker.Item key={category.id} label={category.label} value={category.label} />)}
                   </Picker>
                 </Item>
               </Body>
@@ -146,7 +146,7 @@ class AddTransactionModal extends Component {
                   selectedValue={this.state.wallet}
                   onValueChange={this.onValueChangeWallet.bind(this)}
                 >
-                  {this.props.wallets.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.label} />)}
+                  {this.props.wallets.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.id} />)}
 
                 </Picker>
               </Item>

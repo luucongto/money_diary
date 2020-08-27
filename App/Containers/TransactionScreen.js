@@ -17,12 +17,14 @@ import _ from 'lodash'
 class TransactionScreen extends Component {
   constructor (props) {
     super(props)
-    const walletLabel = props?.route?.params?.wallet?.label
+    const { wallet, category, useWalletTitle } = props?.route?.params
     this.state = {
       start: {},
       items: [],
       currentTransaction: null,
-      walletLabel
+      wallet,
+      category,
+      useWalletTitle
     }
     Utils.log('TransactionScreen', props)
     autoBind(this)
@@ -31,9 +33,9 @@ class TransactionScreen extends Component {
   componentDidMount () {
     const wallets = Wallet.find()
     const categories = Category.find()
-    const walletColorsMapping = Utils.createMapFromArray(wallets, 'label', 'color')
-    const categoryColorsMapping = Utils.createMapFromArray(categories, 'label', 'color')
-    this.setState({ wallets, categories, walletColorsMapping, categoryColorsMapping })
+    const walletMapping = Utils.createMapFromArray(wallets, 'id')
+    const categoryMapping = Utils.createMapFromArray(categories, 'id')
+    this.setState({ wallets, categories, walletMapping, categoryMapping })
     this.refreshTransactions()
   }
 
@@ -56,11 +58,15 @@ class TransactionScreen extends Component {
   }
 
   refreshTransactions () {
-    if (this.state.walletLabel !== 'Total') {
-      this.props.transactionRequest({ wallet: this.state.walletLabel })
-    } else {
-      this.props.transactionRequest()
+    const findConditions = {}
+    if (this.state.wallet && this.state.wallet.id) {
+      findConditions.wallet = this.state.wallet.id
     }
+    if (this.state.category && this.state.category.id) {
+      findConditions.category = this.state.category.id
+    }
+    Utils.log('transactionScreen findConditions', findConditions)
+    this.props.transactionRequest(findConditions)
   }
 
   openTransactionDetailModal (transaction) {
@@ -91,17 +97,18 @@ class TransactionScreen extends Component {
         transaction={item}
         wallets={this.state.wallets}
         categories={this.state.categories}
-        walletColorsMapping={this.state.walletColorsMapping}
-        categoryColorsMapping={this.state.categoryColorsMapping}
+        walletMapping={this.state.walletMapping}
+        categoryMapping={this.state.categoryMapping}
         refreshTransactions={this.refreshTransactions}
         openTransactionDetailModal={this.openTransactionDetailModal.bind(this)}
+        useWalletTitle={this.state.useWalletTitle}
       />)
 
     return itemView
   }
 
   renderPhone () {
-    Utils.log('items', this.state.items)
+    Utils.log('items', this.state.items, this.state.walletMapping)
     return (
       <Container>
         <Header>
@@ -111,7 +118,7 @@ class TransactionScreen extends Component {
             </Button>
           </Left>
           <Body>
-            <Title>{this.state.walletLabel}</Title>
+            <Title>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Title>
             <Title note>{this.state.items.length}</Title>
           </Body>
         </Header>

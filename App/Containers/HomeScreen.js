@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Text, Fab } from 'native-base'
+import { Container, Icon, Fab, View } from 'native-base'
 import { TabView, TabBar } from 'react-native-tab-view'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
@@ -21,13 +21,13 @@ class Screen extends Component {
     const tabs = months.map(month => { return { key: month, title: month } })
     const wallets = Wallet.find()
     const categories = Category.find()
-    const walletColorsMapping = Utils.createMapFromArray(wallets, 'label', 'color')
-    const categoryColorsMapping = Utils.createMapFromArray(categories, 'label', 'color')
+    const walletMapping = Utils.createMapFromArray(wallets, 'id')
+    const categoryMapping = Utils.createMapFromArray(categories, 'id')
     this.state = {
       wallets,
       categories,
-      walletColorsMapping,
-      categoryColorsMapping,
+      walletMapping,
+      categoryMapping,
       start: {},
       items: [],
       tabIndex: tabs.length - 1,
@@ -77,21 +77,25 @@ class Screen extends Component {
 
   _renderOneTab ({ route }) {
     const thisTabIndex = this.state.tabs.indexOf(route)
+    if (Math.abs(this.tabIndex - this.state.tabIndex) > 2) {
+      return <View />
+    }
     const {
       wallets,
       categories,
-      walletColorsMapping,
-      categoryColorsMapping
+      walletMapping,
+      categoryMapping
     } = this.state
     return (
       <TransactionList
         {...this.props}
         wallets={wallets}
         categories={categories}
-        walletColorsMapping={walletColorsMapping}
-        categoryColorsMapping={categoryColorsMapping}
+        walletMapping={walletMapping}
+        categoryMapping={categoryMapping}
         tab={route}
         isThisTabVisible={this.state.tabIndex === thisTabIndex}
+        openTransactionDetailModal={this.openTransactionDetailModal}
       />
     )
   }
@@ -124,7 +128,7 @@ class Screen extends Component {
           position='bottomRight'
           onPress={() => this.addTransactionModalRef.setModalVisible(true)}
         >
-          <Text>+</Text>
+          <Icon name='plus-circle' type='FontAwesome' />
 
         </Fab>
       </Container>

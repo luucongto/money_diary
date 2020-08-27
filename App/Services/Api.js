@@ -106,7 +106,7 @@ class API {
     Utils.log('api.startup')
     Wallet.initializeDatas()
     Category.initializeDatas()
-    Transaction.initializeTransactions()
+    // Transaction.initializeTransactions()
     return { data: true }
   }
 
@@ -134,6 +134,31 @@ class API {
   transactionDelete (params) {
     const id = params.id
     return { data: Transaction.remove({ id: id }) }
+  }
+
+  downloadFile (fileId, token) {
+    const api = apisauce.create({
+      // base URL is read from the "constructor"
+      baseURL: 'https://www.googleapis.com/drive/v3/files',
+      // here are some default headers
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        Accept: 'application/json',
+        Authorization: 'Bearer ' + token
+      },
+      // 15 second timeout...
+      timeout: 1500000
+    })
+    return api.get(fileId, { alt: 'media' }).then(data => {
+      const { wallets, transactions, categories } = data.data
+      // const walletCounts = Wallet.upsert(wallets)
+      // const categoryCount = Category.upsert(categories)
+      const transactionCount = Transaction.upsert(transactions)
+      Utils.log('sync', transactionCount)
+      return data.data
+    }).catch(error => {
+      Utils.log('e', error)
+    })
   }
 }
 

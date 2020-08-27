@@ -14,30 +14,30 @@ class Wallet extends RealmWrapper {
     Wallet.bulkInsert(require('./data/wallet.json'))
   }
 
-  static getColor = (label: string) => {
-    const item = Wallet.findOne({ label })
+  static getColor = (id: number) => {
+    const item = Wallet.findOne({ id })
     const color = item ? item.color : 'black'
     return color
   }
 
-  static get = (label: string) => {
-    return Wallet.findOne({ label })
+  static get = (id: number) => {
+    return Wallet.findOne({ id })
   }
 
   static findWithAmount = () => {
     const wallets = Wallet.find()
-    const result = wallets.map((wallet: { label: string }) => Wallet.findOneWithAmount(wallet.label))
+    const result = wallets.map((wallet: { id: number }) => Wallet.findOneWithAmount(wallet.id))
     return result
   }
 
-  static findOneWithAmount = (label: string) => {
-    const wallet = Wallet.findOne({ label })
-    const amounts = Wallet.calculate(label)
+  static findOneWithAmount = (id: number) => {
+    const wallet = Wallet.findOne({ id })
+    const amounts = Wallet.calculate(id)
     return { ...wallet, ...amounts }
   }
 
-  static calculate = (label: string) => {
-    const transactions = Transaction.find({ wallet: label })
+  static calculate = (id: number) => {
+    const transactions = Transaction.find({ wallet: id })
     const result = {
       amount: 0,
       income: 0,

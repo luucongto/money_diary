@@ -3,6 +3,7 @@ import data from './data/transaction.json'
 import RealmWrapper from './RealmWrapper'
 import Utils from '../Utils/Utils'
 import Wallet from './Wallet'
+import Category from './Category'
 class Transaction extends RealmWrapper {
   static schema = schema
   static initializeTransactions = () => {
@@ -25,6 +26,30 @@ class Transaction extends RealmWrapper {
     const realm = this.realm
     const id = params.id ? params.id : realm.objects(schema.name).max('id')
     params.id = (id || 0) + 1
+    if (typeof (params.category) === 'string') {
+      const category = Category.findOne({ label: params.category })
+      if (category) {
+        params.category = category.id
+      } else {
+        const newCategory = Category.insert({
+          label: params.category,
+          color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+        }, true)
+        params.category = newCategory.id
+      }
+    }
+    if (typeof (params.wallet) === 'string') {
+      const wallet = Wallet.findOne({ label: params.wallet })
+      if (wallet) {
+        params.wallet = wallet.id
+      } else {
+        const newWallet = Category.insert({
+          label: params.wallet,
+          color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+        }, true)
+        params.wallet = newWallet.id
+      }
+    }
     return params
   }
 

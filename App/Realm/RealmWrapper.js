@@ -1,9 +1,13 @@
 import realm from './schemas/realm'
 import _ from 'lodash'
+import Utils from '../Utils/Utils'
 class RealmWrapper {
   static schema = null
   static realm = realm
   static beforeInsert (params) {
+    const realm = this.realm
+    const id = params.id ? params.id : realm.objects(this.schema.name).max('id')
+    params.id = (id || 0) + 1
     return params
   }
 
@@ -101,7 +105,32 @@ class RealmWrapper {
     if (inTx) {
       return action()
     } else {
-      className.realm.write(action)
+      return className.realm.write(action)
+    }
+  }
+
+  static upsert (params, key = 'id') {
+    try {
+      const className = this
+      const childAction = (item) => {
+        const filter = { id: item.id }
+        let o = className.findOne(filter)
+        if (!o) {
+          o = className.insert(item, true)
+        } else {
+          item = delete (item.id)
+          o = className.update(filter, item, true)
+        }
+        return className.afterInsert(o)
+      }
+      const action = () => {
+        params.forEach(item => childAction(item))
+        return params.length
+      }
+
+      return className.realm.write(action)
+    } catch (error) {
+      Utils.log('upsert error', error)
     }
   }
 

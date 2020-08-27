@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { SectionList } from 'react-native'
-import { Container, Content, ListItem, Text, Right, Body } from 'native-base'
+import { Container, Content, ListItem, Text, Right, Body, View } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
@@ -74,8 +74,8 @@ class TransactionList extends Component {
         transaction={item}
         wallets={this.props.wallets}
         categories={this.props.categories}
-        walletColorsMapping={this.props.walletColorsMapping}
-        categoryColorsMapping={this.props.categoryColorsMapping}
+        walletMapping={this.props.walletMapping}
+        categoryMapping={this.props.categoryMapping}
         refreshTransactions={this.refreshTransactions}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
       />)
@@ -108,6 +108,7 @@ class TransactionList extends Component {
               </ListItem>
             )}
           />
+          <View style={{ height: 80 }} />
         </Content>
       </Container>
     )
