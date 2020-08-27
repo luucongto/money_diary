@@ -1,6 +1,5 @@
 import realm from './schemas/realm'
 import _ from 'lodash'
-import Utils from '../Utils/Utils'
 class RealmWrapper {
   static schema = null
   static realm = realm

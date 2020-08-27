@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
-import { View, SectionList } from 'react-native'
+import { SectionList } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, ListItem, Text, Fab, Icon, Button, Header, Left, Right, Body, Title } from 'native-base'
+import { Container, Content, ListItem, Text, Fab, Icon, Button, Header, Left, Body, Title } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 // Styles

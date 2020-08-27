@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import Utils from '../../Utils/Utils'
-import { Category } from '../../Realm'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch, List, ListItem } from 'native-base'
-import Modal, { ModalContent, ModalFooter, ModalButton } from 'react-native-modals'
-import _ from 'lodash'
+import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch } from 'native-base'
+import Modal, { ModalContent, ModalFooter } from 'react-native-modals'
 class AddTransactionModal extends Component {
   constructor (props) {
     super(props)

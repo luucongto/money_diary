@@ -8,7 +8,6 @@ import Utils from '../../Utils/Utils'
 import TransactionComponent from './TransactionComponent'
 import autoBind from 'react-autobind'
 import _ from 'lodash'
-import { transaction } from '../../Sagas/TransactionSaga'
 class TransactionList extends Component {
   constructor (props) {
     super(props)

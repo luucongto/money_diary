@@ -1,5 +1,4 @@
-import { put, select, call } from 'redux-saga/effects'
-import { loginTokenSelector } from '../Redux/LoginRedux'
+import { put, call } from 'redux-saga/effects'
 import StartupActions from '../Redux/StartupRedux'
 // import { is } from 'ramda'
 // import Utils from '../Containers/Utils'

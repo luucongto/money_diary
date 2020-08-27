@@ -5,12 +5,12 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import GDrive from 'react-native-google-drive-api-wrapper'
+// import GDrive from 'react-native-google-drive-api-wrapper'
 // Styles
 import Utils from '../Utils/Utils'
 import autoBind from 'react-autobind'
 import LoginRedux from '../Redux/LoginRedux'
-import { Container, Content, ListItem, Right, Button, Left, Text } from 'native-base'
+import { Container, Content, ListItem, Button, Text } from 'native-base'
 class Screen extends Component {
   constructor (props) {
     super(props)

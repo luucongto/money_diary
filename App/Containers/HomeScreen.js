@@ -1,21 +1,18 @@
 import React, { Component } from 'react'
-import { View, SectionList, RefreshControl } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, ListItem, Text, Fab, Icon, Button } from 'native-base'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
+import { Container, Text, Fab } from 'native-base'
+import { TabView, TabBar } from 'react-native-tab-view'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import { Metrics } from '../Themes'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
 import AddTransactionModal from '../Components/MoneyDairy/AddTransactionModal'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
 import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
-import _ from 'lodash'
 import TransactionList from '../Components/MoneyDairy/TransactionLists'
 class Screen extends Component {
   constructor (props) {
