@@ -99,7 +99,7 @@ class RealmWrapper {
     const className = this
     const action = () => {
       params = className.beforeInsert(params)
-      const o = className.realm.create(className.schema.name, params)
+      const o = className.realm.create(className.schema.name, params, true)
       return className.afterInsert(o)
     }
     if (inTx) {
@@ -109,28 +109,25 @@ class RealmWrapper {
     }
   }
 
-  static upsert (params, key = 'id') {
+  static upsert (params, inTx = false) {
     try {
       const className = this
       const childAction = (item) => {
-        const filter = { id: item.id }
-        let o = className.findOne(filter)
-        if (!o) {
-          o = className.insert(item, true)
-        } else {
-          item = delete (item.id)
-          o = className.update(filter, item, true)
-        }
-        return className.afterInsert(o)
+        const o = className.insert(item, true)
+        return o
       }
       const action = () => {
         params.forEach(item => childAction(item))
         return params.length
       }
 
-      return className.realm.write(action)
+      if (inTx) {
+        return action()
+      } else {
+        return className.realm.write(action)
+      }
     } catch (error) {
-      Utils.log('upsert error', error)
+      Utils.log('upsert error', params, error)
     }
   }
 

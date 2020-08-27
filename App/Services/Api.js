@@ -1,7 +1,7 @@
 import apisauce from 'apisauce'
 import ApiConfig from '../Config/ApiConfig'
 import Utils from '../Utils/Utils'
-import { Transaction, Wallet, Category } from '../Realm'
+import { Transaction, Wallet, Category, realm } from '../Realm'
 const autoBind = require('react-autobind')
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {
@@ -151,10 +151,13 @@ class API {
     })
     return api.get(fileId, { alt: 'media' }).then(data => {
       const { wallets, transactions, categories } = data.data
-      // const walletCounts = Wallet.upsert(wallets)
-      // const categoryCount = Category.upsert(categories)
-      const transactionCount = Transaction.upsert(transactions)
-      Utils.log('sync', transactionCount)
+      realm.write(() => {
+        const walletCounts = Wallet.upsert(wallets, true)
+        const categoryCount = Category.upsert(categories, true)
+        const transactionCount = Transaction.upsert(transactions, true)
+        Utils.log('sync', walletCounts, categoryCount, transactionCount)
+      })
+
       return data.data
     }).catch(error => {
       Utils.log('e', error)

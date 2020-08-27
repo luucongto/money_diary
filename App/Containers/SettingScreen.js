@@ -25,6 +25,11 @@ class Screen extends Component {
     })
   }
 
+  async componentDidMount () {
+    const isSignedIn = await GoogleSignin.isSignedIn()
+    this.setState({ isSignedIn })
+  }
+
   async signOut () {
     await GoogleSignin.signOut()
     this.props.logoutSuccess()
@@ -88,6 +93,7 @@ class Screen extends Component {
     try {
       const result = await Api.downloadFile(currentFileId, tokens.accessToken)
       Utils.log('result', result, result.wallets)
+      await this.asyncSetState({ doingDownload: false })
     } catch (error) {
       Utils.log('download error', error)
     }
@@ -137,9 +143,9 @@ class Screen extends Component {
       <Container>
         <Content>
           <ListItem>
-            {!this.props.login && this._renderLoginButton()}
+            {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
           </ListItem>
-          {this.props.login && (
+          {this.props.login && this.state.isSignedIn && (
             <View>
               <ListItem noBorder noIndent>
                 <Button onPress={() => this.signOut()}><Text>Logout</Text></Button>
@@ -148,7 +154,7 @@ class Screen extends Component {
                 {this.state.doingBackup ? <Text>Doing backup</Text> : <Button onPress={() => this.backup()}><Text>Backup</Text></Button>}
               </ListItem>
               <ListItem noBorder noIndent>
-                <Button onPress={() => this.download()}><Text>Download</Text></Button>
+                {this.state.doingDownload ? <Text>Doing Download</Text> : <Button onPress={() => this.download()}><Text>Download</Text></Button>}
               </ListItem>
             </View>)}
         </Content>
