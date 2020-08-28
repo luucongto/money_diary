@@ -32,19 +32,28 @@ class TransactionList extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (this.props.tab !== nextProps.tab) {
+    if (!this.shouldComponentUpdate(nextProps)) {
+      return
+    }
+    const prevProps = this.props
+    if (prevProps.tab !== nextProps.tab) {
       this.refreshTransactions()
-    } else if (!this.props.isThisTabVisible && nextProps.isThisTabVisible) {
+    } else if (!prevProps.isThisTabVisible && nextProps.isThisTabVisible) {
+      this.refreshTransactions()
+    } else if (prevProps.transactionUpdateObjects !== nextProps.transactionUpdateObjects && !_.isEmpty(nextProps.transactionUpdateObjects)) {
+      this.refreshTransactions()
+    } else if (prevProps.transactionDeleteObjects !== nextProps.transactionDeleteObjects && !_.isEmpty(nextProps.transactionDeleteObjects)) {
       this.refreshTransactions()
     }
     if (nextProps.transactions) {
+      Utils.log('componentWillReceiveProps', nextProps.transactions)
       const transactions = nextProps.transactions
       let amount = 0
       let income = 0
       let outcome = 0
       transactions.forEach(transaction => {
         amount += transaction.amount
-        income += (transaction.include && transaction.amount) ? transaction.amount : 0
+        income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
         outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
       })
       this.setState({ items: this._groupTransactionByDate(transactions), amount, income, outcome })

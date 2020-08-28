@@ -7,7 +7,6 @@ import { Container, Content, ListItem, Text, Fab, Icon, Button, Header, Left, Bo
 import Utils from '../Utils/Utils'
 // Styles
 import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
-import AddTransactionModal from '../Components/MoneyDairy/AddTransactionModal'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
@@ -143,7 +142,7 @@ class TransactionScreen extends Component {
           transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
-        <AddTransactionModal
+        <TransactionComponent
           setRef={(ref) => { this.addTransactionModalRef = ref }}
           wallets={this.state.wallets}
           categories={this.state.categories}

@@ -1,21 +1,17 @@
+import _ from 'lodash'
+import { Button, DatePicker, Form, Icon, Input, Item, Picker, Right, Switch, Text, Label, Grid, Col } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
+import Modal, { ModalContent } from 'react-native-modals'
 import Utils from '../../Utils/Utils'
-import { Category } from '../../Realm'
-import { Card, Button, CardItem, Body, Text, Left, Right, Icon, Form, Item, Picker, DatePicker, Input, Switch } from 'native-base'
-import Modal, { ModalContent, ModalFooter } from 'react-native-modals'
-import _ from 'lodash'
 class TransactionDetailModal extends Component {
   constructor (props) {
     super(props)
     const transaction = this.props.transaction
+    const stateTransaction = this._assignTransactionToStart(transaction)
     this.state = {
       visible: false,
-      wallet: transaction?.wallet,
-      category: transaction?.category,
-      date: new Date(transaction?.date),
-      amount: transaction?.amount,
-      include: transaction?.include
+      ...stateTransaction
     }
     autoBind(this)
   }
@@ -24,7 +20,8 @@ class TransactionDetailModal extends Component {
     this.props.setRef(this)
   }
 
-  setModalVisible (visible) {
+  setModalVisible (visible = false) {
+    Utils.log('setModalVisible', visible)
     this.setState({ visible })
   }
 
@@ -32,16 +29,21 @@ class TransactionDetailModal extends Component {
     this.setState({ date: newDate })
   }
 
+  _assignTransactionToStart (transaction) {
+    return {
+      wallet: transaction?.wallet,
+      category: transaction?.category,
+      date: transaction ? new Date(transaction.date) : new Date(),
+      amount: transaction?.amount || 0,
+      include: transaction ? transaction.include : true,
+      note: transaction?.note
+    }
+  }
+
   componentWillReceiveProps (nextProp) {
     if (nextProp.transaction) {
       const transaction = nextProp.transaction
-      this.setState({
-        wallet: transaction?.wallet,
-        category: transaction?.category,
-        date: new Date(transaction?.date),
-        amount: transaction?.amount,
-        include: transaction?.include
-      })
+      this.setState(this._assignTransactionToStart(transaction))
     }
   }
 
@@ -57,12 +59,32 @@ class TransactionDetailModal extends Component {
     })
   }
 
+  create () {
+    const data = {
+      wallet: this.state.wallet ? this.state.wallet : this.props.wallets[0].id,
+      category: this.state.category ? this.state.category : this.props.categories[0].label,
+      amount: this.state.amount || 0,
+      date: this.state.date,
+      include: this.state.include
+    }
+    this.props.transactionCreate(data)
+    this.setState({
+      wallet: this.props.wallets ? this.props.wallets[0].id : null,
+      category: this.props.categories ? this.props.categories[0].label : null,
+      date: new Date(),
+      amount: 0,
+      include: true
+    })
+    this.setModalVisible(false)
+  }
+
   update () {
     let updateData = {
       amount: this.state.amount,
       wallet: this.state.wallet,
       category: this.state.category,
-      include: this.state.include
+      include: this.state.include,
+      note: this.state.note
     }
     updateData = _.omitBy(updateData, (v, k) => this.props.transaction[k] === v)
     if (Utils.getDate(this.props.transaction.date) !== Utils.getDate(this.state.date)) {
@@ -85,10 +107,36 @@ class TransactionDetailModal extends Component {
   }
 
   render () {
-    const transaction = this.props.transaction
-    if (!transaction) {
-      return null
-    }
+    const buttons = (
+      <Grid>
+
+        {this.props.transaction &&
+          <Col size={0.35}>
+            <Button success onPress={this.update.bind(this)}>
+              <Text>Update</Text>
+            </Button>
+          </Col>}
+        {this.props.transaction &&
+          <Col size={0.35}>
+            <Button danger onPress={this.delete.bind(this)}>
+              <Text>Delete</Text>
+            </Button>
+          </Col>}
+        {!this.props.transaction &&
+          <Col size={0.65}>
+            <Button success onPress={this.create.bind()}>
+              <Text>Create</Text>
+            </Button>
+          </Col>}
+        <Col size={0.35}>
+          <Button info onPress={() => this.setModalVisible(false)} style={{ alignSelf: 'flex-end' }}>
+            <Icon name='close' />
+          </Button>
+        </Col>
+      </Grid>
+
+    )
+
     return (
       <Modal.BottomModal
         visible={this.state.visible}
@@ -98,11 +146,11 @@ class TransactionDetailModal extends Component {
         width={1}
       >
         <ModalContent>
-
           <Form>
-            <Item underline>
-              <Text style={{ position: 'absolute', left: 0 }}>{Utils.getDate(this.state.date)}</Text>
+            <Item inlineLabel>
+              <Label>Date</Label>
               <DatePicker
+                style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
                 defaultDate={this.state.date}
                 minimumDate={new Date(2010, 1, 1)}
                 maximumDate={new Date(2030, 12, 31)}
@@ -111,15 +159,16 @@ class TransactionDetailModal extends Component {
                 modalTransparent={false}
                 animationType='fade'
                 androidMode='default'
-                placeHolderText={Utils.getDay(this.state.date)}
-                textStyle={{ color: 'green', opacity: 0 }}
-                placeHolderTextStyle={{ width: 50, height: 50, textAlign: 'center', textAlignVertical: 'center', color: 'green', opacity: 0 }}
+                placeHolderText={Utils.getDate(this.state.date)}
+                textStyle={{ color: 'green', opacity: 1 }}
+                placeHolderTextStyle={{ color: 'green', opacity: 1 }}
                 onDateChange={this.setDate.bind(this)}
                 disabled={false}
               />
 
             </Item>
-            <Item picker>
+            <Item inlineLabel>
+              <Label>Category</Label>
               <Picker
                 mode='dropdown'
                 iosIcon={<Icon name='arrow-down' />}
@@ -130,10 +179,11 @@ class TransactionDetailModal extends Component {
                 selectedValue={this.state.category}
                 onValueChange={this.onValueChangeCategory.bind(this)}
               >
-                {this.props.categories.map(category => <Picker.Item key={category.id} label={category.label} value={category.id} />)}
+                {this.props.categories.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
               </Picker>
             </Item>
-            <Item picker>
+            <Item inlineLabel>
+              <Label>Wallet</Label>
               <Picker
                 mode='dropdown'
                 iosIcon={<Icon name='arrow-down' />}
@@ -141,21 +191,24 @@ class TransactionDetailModal extends Component {
                 placeholder='Select Wallet'
                 placeholderStyle={{ color: '#bfc6ea' }}
                 placeholderIconColor='#007aff'
+                itemTextStyle={{ color: 'red' }}
                 selectedValue={this.state.wallet}
                 onValueChange={this.onValueChangeWallet.bind(this)}
               >
-                {this.props.wallets.map(wallet => <Picker.Item key={wallet.id} label={wallet.label} value={wallet.id} />)}
+                {this.props.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
 
               </Picker>
             </Item>
-            <Item picker />
             <Item inlineLabel>
-              <Input value={Utils.numberWithCommas(this.state.amount.toString())} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
+              <Label>Amount</Label>
+              <Input value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
             </Item>
-            <Item picker>
-              <Body>
-                <Text>Included</Text>
-              </Body>
+            <Item inlineLabel>
+              <Label>Note</Label>
+              <Input value={this.state.note} onChangeText={note => this.setState({ note })} />
+            </Item>
+            <Item inlineLabel style={{ height: 50 }}>
+              <Label>Included</Label>
               <Right>
                 <Switch
                   value={this.state.include} onValueChange={value => {
@@ -164,19 +217,7 @@ class TransactionDetailModal extends Component {
                 />
               </Right>
             </Item>
-            <Item>
-              <Button success onPress={this.update.bind()}>
-                <Text>Update</Text>
-              </Button>
-              <Button danger onPress={this.delete.bind()}>
-                <Text>Delete</Text>
-              </Button>
-              <Right>
-                <Button info onPress={() => this.setModalVisible(false)}>
-                  <Text>X</Text>
-                </Button>
-              </Right>
-            </Item>
+            {buttons}
           </Form>
         </ModalContent>
       </Modal.BottomModal>)

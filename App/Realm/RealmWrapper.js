@@ -4,11 +4,17 @@ import Utils from '../Utils/Utils'
 class RealmWrapper {
   static schema = null
   static realm = realm
-  static beforeInsert (params) {
+  static appendId (params) {
     const realm = this.realm
-    const id = params.id ? params.id : realm.objects(this.schema.name).max('id')
-    params.id = (id || 0) + 1
+    if (!params.id) {
+      const maxId = realm.objects(this.schema.name).max('id')
+      params.id = (maxId || 0) + 1
+    }
     return params
+  }
+
+  static beforeInsert (params) {
+    return this.appendId(params)
   }
 
   static afterInsert (doc) {
@@ -97,51 +103,41 @@ class RealmWrapper {
 
   static insert (params, inTx = false) {
     const className = this
+    let o = null
     const action = () => {
       params = className.beforeInsert(params)
-      const o = className.realm.create(className.schema.name, params, true)
+      o = className.realm.create(className.schema.name, params, true)
       return className.afterInsert(o)
     }
     if (inTx) {
       return action()
     } else {
-      return className.realm.write(action)
+      className.realm.write(action)
+      return o
     }
   }
 
-  static upsert (params, inTx = false) {
+  static bulkInsert (params, inTx = false) {
     try {
       const className = this
+      let result = []
       const childAction = (item) => {
         const o = className.insert(item, true)
         return o
       }
       const action = () => {
-        params.forEach(item => childAction(item))
-        return params.length
+        result = params.map(item => childAction(item))
+        return result
       }
 
       if (inTx) {
         return action()
       } else {
-        return className.realm.write(action)
+        className.realm.write(action)
+        return result
       }
     } catch (error) {
-      Utils.log('upsert error', params, error)
-    }
-  }
-
-  static bulkInsert (items, inTx = false) {
-    const className = this
-    const action = () => {
-      items.forEach(item => {
-        className.insert(item, true)
-      })
-    }
-    if (inTx) {
-      return action()
-    } else {
-      className.realm.write(action)
+      Utils.log('bulkInsert error', params, error)
     }
   }
 
@@ -159,7 +155,7 @@ class RealmWrapper {
     }
     const action = () => {
       if (!objects.length) {
-        return 0
+        return []
       }
       _.each(objects, o => {
         if (_.isObject(o)) {
@@ -169,45 +165,44 @@ class RealmWrapper {
           className.afterUpdate(o, modifier)
         }
       })
-      return objects.length
+      Utils.log('updaterealm', JSON.stringify(objects))
+      return objects
     }
     if (inTx) {
       return action()
     } else {
       className.realm.write(action)
-      return objects.length
+      return objects
     }
   }
 
   static remove (filter = {}, inTx = false) {
     var className = this
-
     let objects = className.realm.objects(className.schema.name)
     if (!_.isEmpty(filter)) {
       const filterStr = className._buildFilter(filter)
       if (filterStr) {
         objects = objects.filtered(filterStr)
       }
-    } else {
-      return 0
     }
+    const deletingObjects = []
     const action = () => {
       if (objects.length) {
         _.each(objects, o => {
           if (_.isObject(o)) {
+            deletingObjects.push(Utils.clone(o))
             className.realm.delete(o)
           }
         })
       }
-      return objects.length
     }
 
     if (inTx) {
-      return action()
+      action()
     } else {
       className.realm.write(action)
-      return objects.length
     }
+    return deletingObjects
   }
 }
 

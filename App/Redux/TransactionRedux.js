@@ -1,7 +1,7 @@
 
-import { createReducer, createActions } from 'reduxsauce'
+import { createActions, createReducer } from 'reduxsauce'
 import Immutable from 'seamless-immutable'
-
+import Utils from '../Utils/Utils'
 /* ------------- Types and Action Creators ------------- */
 const actions = {
   transactionFailure: ['error']
@@ -28,6 +28,8 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   params: null,
   data: [],
+  updateObjects: {},
+  deleteObjects: {},
   objects: {},
   error: null,
   fetching: false
@@ -66,31 +68,37 @@ export const transactionCreateSuccess = (state, { data }) => {
   return state
 }
 
-export const transactionUpdateRequest = (state, { params }) => state.merge({ fetching: true, params: params })
+export const transactionUpdateRequest = (state, { params }) => state.merge({ fetching: true, params: params, updateObjects: {} })
 export const transactionUpdateSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
+  Utils.log('update', JSON.stringify(data), Array.isArray(data))
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
+      state = state.setIn(['updateObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
+    state = state.setIn(['updateObjects', data.id], data)
   }
 
   return state
 }
 
-export const transactionDeleteRequest = (state, { params }) => state.merge({ fetching: true, params: params })
+export const transactionDeleteRequest = (state, { params }) => state.merge({ fetching: true, params: params, deleteObjects: {} })
 export const transactionDeleteSuccess = (state, { data }) => {
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
+  Utils.log('transactionDeleteSuccess', JSON.stringify(data), Array.isArray(data))
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
+      state = state.setIn(['deleteObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
+    state = state.setIn(['deleteObjects', data.id], data)
   }
   return state
 }

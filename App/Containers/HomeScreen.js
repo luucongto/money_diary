@@ -8,7 +8,6 @@ import Utils from '../Utils/Utils'
 import { Metrics } from '../Themes'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import AddTransactionModal from '../Components/MoneyDairy/AddTransactionModal'
 import TransactionRedux from '../Redux/TransactionRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
@@ -38,6 +37,7 @@ class Screen extends Component {
   }
 
   openTransactionDetailModal (transaction) {
+    Utils.log('openTransactionDetailModal', transaction)
     this.setState({ currentTransaction: transaction }, () => {
       this.transactionDetailModalRef.setModalVisible(true)
     })
@@ -45,17 +45,14 @@ class Screen extends Component {
 
   transactionUpdate (transaction) {
     this.props.transactionUpdateRequest(transaction)
-    setTimeout(() => this.refreshTransactions(), 100)
   }
 
   transactionDelete (transaction) {
     this.props.transactionDeleteRequest(transaction)
-    setTimeout(() => this.refreshTransactions(), 100)
   }
 
   transactionCreate (transaction) {
     this.props.transactionCreateRequest(transaction)
-    setTimeout(() => this.refreshTransactions(), 100)
   }
 
   _setTabIndex (index) {
@@ -109,15 +106,13 @@ class Screen extends Component {
           setRef={(ref) => { this.transactionDetailModalRef = ref }}
           wallets={this.state.wallets}
           categories={this.state.categories}
-          refreshTransactions={this.refreshTransactions}
           transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
-        <AddTransactionModal
+        <TransactionDetailModal
           setRef={(ref) => { this.addTransactionModalRef = ref }}
           wallets={this.state.wallets}
           categories={this.state.categories}
-          refreshTransactions={this.refreshTransactions}
           transactionCreate={this.transactionCreate.bind(this)}
         />
         <Fab
@@ -143,7 +138,9 @@ class Screen extends Component {
 const mapStateToProps = (state) => {
   return {
     transactions: state.transaction.data,
-    transactionParams: state.transaction.params
+    transactionParams: state.transaction.params,
+    transactionUpdateObjects: state.transaction.updateObjects,
+    transactionDeleteObjects: state.transaction.deleteObjects
   }
 }
 

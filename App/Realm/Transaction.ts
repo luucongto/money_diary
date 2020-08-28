@@ -23,9 +23,7 @@ class Transaction extends RealmWrapper {
     if (!params.date) {
       params.date = new Date()
     }
-    const realm = this.realm
-    const id = params.id ? params.id : realm.objects(schema.name).max('id')
-    params.id = (id || 0) + 1
+    params = Transaction.appendId(params)
     if (typeof (params.category) === 'string') {
       const category = Category.findOne({ label: params.category })
       if (category) {

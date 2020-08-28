@@ -1,18 +1,18 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
 import {
   GoogleSignin,
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail } from 'native-base'
+import React, { Component } from 'react'
+import autoBind from 'react-autobind'
 import GDrive from 'react-native-google-drive-api-wrapper'
+import { connect } from 'react-redux'
+import { Category, Transaction, Wallet } from '../Realm'
+import LoginRedux from '../Redux/LoginRedux'
+import Api from '../Services/Api'
 // Styles
 import Utils from '../Utils/Utils'
-import autoBind from 'react-autobind'
-import LoginRedux from '../Redux/LoginRedux'
-import { Container, Content, ListItem, Button, Text, View } from 'native-base'
-import { Wallet, Transaction, Category } from '../Realm'
-import Api from '../Services/Api'
 class Screen extends Component {
   constructor (props) {
     super(props)
@@ -23,11 +23,12 @@ class Screen extends Component {
     GoogleSignin.configure({
       scopes: ['https://www.googleapis.com/auth/drive.file']
     })
+    autoBind(this)
   }
 
   async componentDidMount () {
-    const isSignedIn = await GoogleSignin.isSignedIn()
-    this.setState({ isSignedIn })
+    await this.signIn(true)
+    await this.getFileInfo()
   }
 
   async signOut () {
@@ -73,19 +74,56 @@ class Screen extends Component {
     await this.asyncSetState({ doingBackup: false })
   }
 
+  async getFileId () {
+    try {
+      const tokens = this.props.login
+      GDrive.setAccessToken(tokens.accessToken)
+      GDrive.init()
+      const folderRes = await GDrive.files.safeCreateFolder({
+        name: 'MoneyDairy',
+        parents: ['root']
+      })
+      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      if (!currentFileId) {
+        return null
+      }
+      return null
+    } catch (error) {
+      return null
+    }
+  }
+
+  async getFileInfo () {
+    try {
+      Utils.log('getFileInfo')
+      const folderRes = await GDrive.files.safeCreateFolder({
+        name: 'MoneyDairy',
+        parents: ['root']
+      })
+      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      if (!currentFileId) {
+        return null
+      }
+      Utils.log('fileId', currentFileId)
+      const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
+      Utils.log(fileInfo)
+    } catch (error) {
+      Utils.log('getFileInfoerror', error)
+    }
+  }
+
   async download () {
-    await this.asyncSetState({ doingDownload: true })
     const tokens = this.props.login
-    GDrive.setAccessToken(tokens.accessToken)
-    GDrive.init()
-    Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
+    await this.asyncSetState({ doingDownload: true })
     const folderRes = await GDrive.files.safeCreateFolder({
       name: 'MoneyDairy',
       parents: ['root']
     })
     const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
     if (!currentFileId) {
-      Utils.log('no fileid', currentFileId)
+      return null
+    }
+    if (!currentFileId) {
       await this.asyncSetState({ doingDownload: false })
       return
     }
@@ -99,15 +137,22 @@ class Screen extends Component {
     }
   }
 
-  async signIn () {
+  async signIn (isSilent = false) {
     try {
       await GoogleSignin.hasPlayServices()
-      const userInfo = await GoogleSignin.signIn()
+      let userInfo = null
+      if (isSilent) {
+        userInfo = await GoogleSignin.signInSilently()
+      } else {
+        userInfo = await GoogleSignin.signIn()
+      }
       Utils.log('userInfo', userInfo)
       const tokens = await GoogleSignin.getTokens()
-      Utils.log(tokens)
+      Utils.log('tokens', tokens)
       if (tokens) {
         this.props.loginSuccess(tokens)
+        this.setState({ isSignedIn: true, user: userInfo.user })
+        await this.getFileInfo()
       }
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -128,13 +173,67 @@ class Screen extends Component {
 
   _renderLoginButton () {
     return (
-      <GoogleSigninButton
-        style={{ width: '100%', height: 68 }}
-        size={GoogleSigninButton.Size.Wide}
-        color={GoogleSigninButton.Color.Dark}
-        onPress={this.signIn.bind(this)}
-        disabled={this.state.isSigninInProgress}
-      />
+      <Card>
+        <CardItem header>
+          <Text>Signin to backup with GDrive</Text>
+        </CardItem>
+        <CardItem>
+          <GoogleSigninButton
+            style={{ width: '100%', height: 68 }}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={this.signIn.bind(this)}
+            disabled={this.state.isSigninInProgress}
+          />
+        </CardItem>
+      </Card>
+
+    )
+  }
+
+  _renderUser () {
+    if (!this.state.user) {
+      return null
+    }
+    const user = this.state.user
+    return (
+      <Card>
+        <CardItem header bordered>
+          <Text>User</Text>
+        </CardItem>
+        <CardItem bordered>
+          <Left>
+            <Thumbnail source={{ uri: user.photo }} />
+            <Body>
+              <Text> {user.name}</Text>
+              <Text note>{user.email}</Text>
+            </Body>
+          </Left>
+          <Button onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>Logout</Text></Button>
+          <Button onPress={() => this.getFileInfo()} style={{ alignSelf: 'flex-end' }}><Text>getFileInfo</Text></Button>
+        </CardItem>
+      </Card>
+    )
+  }
+
+  _renderBackup () {
+    return (
+      <Card>
+        <CardItem header bordered>
+          <Text>Backup And Download</Text>
+        </CardItem>
+        <CardItem bordered>
+          <Body>
+            <Text>filename</Text>
+            <Text note>File Date</Text>
+          </Body>
+
+        </CardItem>
+        <CardItem bordered style={{ justifyContent: 'space-around' }}>
+          <Button info style={{ width: 150, justifyContent: 'center' }} onPress={() => this.backup()}><Text>{this.state.doingBackup ? 'Doing backup' : 'Backup'}</Text></Button>
+          <Button success style={{ width: 150, justifyContent: 'center' }} onPress={() => this.download()}><Text>{this.state.doingDownload ? 'Doing Download' : 'Download'}</Text></Button>
+        </CardItem>
+      </Card>
     )
   }
 
@@ -142,21 +241,9 @@ class Screen extends Component {
     return (
       <Container>
         <Content>
-          <ListItem>
-            {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
-          </ListItem>
-          {this.props.login && this.state.isSignedIn && (
-            <View>
-              <ListItem noBorder noIndent>
-                <Button onPress={() => this.signOut()}><Text>Logout</Text></Button>
-              </ListItem>
-              <ListItem noBorder noIndent>
-                {this.state.doingBackup ? <Text>Doing backup</Text> : <Button onPress={() => this.backup()}><Text>Backup</Text></Button>}
-              </ListItem>
-              <ListItem noBorder noIndent>
-                {this.state.doingDownload ? <Text>Doing Download</Text> : <Button onPress={() => this.download()}><Text>Download</Text></Button>}
-              </ListItem>
-            </View>)}
+          {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
+          {this.props.login && this.state.isSignedIn && this._renderUser()}
+          {this.props.login && this.state.isSignedIn && this._renderBackup()}
         </Content>
       </Container>
 

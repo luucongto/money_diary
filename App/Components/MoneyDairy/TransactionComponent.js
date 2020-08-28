@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { View } from 'react-native'
-import { Body, Text, Right, ListItem } from 'native-base'
+import { Body, Text, Right, ListItem, Grid, Col, Row } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Utils/Utils'
 import autoBind from 'react-autobind'
@@ -18,10 +18,6 @@ export default class TransactionComponent extends Component {
     this.setState({ date: newDate })
   }
 
-  shouldComponentUpdate (nextProps) {
-    return nextProps.transaction && nextProps.transaction !== this.state.transaction
-  }
-
   componentWillReceiveProps (nextProp) {
     if (nextProp.transaction) {
       const transaction = nextProp.transaction
@@ -32,32 +28,44 @@ export default class TransactionComponent extends Component {
   }
 
   _renderNormal () {
-    const transaction = this.props.transaction
+    const transaction = this.state.transaction
     if (!transaction) {
       return null
     }
     const categoryItem = this.props.categoryMapping[transaction.category]
     const walletItem = this.props.walletMapping[transaction.wallet]
     return (
-      <ListItem noIndent style={{ opacity: transaction.include ? 1 : 0.15 }}>
+      <ListItem
+        onPress={() => this.props.openTransactionDetailModal(transaction)}
+        noIndent style={{ opacity: transaction.include ? 1 : 0.15, paddingTop: 0, paddingBottom: 0 }}
+      >
         <View
           style={{
+            position: 'absolute',
+            left: 0,
             backgroundColor: walletItem ? walletItem.color : 'black',
-            width: 10,
+            width: 5,
             height: '100%'
           }}
         />
-        <Body>
-          {this.props.useWalletTitle
-            ? <Text style={{ color: walletItem.color || 'black' }}>{walletItem.label || 'Error'}</Text>
-            : <Text style={{ color: categoryItem ? categoryItem.color : 'black' }}>{categoryItem ? categoryItem.label : 'Error'}</Text>}
-          <Text note>{transaction.note}</Text>
-        </Body>
-        <TouchableOpacity onPress={() => this.props.openTransactionDetailModal(transaction)}>
-          <Right>
-            <Text note style={{ textAlign: 'right', width: 200, color: transaction.amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(transaction.amount)}</Text>
-          </Right>
-        </TouchableOpacity>
+        <Grid style={{ marginTop: 5, marginBottom: 5 }}>
+          <Row>
+            <Col style={{ justifyContent: 'flex-start', alignContent: 'flex-start' }}>
+              {this.props.useWalletTitle
+                ? <Text style={{ color: walletItem.color || 'black', alignSelf: 'flex-start' }}>{walletItem.label || 'Error'}</Text>
+                : <Text style={{ color: categoryItem ? categoryItem.color : 'black', alignSelf: 'flex-start' }}>{categoryItem ? categoryItem.label : 'Error'}</Text>}
+
+            </Col>
+
+            <Col>
+              <Text note style={{ textAlign: 'right', color: transaction.amount > 0 ? 'green' : 'red', alignSelf: 'flex-end' }}>{Utils.numberWithCommas(transaction.amount)}</Text>
+            </Col>
+          </Row>
+          <Text style={{ alignSelf: 'flex-start' }} note>{transaction.note}</Text>
+          <Row />
+
+        </Grid>
+
       </ListItem>
 
     )

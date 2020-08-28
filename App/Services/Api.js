@@ -122,9 +122,12 @@ class API {
   }
 
   transactionUpdate (params) {
-    const id = params.id
-    delete (params.id)
-    return { data: Transaction.update({ id: id }, params) }
+    const transaction = Transaction.findOne({ id: params.id })
+    if (!transaction) {
+      return { error: 'not_found' }
+    }
+    const updateResults = Transaction.insert({ ...transaction, ...params })
+    return { data: updateResults }
   }
 
   transactionCreate (params) {
@@ -152,9 +155,9 @@ class API {
     return api.get(fileId, { alt: 'media' }).then(data => {
       const { wallets, transactions, categories } = data.data
       realm.write(() => {
-        const walletCounts = Wallet.upsert(wallets, true)
-        const categoryCount = Category.upsert(categories, true)
-        const transactionCount = Transaction.upsert(transactions, true)
+        const walletCounts = Wallet.bulkInsert(wallets, true)
+        const categoryCount = Category.bulkInsert(categories, true)
+        const transactionCount = Transaction.bulkInsert(transactions, true)
         Utils.log('sync', walletCounts, categoryCount, transactionCount)
       })
 
