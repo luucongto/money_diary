@@ -34,10 +34,10 @@ const appendSagas = () => {
       } else if (line.trim() === connect) {
         newFileStrs.push(line)
         inserted = true
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST, ${nameCamel}, api.${nameCamel}),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE_REQUEST, ${nameCamel}Update, api.${nameCamel}Update),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_CREATE_REQUEST, ${nameCamel}Create, api.${nameCamel}Create),`)
-        newFileStrs.push(`    // takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_DELETE_REQUEST, ${nameCamel}Delete, api.${nameCamel}Delete),`)
+        newFileStrs.push(`    takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_REQUEST, ${nameCamel}, api.${nameCamel}),`)
+        newFileStrs.push(`    takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_UPDATE_REQUEST, ${nameCamel}Update, api.${nameCamel}Update),`)
+        newFileStrs.push(`    takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_CREATE_REQUEST, ${nameCamel}Create, api.${nameCamel}Create),`)
+        newFileStrs.push(`    takeLatest(${namePascal}Types.${changeCase.snakeCase(name).toUpperCase()}_DELETE_REQUEST, ${nameCamel}Delete, api.${nameCamel}Delete),`)
       } else {
         newFileStrs.push(line)
       }
@@ -77,7 +77,54 @@ const appendReducers = () => {
     })
   })
 }
+const apiFilePath = './App/Services/Api.js'
+const appendApis = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      const apiStartLine = '// Custom API ---------------------------------------------------------'
+      const rl = readline.createInterface({
+        input: fs.createReadStream(apiFilePath),
+        crlfDelay: Infinity
+      })
+      const newFileStrs = []
+      const contents = `  async ${nameCamel} () {
+    return { data: null }
+  }
 
+  async ${nameCamel}Update () {
+    return { data: null }
+  }
+
+  async ${nameCamel}Create () {
+    return { data: null }
+  }
+
+  async ${nameCamel}Delete () {
+    return { data: null }
+  }
+`
+      let inserted = false
+      rl.on('line', (line) => {
+        if (line.trim() === apiStartLine) {
+          newFileStrs.push(line)
+          inserted = true
+          newFileStrs.push(contents)
+        } else {
+          newFileStrs.push(line)
+        }
+      })
+      rl.on('close', function () {
+        resolve({
+          success: inserted,
+          newFileStrs
+        })
+      })
+    } catch (error) {
+      console.log(error)
+      reject(error)
+    }
+  })
+}
 try {
   appendReducers().then(reducers => {
     if (reducers.success) {
@@ -87,6 +134,11 @@ try {
   appendSagas().then(sagas => {
     if (sagas.success) {
       fs.writeFileSync('./App/Sagas/index.js', sagas.newFileStrs.join('\n') + '\n')
+    }
+  })
+  appendApis().then(fileContents => {
+    if (fileContents.success) {
+      fs.writeFileSync(apiFilePath, fileContents.newFileStrs.join('\n') + '\n')
     }
   })
   fs.writeFileSync(`./App/Redux/${namePascal}Redux.js`, temp)

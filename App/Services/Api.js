@@ -111,6 +111,38 @@ class API {
   }
 
   // Custom API ---------------------------------------------------------
+  async wallet () {
+    return { data: null }
+  }
+
+  async walletUpdate () {
+    return { data: null }
+  }
+
+  async walletCreate () {
+    return { data: null }
+  }
+
+  async walletDelete () {
+    return { data: null }
+  }
+
+  async category () {
+    return { data: null }
+  }
+
+  async categoryUpdate () {
+    return { data: null }
+  }
+
+  async categoryCreate () {
+    return { data: null }
+  }
+
+  async categoryDelete () {
+    return { data: null }
+  }
+
   transaction (params) {
     if (params && params.month) {
       const startDate = Utils.startOf('month', params.month)

@@ -3,11 +3,15 @@ import API from '../Services/Api'
 // import DebugConfig from '../Config/DebugConfig'
 
 /* ------------- Types ------------- */
+import { WalletTypes } from '../Redux/WalletRedux'
+import { CategoryTypes } from '../Redux/CategoryRedux'
 import { TransactionTypes } from '../Redux/TransactionRedux'
 import { UserTypes } from '../Redux/UserRedux'
 import { StartupTypes } from '../Redux/StartupRedux'
 
 /* ------------- Sagas ------------- */
+import { wallet, walletUpdate, walletCreate, walletDelete  } from './WalletSaga'
+import { category, categoryUpdate, categoryCreate, categoryDelete  } from './CategorySaga'
 import { transaction, transactionUpdate, transactionCreate, transactionDelete } from './TransactionSaga'
 import { user } from './UserSaga'
 import { startup } from './StartupSagas'
@@ -23,6 +27,14 @@ const api = API
 export default function * root () {
   yield all([
     // tool generated sagas
+    takeLatest(WalletTypes.WALLET_REQUEST, wallet, api.wallet),
+    takeLatest(WalletTypes.WALLET_UPDATE_REQUEST, walletUpdate, api.walletUpdate),
+    takeLatest(WalletTypes.WALLET_CREATE_REQUEST, walletCreate, api.walletCreate),
+    takeLatest(WalletTypes.WALLET_DELETE_REQUEST, walletDelete, api.walletDelete),
+    takeLatest(CategoryTypes.CATEGORY_REQUEST, category, api.category),
+    takeLatest(CategoryTypes.CATEGORY_UPDATE_REQUEST, categoryUpdate, api.categoryUpdate),
+    takeLatest(CategoryTypes.CATEGORY_CREATE_REQUEST, categoryCreate, api.categoryCreate),
+    takeLatest(CategoryTypes.CATEGORY_DELETE_REQUEST, categoryDelete, api.categoryDelete),
     takeLatest(TransactionTypes.TRANSACTION_REQUEST, transaction, api.transaction),
     takeLatest(TransactionTypes.TRANSACTION_UPDATE_REQUEST, transactionUpdate, api.transactionUpdate),
     takeLatest(TransactionTypes.TRANSACTION_CREATE_REQUEST, transactionCreate, api.transactionCreate),

@@ -6,7 +6,7 @@ import {
 import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import GDrive from 'react-native-google-drive-api-wrapper'
+import GDrive from '../Services/GDrive'
 import { connect } from 'react-redux'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
@@ -83,12 +83,15 @@ class Screen extends Component {
         name: 'MoneyDairy',
         parents: ['root']
       })
+      Utils.log('folderRes', folderRes)
       const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      Utils.log('fileId', currentFileId)
       if (!currentFileId) {
         return null
       }
-      return null
+      return currentFileId
     } catch (error) {
+      Utils.log('getFileIdError', error)
       return null
     }
   }
@@ -96,16 +99,14 @@ class Screen extends Component {
   async getFileInfo () {
     try {
       Utils.log('getFileInfo')
-      const folderRes = await GDrive.files.safeCreateFolder({
-        name: 'MoneyDairy',
-        parents: ['root']
-      })
-      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      const currentFileId = await this.getFileId()
       if (!currentFileId) {
+        Utils.log('getFileInfo fileidnull')
         return null
       }
-      Utils.log('fileId', currentFileId)
+
       const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
+      this.setState({ fileInfo })
       Utils.log(fileInfo)
     } catch (error) {
       Utils.log('getFileInfoerror', error)
@@ -210,13 +211,13 @@ class Screen extends Component {
             </Body>
           </Left>
           <Button onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>Logout</Text></Button>
-          <Button onPress={() => this.getFileInfo()} style={{ alignSelf: 'flex-end' }}><Text>getFileInfo</Text></Button>
         </CardItem>
       </Card>
     )
   }
 
   _renderBackup () {
+    const fileInfo = this.state.fileInfo || {}
     return (
       <Card>
         <CardItem header bordered>
@@ -224,8 +225,8 @@ class Screen extends Component {
         </CardItem>
         <CardItem bordered>
           <Body>
-            <Text>filename</Text>
-            <Text note>File Date</Text>
+            <Text>{fileInfo ? fileInfo.originalFilename : 'No backup'}</Text>
+            <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
           </Body>
 
         </CardItem>

@@ -3,9 +3,11 @@ function apiFunc (name, functionName, successAction = `
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
+      state = state.setIn(['deleteObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
+    state = state.setIn(['deleteObjects', data.id], data)
   }
   state = state.setIn(['data'], data)
 `) {
@@ -59,6 +61,8 @@ export const INITIAL_STATE = Immutable({
   params: null,
   data: [],
   objects: {},
+  updateObjects: {},
+  deleteObjects: {},
   error: null,
   fetching: false
 })
