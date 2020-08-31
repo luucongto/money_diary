@@ -1,5 +1,6 @@
 import { put, call } from 'redux-saga/effects'
 import StartupActions from '../Redux/StartupRedux'
+import Utils from '../Utils/Utils'
 // import { is } from 'ramda'
 // import Utils from '../Containers/Utils'
 // exported to make available for tests
@@ -36,6 +37,7 @@ export function * startup (api) {
   // }
 
   const res = yield call(api)
+  Utils.log('startup result', res)
   if (!res) {
     yield put(StartupActions.startupFailure(res))
     return

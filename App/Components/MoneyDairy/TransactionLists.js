@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { SectionList } from 'react-native'
+import { SectionList, RefreshControl } from 'react-native'
 import { Container, Content, ListItem, Text, Right, Body, View } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
@@ -23,7 +23,7 @@ class TransactionList extends Component {
 
   componentDidMount () {
     if (this.props.isThisTabVisible) {
-      this.refreshTransactions()
+      this.refresh()
     }
   }
 
@@ -37,27 +37,27 @@ class TransactionList extends Component {
     }
     const prevProps = this.props
     if (prevProps.tab !== nextProps.tab) {
-      this.refreshTransactions()
+      this.refresh()
     } else if (!prevProps.isThisTabVisible && nextProps.isThisTabVisible) {
-      this.refreshTransactions()
+      this.refresh()
     } else if (prevProps.transactionUpdateObjects !== nextProps.transactionUpdateObjects && !_.isEmpty(nextProps.transactionUpdateObjects)) {
-      this.refreshTransactions()
+      this.refresh()
     } else if (prevProps.transactionDeleteObjects !== nextProps.transactionDeleteObjects && !_.isEmpty(nextProps.transactionDeleteObjects)) {
-      this.refreshTransactions()
+      this.refresh()
+    } else if (prevProps.wallet !== nextProps.wallet) {
+      this.refresh(nextProps.wallet)
     }
-    if (nextProps.transactions) {
-      Utils.log('componentWillReceiveProps', nextProps.transactions)
-      const transactions = nextProps.transactions
-      let amount = 0
-      let income = 0
-      let outcome = 0
-      transactions.forEach(transaction => {
-        amount += transaction.amount
-        income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
-        outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
-      })
-      this.setState({ items: this._groupTransactionByDate(transactions), amount, income, outcome })
-    }
+    Utils.log('componentWillReceiveProps', nextProps.transactions)
+    const transactions = nextProps.transactions
+    let amount = 0
+    let income = 0
+    let outcome = 0
+    transactions.forEach(transaction => {
+      amount += transaction.amount
+      income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
+      outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
+    })
+    this.setState({ items: this._groupTransactionByDate(transactions), amount, income, outcome })
   }
 
   _groupTransactionByDate (items) {
@@ -72,8 +72,8 @@ class TransactionList extends Component {
     return result
   }
 
-  refreshTransactions () {
-    this.props.transactionRequest({ month: this.props.tab.key })
+  refresh (wallet = this.props.wallet) {
+    this.props.transactionRequest({ month: this.props.tab.key, wallet })
   }
 
   _renderItem ({ item, index }) {
@@ -85,7 +85,7 @@ class TransactionList extends Component {
         categories={this.props.categories}
         walletMapping={this.props.walletMapping}
         categoryMapping={this.props.categoryMapping}
-        refreshTransactions={this.refreshTransactions}
+        refreshTransactions={this.refresh}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
       />)
 
@@ -96,7 +96,11 @@ class TransactionList extends Component {
     const { amount, income, outcome } = this.state
     return (
       <Container>
-        <Content>
+        <Content
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
+          }
+        >
           <ListItem noIndent>
             <Body>
               <Text>Total</Text>

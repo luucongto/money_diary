@@ -6,7 +6,7 @@ class RealmWrapper {
   static realm = realm
   static appendId (params) {
     const realm = this.realm
-    if (!params.id) {
+    if (params.id === undefined) {
       const maxId = realm.objects(this.schema.name).max('id')
       params.id = (maxId || 0) + 1
     }
@@ -107,18 +107,19 @@ class RealmWrapper {
     const action = () => {
       params = className.beforeInsert(params)
       o = className.realm.create(className.schema.name, params, true)
-      return className.afterInsert(o)
+      o = className.afterInsert(o)
     }
     if (inTx) {
-      return action()
+      action()
     } else {
       className.realm.write(action)
-      return o
     }
+    return o
   }
 
   static bulkInsert (params, inTx = false) {
     try {
+      Utils.log('bulkInsert', params.length)
       const className = this
       let result = []
       const childAction = (item) => {
@@ -127,15 +128,15 @@ class RealmWrapper {
       }
       const action = () => {
         result = params.map(item => childAction(item))
-        return result
       }
 
       if (inTx) {
-        return action()
+        action()
       } else {
         className.realm.write(action)
-        return result
       }
+      Utils.log('inserted', params.length, result.length, result)
+      return result
     } catch (error) {
       Utils.log('bulkInsert error', params, error)
     }

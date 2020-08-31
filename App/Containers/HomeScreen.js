@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Icon, Fab, View } from 'native-base'
+import { Container, Icon, Fab, View, Card, CardItem, Item, Picker } from 'native-base'
 import { TabView, TabBar } from 'react-native-tab-view'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
@@ -9,6 +9,8 @@ import { Metrics } from '../Themes'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import TransactionRedux from '../Redux/TransactionRedux'
+import CategoryRedux from '../Redux/CategoryRedux'
+import WalletRedux from '../Redux/WalletRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
 import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
@@ -27,6 +29,7 @@ class Screen extends Component {
       categories,
       walletMapping,
       categoryMapping,
+      wallet: wallets[0].id,
       start: {},
       items: [],
       tabIndex: tabs.length - 1,
@@ -34,6 +37,24 @@ class Screen extends Component {
       currentTransaction: null
     }
     autoBind(this)
+  }
+
+  componentDidMount () {
+    this.props.categoryRequest()
+    this.props.walletRequest()
+  }
+
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.categories !== this.state.categories) {
+      const categories = nextProps.categories
+      const categoryMapping = Utils.createMapFromArray(categories, 'id')
+      this.setState({ categories, categoryMapping })
+    }
+    if (nextProps.wallets !== this.state.wallets) {
+      const wallets = nextProps.wallets
+      const walletMapping = Utils.createMapFromArray(wallets, 'id')
+      this.setState({ wallets, walletMapping })
+    }
   }
 
   openTransactionDetailModal (transaction) {
@@ -60,6 +81,7 @@ class Screen extends Component {
   }
 
   _renderTabs () {
+    Utils.log('renderTabs', this.state.tabs)
     return (
       <TabView
         swipeEnabled
@@ -81,7 +103,8 @@ class Screen extends Component {
       wallets,
       categories,
       walletMapping,
-      categoryMapping
+      categoryMapping,
+      wallet
     } = this.state
     return (
       <TransactionList
@@ -90,6 +113,7 @@ class Screen extends Component {
         categories={categories}
         walletMapping={walletMapping}
         categoryMapping={categoryMapping}
+        wallet={wallet}
         tab={route}
         isThisTabVisible={this.state.tabIndex === thisTabIndex}
         openTransactionDetailModal={this.openTransactionDetailModal}
@@ -97,9 +121,40 @@ class Screen extends Component {
     )
   }
 
+  onValueChangeWallet (value) {
+    this.setState({
+      wallet: value
+    })
+  }
+
+  _renderHeader () {
+    if (!this.state.wallets) {
+      return null
+    }
+    return (
+      <Item picker>
+        <Picker
+          mode='dropdown'
+          iosIcon={<Icon name='arrow-down' />}
+          style={{ width: undefined }}
+          placeholder='Select Wallet'
+          placeholderStyle={{ color: '#bfc6ea' }}
+          placeholderIconColor='#007aff'
+          itemTextStyle={{ color: 'red' }}
+          selectedValue={this.state.wallet}
+          onValueChange={this.onValueChangeWallet.bind(this)}
+        >
+          {this.state.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+
+        </Picker>
+      </Item>
+    )
+  }
+
   renderPhone () {
     return (
       <Container>
+        {this._renderHeader()}
         {this._renderTabs()}
         <TransactionDetailModal
           transaction={this.state.currentTransaction}
@@ -140,7 +195,9 @@ const mapStateToProps = (state) => {
     transactions: state.transaction.data,
     transactionParams: state.transaction.params,
     transactionUpdateObjects: state.transaction.updateObjects,
-    transactionDeleteObjects: state.transaction.deleteObjects
+    transactionDeleteObjects: state.transaction.deleteObjects,
+    categories: state.category.data,
+    wallets: state.wallet.data
   }
 }
 
@@ -149,7 +206,9 @@ const mapDispatchToProps = (dispatch) => {
     transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
     transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params)),
     transactionDeleteRequest: (params) => dispatch(TransactionRedux.transactionDeleteRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
+    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params)),
+    categoryRequest: (params) => dispatch(CategoryRedux.categoryRequest(params)),
+    walletRequest: (params) => dispatch(WalletRedux.walletRequest(params))
   }
 }
 

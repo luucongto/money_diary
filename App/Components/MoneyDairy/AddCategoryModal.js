@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import Modal, { ModalContent } from 'react-native-modals'
 import Utils from '../../Utils/Utils'
-class AddWalletModal extends Component {
+
+class AddCategoryModal extends Component {
   constructor (props) {
     super(props)
     const colors = Utils.randomPaletteColors(100)
@@ -32,7 +33,7 @@ class AddWalletModal extends Component {
       label: this.state.label,
       color: this.state.color
     }
-    this.props.walletCreate(data)
+    this.props.itemCreate(data)
     this.setModalVisible(false)
   }
 
@@ -52,8 +53,8 @@ class AddWalletModal extends Component {
         <ModalContent>
           <Form>
             <Item inlineLabel>
-              <Label>Wallet Name</Label>
-              <Input placeholder='Wallet Name' value={this.state.label} onChangeText={label => this.setState({ label })} />
+              <Label>Category Name</Label>
+              <Input placeholder='Category Name' value={this.state.label} onChangeText={label => this.setState({ label })} />
             </Item>
             <Item inlineLabel>
               <Label>Color</Label>
@@ -88,4 +89,4 @@ class AddWalletModal extends Component {
   }
 }
 
-export default AddWalletModal
+export default AddCategoryModal

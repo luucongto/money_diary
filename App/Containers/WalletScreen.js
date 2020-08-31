@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { RefreshControl } from 'react-native'
 import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
 import { Container, Content, View, Fab, Text, Icon } from 'native-base'
@@ -9,6 +10,7 @@ import Utils from '../Utils/Utils'
 import WalletItem from '../Components/MoneyDairy/WalletItem'
 import { Wallet } from '../Realm'
 import autoBind from 'react-autobind'
+import WalletRedux from '../Redux/WalletRedux'
 import AddWalletModal from '../Components/MoneyDairy/AddWalletModal'
 class Screen extends Component {
   constructor (props) {
@@ -22,14 +24,19 @@ class Screen extends Component {
   }
 
   componentDidMount () {
-    this.updateTransactions()
+    this.refresh()
   }
 
   componentWillReceiveProps (nextProps) {
     Utils.log('Wallet', nextProps)
+    const prevProps = this.props
+    if (prevProps.walletObjects !== nextProps.walletObjects) {
+      this.refresh()
+    }
   }
 
-  updateTransactions () {
+  refresh () {
+    Utils.log('Wallet Updates')
     const wallets = Wallet.findWithAmount()
     this.setState({ wallets })
   }
@@ -39,30 +46,23 @@ class Screen extends Component {
     this.props.navigation.navigate('TransactionScreen', { wallet: wallet })
   }
 
-  walletCreate (label, color) {
-
+  walletCreate (params) {
+    this.props.walletCreate(params)
   }
 
   renderPhone () {
-    const totalWallet = {
-      id: 0,
-      label: 'Total',
-      amount: 0,
-      income: 0,
-      outcome: 0
-    }
     const renderItems = this.state.wallets.map(item => {
-      totalWallet.amount += item.amount
-      totalWallet.income += item.income
-      totalWallet.outcome += item.outcome
       return (
         <WalletItem key={item.id} item={item} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
       )
     })
     return (
       <Container>
-        <Content>
-          <WalletItem item={totalWallet} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
+        <Content
+          refreshControl={
+            <RefreshControl refreshing={this.props.fetching} onRefresh={this.refresh.bind(this)} />
+          }
+        >
           {renderItems}
           <View style={{ height: 50 }} />
         </Content>
@@ -93,12 +93,15 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transaction: state.transaction
+    transaction: state.transaction,
+    fetching: state.wallet.fetching,
+    walletObjects: state.wallet.objects
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params))
   }
 }
 

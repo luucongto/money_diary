@@ -6,12 +6,8 @@ import { forEach } from 'lodash'
 import Utils from '../Utils/Utils'
 class Category extends RealmWrapper {
   static schema = schema
-  static initializeDatas = () => {
-    const id = Category.realm.objects(schema.name).max('id')
-    if (id) {
-      return
-    }
-    Category.bulkInsert(data)
+  static initializeDatas = (inTx = true) => {
+    Category.bulkInsert(data, inTx)
   }
 
   static getColor = (label: string) => {

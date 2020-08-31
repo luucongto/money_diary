@@ -10,8 +10,8 @@ import { UserTypes } from '../Redux/UserRedux'
 import { StartupTypes } from '../Redux/StartupRedux'
 
 /* ------------- Sagas ------------- */
-import { wallet, walletUpdate, walletCreate, walletDelete  } from './WalletSaga'
-import { category, categoryUpdate, categoryCreate, categoryDelete  } from './CategorySaga'
+import { wallet, walletUpdate, walletCreate, walletDelete } from './WalletSaga'
+import { category, categoryUpdate, categoryCreate, categoryDelete } from './CategorySaga'
 import { transaction, transactionUpdate, transactionCreate, transactionDelete } from './TransactionSaga'
 import { user } from './UserSaga'
 import { startup } from './StartupSagas'

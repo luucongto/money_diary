@@ -4,19 +4,65 @@ import RealmWrapper from './RealmWrapper'
 import Utils from '../Utils/Utils'
 import Wallet from './Wallet'
 import Category from './Category'
+import _ from 'lodash'
 class Transaction extends RealmWrapper {
   static schema = schema
-  static initializeTransactions = () => {
-    const realm = Transaction.realm
-    const id = realm.objects(schema.name).max('id')
-    if (id) {
-      return
-    }
-    Transaction.bulkInsert(data.rows)
+  static initializeTransactions = (inTx = true) => {
+    const rows = data.rows
+    const categories = _.map(rows, 'category')
+    const wallets = _.map(rows, 'wallet')
+    const walletMap: any = {}
+    wallets.forEach((wallet:string) => {
+      const obj = Wallet.findOne({ label: wallet })
+      if (obj) {
+        walletMap[wallet] = obj.id
+      } else {
+        const newObj = Wallet.insert({
+          label: wallet,
+          color: Utils.randomColor()
+        }, true)
+        Utils.log('newWallet', wallet, newObj)
+        if (newObj) {
+          walletMap[wallet] = newObj.id
+        }
+      }
+    })
+
+    const categoryMap: any = {}
+    categories.forEach((item:string) => {
+      const obj = Category.findOne({ label: item })
+      if (obj) {
+        categoryMap[item] = obj.id
+      } else {
+        const newObj = Category.insert({
+          label: item,
+          color: Utils.randomColor()
+        }, true)
+        if (newObj) {
+          categoryMap[item] = newObj.id
+        }
+      }
+    })
+    const processedRows = rows.map(item => {
+      if (typeof (item.wallet) === 'string') {
+        item.wallet = walletMap[item.wallet]
+      }
+      if (typeof (item.category) === 'string') {
+        item.category = categoryMap[item.category]
+      }
+      return item
+    })
+    Utils.log('processedRows', processedRows)
+    Transaction.bulkInsert(processedRows, inTx)
   }
 
-  static getbyPeriod = (startDate: string, endDate:string) => {
-    return Transaction.find(`date > ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`, { sort: { date: true } })
+  static getbyPeriod = (startDate: string, endDate:string, wallet: null | number) => {
+    let query = `date > ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
+    if (wallet) {
+      query = `${query} and wallet=${wallet}`
+    }
+    Utils.log('getByPeriod', query)
+    return Transaction.find(query, { sort: { date: true } })
   }
 
   static beforeInsert (params: any) {

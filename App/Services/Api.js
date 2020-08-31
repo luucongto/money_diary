@@ -2,6 +2,9 @@ import apisauce from 'apisauce'
 import ApiConfig from '../Config/ApiConfig'
 import Utils from '../Utils/Utils'
 import { Transaction, Wallet, Category, realm } from '../Realm'
+import GDrive from './GDrive'
+import { resolve } from 'path'
+import { reject } from 'lodash'
 const autoBind = require('react-autobind')
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {
@@ -103,24 +106,36 @@ class API {
   }
 
   startup () {
-    Utils.log('api.startup')
-    Wallet.initializeDatas()
-    Category.initializeDatas()
-    // Transaction.initializeTransactions()
-    return { data: true }
+    return new Promise((resolve, reject) => {
+      try {
+        Utils.log('api.startup')
+        realm.write(() => {
+          Wallet.initializeDatas()
+          Category.initializeDatas()
+          // Transaction.initializeTransactions()
+        })
+        setTimeout(() => {
+          Utils.log('api.startup done', Wallet.find(), Category.find(), Transaction.find())
+          resolve({ data: true })
+        }, 1000)
+      } catch (e) {
+        Utils.log('api.startuperror', e)
+        reject(e)
+      }
+    }).then(data => data)
   }
 
   // Custom API ---------------------------------------------------------
   async wallet () {
-    return { data: null }
+    return { data: Wallet.find() }
   }
 
   async walletUpdate () {
     return { data: null }
   }
 
-  async walletCreate () {
-    return { data: null }
+  async walletCreate (params) {
+    return { data: Wallet.insert(params) }
   }
 
   async walletDelete () {
@@ -128,15 +143,15 @@ class API {
   }
 
   async category () {
-    return { data: null }
+    return { data: Category.find() }
   }
 
   async categoryUpdate () {
     return { data: null }
   }
 
-  async categoryCreate () {
-    return { data: null }
+  async categoryCreate (params) {
+    return { data: Category.insert(params) }
   }
 
   async categoryDelete () {
@@ -148,7 +163,7 @@ class API {
       const startDate = Utils.startOf('month', params.month)
       const endDate = Utils.endOf('month', params.month)
       Utils.log('query', startDate, endDate)
-      return { data: Transaction.getbyPeriod(startDate, endDate) }
+      return { data: Transaction.getbyPeriod(startDate, endDate, params.wallet) }
     }
     return { data: Transaction.find(params, { sort: { date: true } }) }
   }
@@ -172,18 +187,7 @@ class API {
   }
 
   downloadFile (fileId, token) {
-    const api = apisauce.create({
-      // base URL is read from the "constructor"
-      baseURL: 'https://www.googleapis.com/drive/v3/files',
-      // here are some default headers
-      headers: {
-        'Content-Type': 'application/json; charset=UTF-8',
-        Accept: 'application/json',
-        Authorization: 'Bearer ' + token
-      },
-      // 15 second timeout...
-      timeout: 1500000
-    })
+    const api = GDrive.fileApi
     return api.get(fileId, { alt: 'media' }).then(data => {
       const { wallets, transactions, categories } = data.data
       realm.write(() => {

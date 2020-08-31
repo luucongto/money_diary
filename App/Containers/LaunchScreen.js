@@ -22,7 +22,18 @@ class LaunchScreen extends Component {
   }
 
   componentDidMount () {
-    setTimeout(() => this.goNext(), 1000)
+    this.checkStartUpAndGoNext()
+  }
+
+  checkStartUpAndGoNext () {
+    setTimeout(() => {
+      if (this.props.start) {
+        Utils.log('this.props.start', this.props.start)
+        this.goNext()
+      } else {
+        this.checkStartUpAndGoNext()
+      }
+    }, 1000)
   }
 
   goNext () {
@@ -45,7 +56,7 @@ class LaunchScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    start: state.startup
+    start: state.startup.data
   }
 }
 

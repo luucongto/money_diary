@@ -61,9 +61,11 @@ export const transactionCreateSuccess = (state, { data }) => {
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
+      state = state.setIn(['updateObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
+    state = state.setIn(['updateObjects', data.id], data)
   }
   return state
 }

@@ -3,7 +3,7 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Icon } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import GDrive from '../Services/GDrive'
@@ -71,6 +71,7 @@ class Screen extends Component {
       },
       false)
     Utils.log('result', result)
+    await this.getFileInfo()
     await this.asyncSetState({ doingBackup: false })
   }
 
@@ -106,8 +107,7 @@ class Screen extends Component {
       }
 
       const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
-      this.setState({ fileInfo })
-      Utils.log(fileInfo)
+      await this.asyncSetState({ fileInfo })
     } catch (error) {
       Utils.log('getFileInfoerror', error)
     }

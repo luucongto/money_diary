@@ -7,9 +7,10 @@ import Utils from '../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import CategoryComponent from '../Components/MoneyDairy/CategoryComponent'
+import CategoryRedux from '../Redux/CategoryRedux'
 import { Category } from '../Realm'
 import autoBind from 'react-autobind'
-import AddWalletModal from '../Components/MoneyDairy/AddWalletModal'
+import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
 class Screen extends Component {
   constructor (props) {
     super(props)
@@ -26,6 +27,10 @@ class Screen extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
+    const prevProps = this.props
+    if (prevProps.categoryObjects !== nextProps.categoryObjects) {
+      this.refresh()
+    }
   }
 
   refresh () {
@@ -37,8 +42,8 @@ class Screen extends Component {
     this.props.navigation.navigate('TransactionScreen', { category: item, useWalletTitle: true })
   }
 
-  itemCreate (label, color) {
-
+  itemCreate (params) {
+    this.props.categoryCreateRequest(params)
   }
 
   renderPhone () {
@@ -54,7 +59,7 @@ class Screen extends Component {
           <View style={{ height: 50 }} />
         </Content>
 
-        <AddWalletModal
+        <AddCategoryModal
           setRef={(ref) => { this.addModalRef = ref }}
           itemCreate={this.itemCreate.bind(this)}
         />
@@ -80,11 +85,13 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    categoryObjects: state.category.objects
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    categoryCreateRequest: (params) => dispatch(CategoryRedux.categoryCreateRequest(params))
   }
 }
 

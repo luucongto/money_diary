@@ -94,8 +94,8 @@ class TransactionScreen extends Component {
       <TransactionComponent
         key={item.id}
         transaction={item}
-        wallets={this.state.wallets}
-        categories={this.state.categories}
+        wallets={this.props.wallets}
+        categories={this.categories.categories}
         walletMapping={this.state.walletMapping}
         categoryMapping={this.state.categoryMapping}
         refreshTransactions={this.refreshTransactions}
@@ -136,16 +136,16 @@ class TransactionScreen extends Component {
         <TransactionDetailModal
           transaction={this.state.currentTransaction}
           setRef={(ref) => { this.transactionDetailModalRef = ref }}
-          wallets={this.state.wallets}
-          categories={this.state.categories}
+          wallets={this.props.wallets}
+          categories={this.props.categories}
           refreshTransactions={this.refreshTransactions}
           transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
         <TransactionComponent
           setRef={(ref) => { this.addTransactionModalRef = ref }}
-          wallets={this.state.wallets}
-          categories={this.state.categories}
+          wallets={this.props.wallets}
+          categories={this.props.categories}
           refreshTransactions={this.refreshTransactions}
           transactionCreate={this.transactionCreate.bind(this)}
         />
@@ -171,7 +171,9 @@ class TransactionScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transaction: state.transaction
+    transaction: state.transaction,
+    categories: state.category.data,
+    wallets: state.wallet.data
   }
 }
 

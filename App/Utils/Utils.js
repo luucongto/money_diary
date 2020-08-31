@@ -3,6 +3,7 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
 import _ from 'lodash'
+var distinctColors = require('distinct-colors').default
 // import moment from 'moment'
 export default {
   timeFormat (time) {
@@ -35,25 +36,31 @@ export default {
     return dayjs(time).format('YYYY-MM-DD')
   },
   startOf (param = 'month', date) {
-    return dayjs(date, 'YYYY-MM').startOf(param).add(1, 'day')
+    return dayjs(date, 'YYYY-MM').startOf(param).format('YYYY-MM-DD@00:00:00')
   },
   endOf (param = 'month', date) {
-    return dayjs(date, 'YYYY-MM').endOf(param)
+    return dayjs(date, 'YYYY-MM').endOf(param).add(1, 'day').format('YYYY-MM-DD@00:00:00')
   },
   getAllMonthsBetweenDates (startDateStr, endDateStr) {
+    this.log('getAllMonthsBetweenDates', startDateStr, endDateStr)
+    if (!startDateStr || !endDateStr) {
+      return [dayjs().format('YYYY-MM')]
+    }
     var startDate = dayjs(startDateStr)
     var endDate = dayjs(endDateStr)
 
     var result = []
-
     if (endDate.isBefore(startDate)) {
-      return result
+      return [endDate.format('YYYY-MM')]
     }
-    for (var i = 0; i < 30 && startDate.isBefore(endDate); i++) {
-      result.push(startDate.format('YYYY-MM'))
-      startDate = startDate.add(1, 'month')
+    if (endDate.format('YYYY-MM') === startDate.format('YYYY-MM')) {
+      return [endDate.format('YYYY-MM')]
     }
-    return result
+    for (var i = 0; i < 12 && endDate.isAfter(startDate); i++) {
+      result.push(endDate.format('YYYY-MM'))
+      endDate = endDate.subtract(1, 'month')
+    }
+    return result.reverse()
   },
   log (params) {
     if (__DEV__) console.tron.log(arguments)
@@ -99,5 +106,73 @@ export default {
       .keyBy(key)
       .mapValues(value)
       .value()
+  },
+  randomColor () {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16)
+  },
+  rgbToHex  (rgb) {
+    var hex = Number(rgb).toString(16)
+    if (hex.length < 2) {
+      hex = '0' + hex
+    }
+    return hex
+  },
+  fullColorHex (r, g, b) {
+    var red = this.rgbToHex(r)
+    var green = this.rgbToHex(g)
+    var blue = this.rgbToHex(b)
+    return '#' + red + green + blue
+  },
+  randomPaletteColors (count) {
+    return [
+      '#32baa8',
+      '#cdda17',
+      '#23f2ef',
+      '#af1c25',
+      '#5c0017',
+      '#627847',
+      '#a932aa',
+      '#d85c',
+      '#1f7152',
+      '#a4c539',
+      '#22a30c',
+      '#34d0fb',
+      '#7af278',
+      '#40de0b',
+      '#3bc0e8',
+      '#b85de0',
+      '#49999f',
+      '#66f5e8',
+      '#d49466',
+      '#af9fbd',
+      '#113f06',
+      '#ccc112',
+      '#bef161',
+      '#c7e14f',
+      '#77966a',
+      '#fa0770',
+      '#9eafff',
+      '#bb751d',
+      '#475f76',
+      '#f69897',
+      '#8e9dd',
+      '#ed0410',
+      '#2eba56',
+      '#2f08cb',
+      '#722866',
+      '#7b4ca2',
+      '#f9f62c',
+      '#d3852c',
+      '#96ed4c',
+      '#652d62',
+      '#b61ec8',
+      '#eaa260',
+      '#ab82a7',
+      '#239ba7',
+      '#c792cd',
+      '#98eb37',
+      '#c5fb79',
+      '#ac19e8'
+    ]
   }
 }
