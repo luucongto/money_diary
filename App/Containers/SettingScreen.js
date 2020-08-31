@@ -13,7 +13,8 @@ import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
 // Styles
 import Utils from '../Utils/Utils'
-class Screen extends Component {
+import Screen from './Screen'
+class SettingScreen extends Component {
   constructor (props) {
     super(props)
 
@@ -268,5 +269,5 @@ const mapDispatchToProps = (dispatch) => {
     logoutSuccess: (params) => dispatch(LoginRedux.logoutSuccess(params))
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+const screenHook = Screen(SettingScreen, mapStateToProps, mapDispatchToProps, ['login'])
+export default screenHook

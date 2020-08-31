@@ -11,7 +11,8 @@ import CategoryRedux from '../Redux/CategoryRedux'
 import { Category } from '../Realm'
 import autoBind from 'react-autobind'
 import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
-class Screen extends Component {
+import Screen from './Screen'
+class CategoryScreen extends Component {
   constructor (props) {
     super(props)
 
@@ -94,5 +95,5 @@ const mapDispatchToProps = (dispatch) => {
     categoryCreateRequest: (params) => dispatch(CategoryRedux.categoryCreateRequest(params))
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+const screenHook = Screen(CategoryScreen, mapStateToProps, mapDispatchToProps, ['category'])
+export default screenHook

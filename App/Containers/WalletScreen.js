@@ -12,7 +12,8 @@ import { Wallet } from '../Realm'
 import autoBind from 'react-autobind'
 import WalletRedux from '../Redux/WalletRedux'
 import AddWalletModal from '../Components/MoneyDairy/AddWalletModal'
-class Screen extends Component {
+import Screen from './Screen'
+class WalletScreen extends Component {
   constructor (props) {
     super(props)
 
@@ -93,7 +94,6 @@ class Screen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transaction: state.transaction,
     fetching: state.wallet.fetching,
     walletObjects: state.wallet.objects
   }
@@ -104,5 +104,5 @@ const mapDispatchToProps = (dispatch) => {
     walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params))
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+const screenHook = Screen(WalletScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+export default screenHook

@@ -16,7 +16,8 @@ import autoBind from 'react-autobind'
 import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
 import TransactionList from '../Components/MoneyDairy/TransactionLists'
 import { ActivityIndicator } from 'react-native'
-class Screen extends Component {
+import Screen from './Screen'
+class HomeScreen extends Component {
   constructor (props) {
     super(props)
     const months = Transaction.getMonths()
@@ -45,17 +46,22 @@ class Screen extends Component {
     this.props.walletRequest()
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.categories !== this.state.categories) {
+  static getDerivedStateFromProps (nextProps, state) {
+    if (!nextProps.isFocused) {
+      return state
+    }
+    const newState = {}
+    if (nextProps.categories.length) {
       const categories = nextProps.categories
       const categoryMapping = Utils.createMapFromArray(categories, 'id')
-      this.setState({ categories, categoryMapping })
+      newState.categories = categories
+      newState.categoryMapping = categoryMapping
     }
-    if (nextProps.wallets !== this.state.wallets) {
-      const wallets = nextProps.wallets
-      const walletMapping = Utils.createMapFromArray(wallets, 'id')
-      this.setState({ wallets, walletMapping })
+    if (nextProps.wallets.length) {
+      newState.wallets = nextProps.wallets
+      newState.walletMapping = Utils.createMapFromArray(newState.wallets, 'id')
     }
+    return { ...state, ...newState }
   }
 
   openTransactionDetailModal (transaction) {
@@ -217,4 +223,5 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Screen)
+const screenHook = Screen(HomeScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+export default screenHook

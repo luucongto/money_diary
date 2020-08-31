@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { SectionList, RefreshControl } from 'react-native'
-import { Container, Content, ListItem, Text, Right, Body, View } from 'native-base'
+import { Container, Content, ListItem, Text, Right, Body, View, Left } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
@@ -28,7 +28,7 @@ class TransactionList extends Component {
   }
 
   shouldComponentUpdate (nextProps) {
-    return nextProps.isThisTabVisible
+    return nextProps.isThisTabVisible || (this.props.tab && nextProps.transactionParams === this.props.tab.key)
   }
 
   componentWillReceiveProps (nextProps) {
@@ -47,25 +47,31 @@ class TransactionList extends Component {
     } else if (prevProps.wallet !== nextProps.wallet) {
       this.refresh(nextProps.wallet)
     }
-    Utils.log('componentWillReceiveProps', nextProps.transactions)
-    const transactions = nextProps.transactions
-    let amount = 0
-    let income = 0
-    let outcome = 0
-    transactions.forEach(transaction => {
-      amount += transaction.amount
-      income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
-      outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
-    })
-    this.setState({ items: this._groupTransactionByDate(transactions), amount, income, outcome })
+    Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
+    if (!prevProps.transactionParams || _.isEqual(prevProps.transactionParams, nextProps.transactionParams)) {
+      Utils.log('updateTransactions list')
+      const transactions = nextProps.transactions
+      let amount = 0
+      let income = 0
+      let outcome = 0
+      transactions.forEach(transaction => {
+        amount += transaction.amount
+        income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
+        outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
+      })
+      this.setState({ items: this._groupTransactionByDate(transactions), amount, income, outcome })
+    }
   }
 
   _groupTransactionByDate (items) {
     const result = []
     const groups = _.groupBy(items, item => Utils.getDate(item.date))
     _.each(groups, (v, k) => {
+      let amount = 0
+      v.forEach(item => { amount += item.amount })
       result.push({
         title: k,
+        amount,
         data: v
       })
     })
@@ -73,7 +79,11 @@ class TransactionList extends Component {
   }
 
   refresh (wallet = this.props.wallet) {
-    this.props.transactionRequest({ month: this.props.tab.key, wallet })
+    const query = { wallet }
+    if (this.props.tab) {
+      query.month = this.props.tab.key
+    }
+    this.props.transactionRequest(query)
   }
 
   _renderItem ({ item, index }) {
@@ -115,9 +125,14 @@ class TransactionList extends Component {
             sections={this.state.items}
             keyExtractor={(item, index) => item + index}
             renderItem={item => this._renderItem(item)}
-            renderSectionHeader={({ section: { title } }) => (
+            renderSectionHeader={({ section: { title, amount } }) => (
               <ListItem itemDivider>
-                <Text>{title}</Text>
+                <Left>
+                  <Text>{title}</Text>
+                </Left>
+                <Right>
+                  <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
+                </Right>
               </ListItem>
             )}
           />

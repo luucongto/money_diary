@@ -1,29 +1,35 @@
-import React, { Component } from 'react'
-import { SectionList } from 'react-native'
-import { connect } from 'react-redux'
+import _ from 'lodash'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, ListItem, Text, Fab, Icon, Button, Header, Left, Body, Title } from 'native-base'
+import { Body, Button, Container, Content, Fab, Header, Icon, Right, Text, View } from 'native-base'
+import React, { Component } from 'react'
+import autoBind from 'react-autobind'
+import { connect } from 'react-redux'
+import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
+import TransactionList from '../Components/MoneyDairy/TransactionLists'
+import { Category, Wallet } from '../Realm'
+import TransactionRedux from '../Redux/TransactionRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
-// Styles
-import TransactionComponent from '../Components/MoneyDairy/TransactionComponent'
-import TransactionRedux from '../Redux/TransactionRedux'
-import { Wallet, Category } from '../Realm'
-import autoBind from 'react-autobind'
-import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
-import _ from 'lodash'
+import Screen from './Screen'
 
 class TransactionScreen extends Component {
   constructor (props) {
     super(props)
     const { wallet, category, useWalletTitle } = props?.route?.params
+    const { wallets, categories } = this.props
+    const walletMapping = Utils.createMapFromArray(wallets, 'id')
+    const categoryMapping = Utils.createMapFromArray(categories, 'id')
     this.state = {
       start: {},
       items: [],
       currentTransaction: null,
       wallet,
       category,
-      useWalletTitle
+      useWalletTitle,
+      walletMapping,
+      categoryMapping,
+      categories,
+      wallets
     }
     Utils.log('TransactionScreen', props)
     autoBind(this)
@@ -39,8 +45,18 @@ class TransactionScreen extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    if (nextProps.transaction.data) {
-      this.setState({ items: this._groupTransactionByDate(nextProps.transaction.data) })
+    if (nextProps.transactions) {
+      this.setState({ items: this._groupTransactionByDate(nextProps.transactions) })
+    }
+    if (nextProps.categories !== this.state.categories) {
+      const categories = nextProps.categories
+      const categoryMapping = Utils.createMapFromArray(categories, 'id')
+      this.setState({ categories, categoryMapping })
+    }
+    if (nextProps.wallets !== this.state.wallets) {
+      const wallets = nextProps.wallets
+      const walletMapping = Utils.createMapFromArray(wallets, 'id')
+      this.setState({ wallets, walletMapping })
     }
   }
 
@@ -48,8 +64,11 @@ class TransactionScreen extends Component {
     const result = []
     const groups = _.groupBy(items, item => Utils.getDate(item.date))
     _.each(groups, (v, k) => {
+      let amount = 0
+      v.forEach(item => { amount += item.amount })
       result.push({
         title: k,
+        amount,
         data: v
       })
     })
@@ -89,63 +108,51 @@ class TransactionScreen extends Component {
     setTimeout(() => this.refreshTransactions(), 100)
   }
 
-  _renderItem ({ item, index }) {
-    const itemView = (
-      <TransactionComponent
-        key={item.id}
-        transaction={item}
-        wallets={this.props.wallets}
-        categories={this.categories.categories}
-        walletMapping={this.state.walletMapping}
-        categoryMapping={this.state.categoryMapping}
-        refreshTransactions={this.refreshTransactions}
-        openTransactionDetailModal={this.openTransactionDetailModal.bind(this)}
-        useWalletTitle={this.state.useWalletTitle}
-      />)
-
-    return itemView
-  }
-
   renderPhone () {
     Utils.log('items', this.state.items, this.state.walletMapping)
+    const amount = this.state.wallet ? this.state.wallet.amount : 0
     return (
       <Container>
-        <Header>
-          <Left>
+        <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
+          <View style={{ width: 60 }}>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon name='arrow-back' />
+              <Icon color='black' name='arrow-back' />
             </Button>
-          </Left>
+          </View>
           <Body>
-            <Title>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Title>
-            <Title note>{this.state.items.length}</Title>
+            <Text>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Text>
+            <Text note>{this.state.items.length} days</Text>
           </Body>
+          <Right>
+            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
+          </Right>
         </Header>
         <Content>
-          <SectionList
-            sections={this.state.items}
-            keyExtractor={(item, index) => item + index}
-            renderItem={this._renderItem.bind(this)}
-            renderSectionHeader={({ section: { title } }) => (
-              <ListItem itemDivider>
-                <Text>{title}</Text>
-              </ListItem>
-            )}
+          <TransactionList
+            {...this.props}
+            wallets={this.state.wallets}
+            categories={this.state.categories}
+            walletMapping={this.state.walletMapping}
+            categoryMapping={this.state.categoryMapping}
+            wallet={this.state.wallet.id}
+            isThisTabVisible
+            tab={null}
+            openTransactionDetailModal={this.openTransactionDetailModal}
           />
         </Content>
         <TransactionDetailModal
           transaction={this.state.currentTransaction}
           setRef={(ref) => { this.transactionDetailModalRef = ref }}
           wallets={this.props.wallets}
-          categories={this.props.categories}
+          categories={this.state.categories}
           refreshTransactions={this.refreshTransactions}
           transactionDelete={this.transactionDelete.bind(this)}
           transactionUpdate={this.transactionUpdate.bind(this)}
         />
-        <TransactionComponent
+        <TransactionDetailModal
           setRef={(ref) => { this.addTransactionModalRef = ref }}
           wallets={this.props.wallets}
-          categories={this.props.categories}
+          categories={this.state.categories}
           refreshTransactions={this.refreshTransactions}
           transactionCreate={this.transactionCreate.bind(this)}
         />
@@ -171,7 +178,10 @@ class TransactionScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transaction: state.transaction,
+    transactions: state.transaction.data,
+    transactionParams: state.transaction.params,
+    transactionUpdateObjects: state.transaction.updateObjects,
+    transactionDeleteObjects: state.transaction.deleteObjects,
     categories: state.category.data,
     wallets: state.wallet.data
   }
@@ -185,5 +195,5 @@ const mapDispatchToProps = (dispatch) => {
     transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
   }
 }
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransactionScreen)
+const screenHook = Screen(TransactionScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+export default screenHook
