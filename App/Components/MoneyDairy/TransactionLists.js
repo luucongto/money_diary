@@ -28,7 +28,7 @@ class TransactionList extends Component {
   }
 
   shouldComponentUpdate (nextProps) {
-    return nextProps.isThisTabVisible || nextProps.transactionParams === this.props.tab.key
+    return nextProps.isThisTabVisible
   }
 
   componentWillReceiveProps (nextProps) {

@@ -15,6 +15,7 @@ import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
 import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
 import TransactionList from '../Components/MoneyDairy/TransactionLists'
+import { ActivityIndicator } from 'react-native'
 class Screen extends Component {
   constructor (props) {
     super(props)
@@ -96,8 +97,12 @@ class Screen extends Component {
 
   _renderOneTab ({ route }) {
     const thisTabIndex = this.state.tabs.indexOf(route)
-    if (Math.abs(this.tabIndex - this.state.tabIndex) > 2) {
-      return <View />
+    if (Math.abs(thisTabIndex - this.state.tabIndex) > 0) {
+      return (
+        <View style={{ width: '100%', height: '100%', justifyContent: 'center', flexDirection: 'column' }}>
+          <ActivityIndicator size='large' />
+        </View>
+      )
     }
     const {
       wallets,
