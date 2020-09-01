@@ -1,10 +1,7 @@
 import dayjs from 'dayjs'
-// import relativeTime from 'dayjs/plugin/relativeTime'
 import 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
 import _ from 'lodash'
-var distinctColors = require('distinct-colors').default
-// import moment from 'moment'
 export default {
   timeFormat (time) {
     // dayjs.locale('vi')
@@ -12,12 +9,12 @@ export default {
     // return dayjs(time).locale('vi').fromNow()
     var unix = dayjs(time).unix()
     var now = dayjs().unix()
-    var timepass = (now - unix)
-    var minPass = Math.round(timepass / 60)
+    var timePass = (now - unix)
+    var minPass = Math.round(timePass / 60)
     if (minPass < 59) {
       return `${minPass} phút trước`
     }
-    var hourPass = Math.round(timepass / 3600)
+    var hourPass = Math.round(timePass / 3600)
     if (hourPass < 24) {
       return `${hourPass} giờ trước`
     }

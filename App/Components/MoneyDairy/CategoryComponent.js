@@ -1,21 +1,9 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import { Body, Text, Right, ListItem } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Utils from '../../Utils/Utils'
-import autoBind from 'react-autobind'
-export default class CategoryComponent extends Component {
-  constructor (props) {
-    super(props)
-    this.state = {
-    }
-    autoBind(this)
-  }
-
-  componentWillReceiveProps (nextProp) {
-
-  }
-
+export default class CategoryComponent extends PureComponent {
   render () {
     const wallet = this.props.item
     if (!wallet) return null

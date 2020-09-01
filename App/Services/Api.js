@@ -3,8 +3,6 @@ import ApiConfig from '../Config/ApiConfig'
 import Utils from '../Utils/Utils'
 import { Transaction, Wallet, Category, realm } from '../Realm'
 import GDrive from './GDrive'
-import { resolve } from 'path'
-import { reject } from 'lodash'
 const autoBind = require('react-autobind')
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {

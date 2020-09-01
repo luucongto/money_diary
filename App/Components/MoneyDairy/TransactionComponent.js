@@ -1,10 +1,16 @@
+import { Col, Grid, ListItem, Row, Text, View } from 'native-base'
 import React, { Component } from 'react'
-import { View } from 'react-native'
-import { Body, Text, Right, ListItem, Grid, Col, Row } from 'native-base'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import Utils from '../../Utils/Utils'
 import autoBind from 'react-autobind'
-export default class TransactionComponent extends Component {
+import Utils from '../../Utils/Utils'
+import PropTypes from 'prop-types'
+class TransactionComponent extends Component {
+  propTypes = {
+    transaction: PropTypes.object.isRequired,
+    openTransactionDetailModal: PropTypes.func.isRequired,
+    categoryItem: PropTypes.object.isRequired,
+    walletItem: PropTypes.object.isRequired
+  }
+
   constructor (props) {
     super(props)
     const transaction = this.props.transaction
@@ -14,17 +20,16 @@ export default class TransactionComponent extends Component {
     autoBind(this)
   }
 
-  setDate (newDate) {
-    this.setState({ date: newDate })
+  static getDerivedStateFromProps (nextProps, state) {
+    if (nextProps.transaction) {
+      const transaction = nextProps.transaction
+      return { ...state, transaction }
+    }
+    return state
   }
 
-  componentWillReceiveProps (nextProp) {
-    if (nextProp.transaction) {
-      const transaction = nextProp.transaction
-      this.setState({
-        transaction: transaction
-      })
-    }
+  _setDate (newDate) {
+    this.setState({ date: newDate })
   }
 
   _renderNormal () {
@@ -32,8 +37,8 @@ export default class TransactionComponent extends Component {
     if (!transaction) {
       return null
     }
-    const categoryItem = this.props.categoryMapping[transaction.category]
-    const walletItem = this.props.walletMapping[transaction.wallet]
+    const categoryItem = this.props.categoryItem
+    const walletItem = this.props.walletItem
     return (
       <ListItem
         onPress={() => this.props.openTransactionDetailModal(transaction)}
@@ -75,3 +80,5 @@ export default class TransactionComponent extends Component {
     return this._renderNormal()
   }
 }
+
+export default TransactionComponent

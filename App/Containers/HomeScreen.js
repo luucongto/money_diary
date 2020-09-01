@@ -65,7 +65,6 @@ class HomeScreen extends Component {
   }
 
   openTransactionDetailModal (transaction) {
-    Utils.log('openTransactionDetailModal', transaction)
     this.setState({ currentTransaction: transaction }, () => {
       this.transactionDetailModalRef.setModalVisible(true)
     })

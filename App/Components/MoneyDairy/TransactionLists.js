@@ -8,7 +8,22 @@ import Utils from '../../Utils/Utils'
 import TransactionComponent from './TransactionComponent'
 import autoBind from 'react-autobind'
 import _ from 'lodash'
+import PropTypes from 'prop-types'
 class TransactionList extends Component {
+  propTypes = {
+    transaction: PropTypes.object.isRequired,
+    openTransactionDetailModal: PropTypes.func.isRequired,
+    categoryItem: PropTypes.object.isRequired,
+    walletItem: PropTypes.object.isRequired,
+    wallets: PropTypes.array.isRequired,
+    categories: PropTypes.array.isRequired,
+    walletMapping: PropTypes.object.isRequired,
+    categoryMapping: PropTypes.object.isRequired,
+    wallet: PropTypes.string,
+    tab: PropTypes.object,
+    isThisTabVisible: PropTypes.bool
+  }
+
   constructor (props) {
     super(props)
     this.state = {
@@ -91,11 +106,8 @@ class TransactionList extends Component {
       <TransactionComponent
         key={item.id}
         transaction={item}
-        wallets={this.props.wallets}
-        categories={this.props.categories}
-        walletMapping={this.props.walletMapping}
-        categoryMapping={this.props.categoryMapping}
-        refreshTransactions={this.refresh}
+        walletItem={this.props.walletMapping[item.wallet]}
+        categoryItem={this.props.categoryMapping[item.category]}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
       />)
 
