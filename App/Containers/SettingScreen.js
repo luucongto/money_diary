@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
+import DocumentPicker from 'react-native-document-picker'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
@@ -239,6 +240,46 @@ class SettingScreen extends Component {
     )
   }
 
+  async _pickFile () {
+    try {
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.csv]
+      })
+      Utils.log(
+        res.uri,
+        res.type, // mime type
+        res.name,
+        res.size
+      )
+    } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+        throw err
+      }
+    }
+  }
+
+  _renderImportFromFile () {
+    return (
+      <Card>
+        <CardItem header bordered>
+          <Text>Import from File</Text>
+        </CardItem>
+        <CardItem bordered>
+          <Body>
+            <Text>{}</Text>
+            <Text note>{}</Text>
+          </Body>
+
+        </CardItem>
+        <CardItem bordered style={{ justifyContent: 'space-around' }}>
+          <Button info style={{ width: 150, justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick CSV File</Text></Button>
+        </CardItem>
+      </Card>
+    )
+  }
+
   renderPhone () {
     return (
       <Container>
@@ -246,6 +287,7 @@ class SettingScreen extends Component {
           {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
           {this.props.login && this.state.isSignedIn && this._renderUser()}
           {this.props.login && this.state.isSignedIn && this._renderBackup()}
+          {this._renderImportFromFile()}
         </Content>
       </Container>
 

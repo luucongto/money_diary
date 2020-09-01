@@ -34,6 +34,7 @@
     "@react-navigation/native": "^5.7.3",
     "@react-navigation/stack": "^5.9.0",
     "apisauce": "^1.1.1",
+    "csvtojson": "^2.0.10",
     "dayjs": "^1.8.16",
     "distinct-colors": "^3.0.0",
     "lodash": "^4.17.20",
