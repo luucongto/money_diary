@@ -3,15 +3,17 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Icon } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import GDrive from '../Services/GDrive'
-import { connect } from 'react-redux'
+import { PermissionsAndroid, Platform } from 'react-native'
+import DocumentPicker from 'react-native-document-picker'
+import RNFetchBlob from 'rn-fetch-blob'
+import RNFS from 'react-native-fs'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
-import DocumentPicker from 'react-native-document-picker'
+import GDrive from '../Services/GDrive'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
@@ -240,10 +242,36 @@ class SettingScreen extends Component {
     )
   }
 
+  async _requestStoragePermission () {
+    if (Platform.OS !== 'android') return true
+
+    const pm1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE)
+    const pm2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+
+    if (pm1 && pm2) return true
+
+    const userResponse = await PermissionsAndroid.requestMultiple([
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+    ])
+
+    if (userResponse['android.permission.READ_EXTERNAL_STORAGE'] === 'granted' &&
+        userResponse['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted') {
+      return true
+    } else {
+      return false
+    }
+  }
+
   async _pickFile () {
     try {
+      const isAllowedPermission = await this._requestStoragePermission()
+      if (!isAllowedPermission) {
+        Utils.log('no permission')
+        return
+      }
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.csv]
+        type: [DocumentPicker.types.allFiles]
       })
       Utils.log(
         res.uri,
@@ -251,12 +279,27 @@ class SettingScreen extends Component {
         res.name,
         res.size
       )
-    } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-        // User cancelled the picker, exit any dialogs or menus and move on
-      } else {
-        throw err
+      if (res.uri) {
+        const stats = await RNFetchBlob.fs.stat(res.uri)
+        // console.log(stats.path);
+        // output: /storage/emulated/0/WhatsApp/Media/WhatsApp Images/IMG-20200831-WA0019.jpg
+
+        // csv()
+        //   .fromFile(stats.path)
+        //   .on('json', (jsonObj) => {
+        //     // combine csv header row and csv line to a json object
+        //     // jsonObj.a ==> 1 or 4
+        //     Utils.log('json', jsonObj)
+        //   })
+        //   .on('done', (error) => {
+        //     Utils.log('done', error)
+        //   })
+        const content = await RNFS.readFile(stats.path)
+
+        Utils.log('content', stats.path, content)
       }
+    } catch (err) {
+      Utils.log('pickfile', err)
     }
   }
 
