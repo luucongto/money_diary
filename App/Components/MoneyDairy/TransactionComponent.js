@@ -48,12 +48,19 @@ class TransactionComponent extends Component {
           style={{
             position: 'absolute',
             left: 0,
-            backgroundColor: walletItem ? walletItem.color : 'black',
-            width: 5,
-            height: '100%'
+            borderColor: walletItem ? walletItem.color : 'black',
+            borderRadius: 50,
+            borderWidth: 1,
+            margin: 5,
+            width: 40,
+            height: 40,
+            justifyContent: 'center',
+            alignItems: 'center'
           }}
-        />
-        <Grid style={{ marginTop: 5, marginBottom: 5 }}>
+        >
+          <Text style={{ color: walletItem ? walletItem.color : 'black', fontSize: 25 }}>{walletItem ? walletItem.label[0].toUpperCase() : ''}</Text>
+        </View>
+        <Grid style={{ marginTop: 5, marginBottom: 5, paddingLeft: 30 }}>
           <Row>
             <Col style={{ justifyContent: 'flex-start', alignContent: 'flex-start' }}>
               {this.props.useWalletTitle
