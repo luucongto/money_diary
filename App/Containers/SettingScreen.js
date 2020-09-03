@@ -8,8 +8,6 @@ import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { PermissionsAndroid, Platform } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
-import RNFetchBlob from 'rn-fetch-blob'
-import RNFS from 'react-native-fs'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
@@ -17,6 +15,7 @@ import GDrive from '../Services/GDrive'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+
 class SettingScreen extends Component {
   constructor (props) {
     super(props)
@@ -279,25 +278,7 @@ class SettingScreen extends Component {
         res.name,
         res.size
       )
-      if (res.uri) {
-        const stats = await RNFetchBlob.fs.stat(res.uri)
-        // console.log(stats.path);
-        // output: /storage/emulated/0/WhatsApp/Media/WhatsApp Images/IMG-20200831-WA0019.jpg
-
-        // csv()
-        //   .fromFile(stats.path)
-        //   .on('json', (jsonObj) => {
-        //     // combine csv header row and csv line to a json object
-        //     // jsonObj.a ==> 1 or 4
-        //     Utils.log('json', jsonObj)
-        //   })
-        //   .on('done', (error) => {
-        //     Utils.log('done', error)
-        //   })
-        const content = await RNFS.readFile(stats.path)
-
-        Utils.log('content', stats.path, content)
-      }
+      await Api.importFromFile(res.uri)
     } catch (err) {
       Utils.log('pickfile', err)
     }
@@ -333,7 +314,6 @@ class SettingScreen extends Component {
           {this._renderImportFromFile()}
         </Content>
       </Container>
-
     )
   }
 

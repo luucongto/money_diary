@@ -3,7 +3,13 @@ import ApiConfig from '../Config/ApiConfig'
 import Utils from '../Utils/Utils'
 import { Transaction, Wallet, Category, realm } from '../Realm'
 import GDrive from './GDrive'
-const autoBind = require('react-autobind')
+import RNFetchBlob from 'rn-fetch-blob'
+import RNFS from 'react-native-fs'
+import Papa from 'papaparse'
+import { lowerCase } from 'lodash'
+import dayjs from 'dayjs'
+import moment from 'moment'
+import autoBind from 'react-autobind'
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {
     this.api = apisauce.create({
@@ -110,7 +116,6 @@ class API {
         realm.write(() => {
           Wallet.initializeDatas()
           Category.initializeDatas()
-          // Transaction.initializeTransactions()
         })
         setTimeout(() => {
           Utils.log('api.startup done', Wallet.find(), Category.find(), Transaction.find())
@@ -199,6 +204,47 @@ class API {
     }).catch(error => {
       Utils.log('e', error)
     })
+  }
+
+  async importFromFile (uri) {
+    if (uri) {
+      const stats = await RNFetchBlob.fs.stat(uri)
+      const content = await RNFS.readFile(stats.path)
+      const data = Papa.parse(content, {
+        header: true,
+        dynamicTyping: true,
+        transformHeader: (header, index) => {
+          return lowerCase(header)
+        }
+      })
+      Utils.log('content', stats.path, data)
+      if (data.data) {
+        const transactions = []
+        data.data.map(each => {
+          if (!each.account) {
+            return
+          }
+          const date = moment('' + each.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
+          const {
+            id,
+            category,
+            account,
+            amount,
+            note
+          } = each
+          transactions.push({
+            id,
+            category,
+            wallet: account,
+            amount,
+            note: note || '',
+            date
+          })
+        })
+        const transactionCount = Transaction.bulkInsertRaw(transactions)
+        Utils.log('sync', transactions, transactionCount)
+      }
+    }
   }
 }
 

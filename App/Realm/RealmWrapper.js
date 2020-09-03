@@ -102,19 +102,23 @@ class RealmWrapper {
   }
 
   static insert (params, inTx = false) {
-    const className = this
-    let o = null
-    const action = () => {
-      params = className.beforeInsert(params)
-      o = className.realm.create(className.schema.name, params, true)
-      o = className.afterInsert(o)
+    try {
+      const className = this
+      let o = null
+      const action = () => {
+        params = className.beforeInsert(params)
+        o = className.realm.create(className.schema.name, params, true)
+        o = className.afterInsert(o)
+      }
+      if (inTx) {
+        action()
+      } else {
+        className.realm.write(action)
+      }
+      return o
+    } catch (error) {
+      Utils.log('insert error', params, error)
     }
-    if (inTx) {
-      action()
-    } else {
-      className.realm.write(action)
-    }
-    return o
   }
 
   static bulkInsert (params, inTx = false) {

@@ -62,4 +62,3 @@ android/app/debug
 android/app/release
 
 *.keystore
-App/Realm/data/

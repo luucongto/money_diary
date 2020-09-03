@@ -26,6 +26,9 @@ export default {
   formatDateForRealmQuery (time) {
     return dayjs(time).format('YYYY-MM-DD@00:00:00')
   },
+  dayjsWithTimeFormat (time, inFormat = 'DD/MM/YYYY', outFormat = 'YYYY-MM-DD') {
+    return dayjs(time, inFormat).format(outFormat)
+  },
   getDay (time) {
     return dayjs(time).format('DD')
   },
