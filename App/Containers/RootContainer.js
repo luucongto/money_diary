@@ -1,18 +1,16 @@
-import React, { Component } from 'react'
-import { StatusBar, SafeAreaView } from 'react-native'
 import { Root } from 'native-base'
-import AppNavigation from '../Navigation/AppNavigation'
+import React, { Component } from 'react'
+import { SafeAreaView, StatusBar } from 'react-native'
 import { connect } from 'react-redux'
-import StartupActions from '../Redux/StartupRedux'
 import ReduxPersist from '../Config/ReduxPersist'
-import Orientation from 'react-native-orientation'
+import AppNavigation from '../Navigation/AppNavigation'
+import StartupActions from '../Redux/StartupRedux'
 // Styles
 import styles from './Styles/RootContainerStyles'
 
 class RootContainer extends Component {
   componentDidMount () {
     // if redux persist is not active fire startup action
-    Orientation.lockToPortrait()
     StatusBar.setHidden(true)
     if (!ReduxPersist.active) {
       this.props.startup()
