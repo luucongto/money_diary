@@ -9,6 +9,8 @@ import WalletScreen from '../Containers/WalletScreen'
 import CategoryScreen from '../Containers/CategoryScreen'
 import SettingScreen from '../Containers/SettingScreen'
 import TransactionScreen from '../Containers/TransactionScreen'
+import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
+
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
 function MainScreen () {
@@ -89,6 +91,7 @@ function AppNavigation () {
         <Stack.Screen name='LaunchScreen' component={LaunchScreen} />
         <Stack.Screen name='MainScreen' component={MainScreen} />
         <Stack.Screen name='TransactionScreen' component={TransactionScreen} />
+        <Stack.Screen name='TransactionDetailScreen' component={TransactionDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

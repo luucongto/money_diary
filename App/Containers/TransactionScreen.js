@@ -11,6 +11,8 @@ import TransactionRedux from '../Redux/TransactionRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+import { RefreshControl } from 'react-native'
+import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
 
 class TransactionScreen extends Component {
   constructor (props) {
@@ -88,9 +90,7 @@ class TransactionScreen extends Component {
   }
 
   openTransactionDetailModal (transaction) {
-    this.setState({ currentTransaction: transaction }, () => {
-      this.transactionDetailModalRef.setModalVisible(true)
-    })
+    this.props.navigation.navigate('TransactionDetailScreen', { transaction })
   }
 
   transactionUpdate (transaction) {
@@ -127,46 +127,17 @@ class TransactionScreen extends Component {
             <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
           </Right>
         </Header>
-        <Content>
-          <TransactionList
+          <LongTransactionList
             {...this.props}
             wallets={this.state.wallets}
             categories={this.state.categories}
             walletMapping={this.state.walletMapping}
             categoryMapping={this.state.categoryMapping}
-            wallet={this.state.wallet.id}
+            wallet={this.state.wallet ? this.state.wallet.id : 0}
             isThisTabVisible
             tab={null}
             openTransactionDetailModal={this.openTransactionDetailModal}
           />
-        </Content>
-        <TransactionDetailModal
-          transaction={this.state.currentTransaction}
-          setRef={(ref) => { this.transactionDetailModalRef = ref }}
-          wallets={this.props.wallets}
-          categories={this.state.categories}
-          refreshTransactions={this.refreshTransactions}
-          transactionDelete={this.transactionDelete.bind(this)}
-          transactionUpdate={this.transactionUpdate.bind(this)}
-        />
-        <TransactionDetailModal
-          setRef={(ref) => { this.addTransactionModalRef = ref }}
-          wallets={this.props.wallets}
-          categories={this.state.categories}
-          refreshTransactions={this.refreshTransactions}
-          transactionCreate={this.transactionCreate.bind(this)}
-        />
-        <Fab
-          active={this.state.active}
-          direction='up'
-          containerStyle={{ }}
-          style={{ backgroundColor: '#5067FF' }}
-          position='bottomRight'
-          onPress={() => this.addTransactionModalRef.setModalVisible(true)}
-        >
-          <Text>+</Text>
-
-        </Fab>
       </Container>
     )
   }

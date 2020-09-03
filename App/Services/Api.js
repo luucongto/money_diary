@@ -241,8 +241,9 @@ class API {
             date
           })
         })
-        const transactionCount = Transaction.bulkInsertRaw(transactions)
-        Utils.log('sync', transactions, transactionCount)
+        const updatedResult = Transaction.bulkInsertRaw(transactions)
+        Utils.log('importFromFileAPi updatedResult', updatedResult)
+        return updatedResult
       }
     }
   }

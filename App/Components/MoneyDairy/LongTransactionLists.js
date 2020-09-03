@@ -61,20 +61,18 @@ class TransactionList extends Component {
       this.refresh()
     } else if (prevProps.wallet !== nextProps.wallet) {
       this.refresh(nextProps.wallet)
-    } else if(nextProps.isThisTabVisible && prevProps.isFocused !== nextProps.isFocused && nextProps.isFocused){
-      this.refresh()
     }
     Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
-    Utils.log('updateTransactions list')
-    const transactions = nextProps.transactions
-    const amount = 0
-    let income = 0
-    let outcome = 0
-    transactions.forEach(transaction => {
-      income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
-      outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
-    })
-    this.setState({ items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
+      Utils.log('updateTransactions list')
+      const transactions = nextProps.transactions
+      const amount = 0
+      let income = 0
+      let outcome = 0
+      transactions.forEach(transaction => {
+        income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
+        outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
+      })
+      this.setState({ items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
   }
 
   _groupTransactionByDate (items) {
@@ -147,7 +145,6 @@ class TransactionList extends Component {
               </ListItem>
             )}
           />
-          <View style={{ height: 80 }} />
         </Content>
       </Container>
     )

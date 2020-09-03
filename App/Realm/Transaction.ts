@@ -7,6 +7,7 @@ import _ from 'lodash'
 class Transaction extends RealmWrapper {
   static schema = schema
   static bulkInsertRaw = (rows: any) => {
+    let result = {}
     Transaction.realm.write(() => {
       const categories = _.map(rows, 'category')
       const wallets = _.map(rows, 'wallet')
@@ -52,8 +53,9 @@ class Transaction extends RealmWrapper {
         return item
       })
       Utils.log('processedRows', walletMap, categoryMap, processedRows)
-      return Transaction.bulkInsert(processedRows, true)
+      result = Transaction.bulkInsert(processedRows, true)
     })
+    return result
   }
 
   static getbyPeriod = (startDate: string, endDate:string, wallet: null | number) => {

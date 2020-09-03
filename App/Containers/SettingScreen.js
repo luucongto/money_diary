@@ -3,10 +3,10 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { PermissionsAndroid, Platform } from 'react-native'
+import { PermissionsAndroid, Platform, ActivityIndicator } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
@@ -74,6 +74,11 @@ class SettingScreen extends Component {
       },
       false)
     Utils.log('result', result)
+    Toast.show({
+      text: `Exported ${result} transactions`,
+      buttonText: "OK",
+      duration: 3000
+    })
     await this.getFileInfo()
     await this.asyncSetState({ doingBackup: false })
   }
@@ -135,7 +140,13 @@ class SettingScreen extends Component {
     try {
       const result = await Api.downloadFile(currentFileId, tokens.accessToken)
       Utils.log('result', result, result.wallets)
+      Toast.show({
+        text: `Imported ${result.transactions.length} transactions`,
+        buttonText: "OK",
+        duration: 3000
+      })
       await this.asyncSetState({ doingDownload: false })
+      
     } catch (error) {
       Utils.log('download error', error)
     }
@@ -221,6 +232,7 @@ class SettingScreen extends Component {
 
   _renderBackup () {
     const fileInfo = this.state.fileInfo || {}
+    Utils.log('fileInfo', fileInfo)
     return (
       <Card>
         <CardItem header bordered>
@@ -228,7 +240,7 @@ class SettingScreen extends Component {
         </CardItem>
         <CardItem bordered>
           <Body>
-            <Text>{fileInfo ? fileInfo.originalFilename : 'No backup'}</Text>
+            <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}`  : 'No backup'}</Text>
             <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
           </Body>
 
@@ -264,6 +276,7 @@ class SettingScreen extends Component {
 
   async _pickFile () {
     try {
+      await this.asyncSetState({doingImportFromFile: true})
       const isAllowedPermission = await this._requestStoragePermission()
       if (!isAllowedPermission) {
         Utils.log('no permission')
@@ -278,8 +291,15 @@ class SettingScreen extends Component {
         res.name,
         res.size
       )
-      await Api.importFromFile(res.uri)
+      const result = await Api.importFromFile(res.uri)
+      Toast.show({
+        text: `Updated ${result.length} transactions`,
+        buttonText: "OK",
+        duration: 3000
+      })
+      await this.asyncSetState({doingImportFromFile: false})
     } catch (err) {
+      await this.asyncSetState({doingImportFromFile: false})
       Utils.log('pickfile', err)
     }
   }
@@ -290,15 +310,12 @@ class SettingScreen extends Component {
         <CardItem header bordered>
           <Text>Import from File</Text>
         </CardItem>
-        <CardItem bordered>
-          <Body>
-            <Text>{}</Text>
-            <Text note>{}</Text>
-          </Body>
-
-        </CardItem>
         <CardItem bordered style={{ justifyContent: 'space-around' }}>
-          <Button info style={{ width: 150, justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick CSV File</Text></Button>
+          {this.state.doingImportFromFile ?
+            <ActivityIndicator></ActivityIndicator>
+            :
+            <Button info style={{  justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick MoneyLover CSV File</Text></Button>
+          }
         </CardItem>
       </Card>
     )
@@ -308,10 +325,11 @@ class SettingScreen extends Component {
     return (
       <Container>
         <Content>
+          {this._renderImportFromFile()}
           {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
           {this.props.login && this.state.isSignedIn && this._renderUser()}
           {this.props.login && this.state.isSignedIn && this._renderBackup()}
-          {this._renderImportFromFile()}
+          
         </Content>
       </Container>
     )

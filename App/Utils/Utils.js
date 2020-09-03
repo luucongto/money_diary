@@ -2,11 +2,20 @@ import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
 import _ from 'lodash'
+import { relativeTime } from 'dayjs/locale/vi'
 export default {
+  formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+},
   timeFormat (time) {
-    // dayjs.locale('vi')
-    // dayjs.extend(relativeTime)
-    // return dayjs(time).locale('vi').fromNow()
     var unix = dayjs(time).unix()
     var now = dayjs().unix()
     var timePass = (now - unix)

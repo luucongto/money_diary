@@ -65,9 +65,7 @@ class HomeScreen extends Component {
   }
 
   openTransactionDetailModal (transaction) {
-    this.setState({ currentTransaction: transaction }, () => {
-      this.transactionDetailModalRef.setModalVisible(true)
-    })
+    this.props.navigation.navigate('TransactionDetailScreen', { transaction })
   }
 
   transactionUpdate (transaction) {
@@ -166,27 +164,13 @@ class HomeScreen extends Component {
       <Container>
         {this._renderHeader()}
         {this._renderTabs()}
-        <TransactionDetailModal
-          transaction={this.state.currentTransaction}
-          setRef={(ref) => { this.transactionDetailModalRef = ref }}
-          wallets={this.state.wallets}
-          categories={this.state.categories}
-          transactionDelete={this.transactionDelete.bind(this)}
-          transactionUpdate={this.transactionUpdate.bind(this)}
-        />
-        <TransactionDetailModal
-          setRef={(ref) => { this.addTransactionModalRef = ref }}
-          wallets={this.state.wallets}
-          categories={this.state.categories}
-          transactionCreate={this.transactionCreate.bind(this)}
-        />
         <Fab
           active={this.state.active}
           direction='up'
           containerStyle={{ }}
           style={{ backgroundColor: '#5067FF' }}
           position='bottomRight'
-          onPress={() => this.addTransactionModalRef.setModalVisible(true)}
+          onPress={() => this.props.navigation.navigate('TransactionDetailScreen')}
         >
           <Icon name='plus-circle' type='FontAwesome' />
 
