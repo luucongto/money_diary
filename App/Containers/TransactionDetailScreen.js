@@ -1,5 +1,5 @@
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Container, Content, Header, Icon, Right, Text, View, Item, Label, Col, Grid, Form, DatePicker, Picker, Input, Switch } from 'native-base'
+import { Body, Button, Container, Content, Header, Icon, Right, Text, View, Item, Label, Col, Grid, Form, DatePicker, Picker, Input, Switch, Textarea } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import lodash from 'lodash'
@@ -121,7 +121,7 @@ class TransactionDetailScreen extends Component {
     const transaction = this.state.transaction
     const amount = this.state.amount
     const buttons = (
-      <Grid>
+      <Grid style={{ padding: 20 }}>
         {transaction &&
           <Col size={0.35}>
             <Button success onPress={this.update.bind(this)}>
@@ -221,7 +221,7 @@ class TransactionDetailScreen extends Component {
             </Item>
             <Item inlineLabel>
               <Label>Note</Label>
-              <Input value={this.state.note} onChangeText={note => this.setState({ note })} />
+              <Textarea multiline rowSpan={4} value={this.state.note} onChangeText={note => this.setState({ note })} />
             </Item>
             <Item inlineLabel style={{ height: 50 }}>
               <Label>Included</Label>
