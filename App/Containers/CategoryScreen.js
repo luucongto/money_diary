@@ -56,7 +56,7 @@ class CategoryScreen extends Component {
     })
     return (
       <Container>
-        <ScreenHeader navigation={this.props.navigation} title='Setting' />
+        <ScreenHeader navigation={this.props.navigation} title='Categories' />
         <Content>
           {renderItems}
           <View style={{ height: 50 }} />
