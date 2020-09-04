@@ -1,9 +1,10 @@
 import React from 'react'
-import { Icon } from 'native-base'
+import { Icon, Button, Text } from 'native-base'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
+import { createDrawerNavigator } from '@react-navigation/drawer'
 import LaunchScreen from '../Containers/LaunchScreen'
 import HomeScreen from '../Containers/HomeScreen'
 import WalletScreen from '../Containers/WalletScreen'
@@ -12,14 +13,60 @@ import SettingScreen from '../Containers/SettingScreen'
 import TransactionScreen from '../Containers/TransactionScreen'
 import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
 import TransactionReportScreen from '../Containers/TransactionReportScreen'
-
+const Drawer = createDrawerNavigator()
 const Stack = createStackNavigator()
-const Tab = createBottomTabNavigator()
+// const Tab = createBottomTabNavigator()
+// function MainScreen () {
+//   return (
+//     <Tab.Navigator
+//       screenOptions={({ route }) => ({
+//         tabBarIcon: ({ focused, color, size }) => {
+//           let iconName = 'ios-albums-outline'
+//           switch (route.name) {
+//             case 'Home':
+//               iconName = focused
+//                 ? 'home'
+//                 : 'home-outline'
+//               break
+//             case 'Wallet':
+//               iconName = focused
+//                 ? 'wallet'
+//                 : 'wallet-outline'
+//               break
+//             case 'Settings':
+//               iconName = focused
+//                 ? 'settings'
+//                 : 'settings-outline'
+//               break
+//             case 'Category':
+//               iconName = focused
+//                 ? 'pricetags'
+//                 : 'pricetags-outline'
+//           }
+
+//           // You can return any component that you like here!
+//           return <Icon name={iconName} type='Ionicons' size={size} color={color} />
+//         }
+//       })}
+//       tabBarOptions={{
+//         activeTintColor: 'tomato',
+//         inactiveTintColor: 'gray'
+//       }}
+//     >
+//       <Tab.Screen name='Home' component={HomeScreen} />
+//       <Tab.Screen name='Wallet' component={WalletScreen} />
+//       <Tab.Screen name='Category' component={CategoryScreen} />
+//       <Tab.Screen name='Settings' component={SettingScreen} />
+//     </Tab.Navigator>
+//   )
+// }
+
 function MainScreen () {
   return (
-    <Tab.Navigator
+    <Drawer.Navigator
+      initialRouteName='Home'
       screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
+        drawerIcon: ({ focused, color, size }) => {
           let iconName = 'ios-albums-outline'
           switch (route.name) {
             case 'Home':
@@ -47,16 +94,14 @@ function MainScreen () {
           return <Icon name={iconName} type='Ionicons' size={size} color={color} />
         }
       })}
-      tabBarOptions={{
-        activeTintColor: 'tomato',
-        inactiveTintColor: 'gray'
-      }}
     >
-      <Tab.Screen name='Home' component={HomeScreen} />
-      <Tab.Screen name='Wallet' component={WalletScreen} />
-      <Tab.Screen name='Category' component={CategoryScreen} />
-      <Tab.Screen name='Settings' component={SettingScreen} />
-    </Tab.Navigator>
+      <Drawer.Screen
+        name='Home' component={HomeScreen}
+      />
+      <Drawer.Screen name='Wallet' component={WalletScreen} />
+      <Drawer.Screen name='Category' component={CategoryScreen} />
+      <Drawer.Screen name='Settings' component={SettingScreen} />
+    </Drawer.Navigator>
   )
 }
 function AppNavigation () {

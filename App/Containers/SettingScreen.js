@@ -3,7 +3,7 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { PermissionsAndroid, Platform, ActivityIndicator } from 'react-native'
@@ -15,7 +15,7 @@ import GDrive from '../Services/GDrive'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 class SettingScreen extends Component {
   constructor (props) {
     super(props)
@@ -75,8 +75,7 @@ class SettingScreen extends Component {
       false)
     Utils.log('result', result)
     Toast.show({
-      text: `Exported ${result} transactions`,
-      buttonText: 'OK',
+      text: 'Exported to Gdrive',
       duration: 3000
     })
     await this.getFileInfo()
@@ -318,10 +317,26 @@ class SettingScreen extends Component {
     )
   }
 
+  _renderHeader () {
+    return (
+      <Header>
+        <Left>
+          <Button transparent onPress={() => this.props.navigation.openDrawer()}>
+            <Icon name='menu' />
+          </Button>
+        </Left>
+        <Body>
+          <Title>Setting</Title>
+        </Body>
+      </Header>
+    )
+  }
+
   renderPhone () {
     Utils.log('render SettingScreen')
     return (
       <Container>
+        <ScreenHeader navigation={this.props.navigation} title='Setting' />
         <Content>
           {this._renderImportFromFile()}
           {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}

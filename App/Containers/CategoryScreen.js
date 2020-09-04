@@ -1,16 +1,16 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, View, Fab, Icon } from 'native-base'
-// import I18n from 'react-native-i18n'
-import Utils from '../Utils/Utils'
+import { Container, Content, Fab, Icon, View } from 'native-base'
+import React, { Component } from 'react'
+import autoBind from 'react-autobind'
+import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import CategoryComponent from '../Components/MoneyDairy/CategoryComponent'
-import CategoryRedux from '../Redux/CategoryRedux'
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Category } from '../Realm'
-import autoBind from 'react-autobind'
-import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
+import CategoryRedux from '../Redux/CategoryRedux'
+// import I18n from 'react-native-i18n'
+import Utils from '../Utils/Utils'
 import Screen from './Screen'
 class CategoryScreen extends Component {
   constructor (props) {
@@ -56,6 +56,7 @@ class CategoryScreen extends Component {
     })
     return (
       <Container>
+        <ScreenHeader navigation={this.props.navigation} title='Setting' />
         <Content>
           {renderItems}
           <View style={{ height: 50 }} />

@@ -13,8 +13,8 @@ import CategoryRedux from '../Redux/CategoryRedux'
 import WalletRedux from '../Redux/WalletRedux'
 import { Transaction, Wallet, Category } from '../Realm'
 import autoBind from 'react-autobind'
-import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
 import TransactionList from '../Components/MoneyDairy/TransactionLists'
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { ActivityIndicator } from 'react-native'
 import Screen from './Screen'
 class HomeScreen extends Component {
@@ -162,6 +162,7 @@ class HomeScreen extends Component {
   renderPhone () {
     return (
       <Container>
+        <ScreenHeader navigation={this.props.navigation} title='Home' />
         {this._renderHeader()}
         {this._renderTabs()}
         <Fab

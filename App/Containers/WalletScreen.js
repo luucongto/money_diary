@@ -7,6 +7,7 @@ import AddWalletModal from '../Components/MoneyDairy/AddWalletModal'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import WalletItem from '../Components/MoneyDairy/WalletItem'
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Wallet } from '../Realm'
 import WalletRedux from '../Redux/WalletRedux'
 // import I18n from 'react-native-i18n'
@@ -59,6 +60,7 @@ class WalletScreen extends Component {
     Utils.log('render WalletScreen')
     return (
       <Container>
+        <ScreenHeader navigation={this.props.navigation} title='Wallet' />
         <Content
           refreshControl={
             <RefreshControl refreshing={this.props.fetching} onRefresh={this.refresh.bind(this)} />
