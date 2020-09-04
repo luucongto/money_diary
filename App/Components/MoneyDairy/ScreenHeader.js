@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react'
 export default class WalletComponent extends PureComponent {
   render () {
     return (
-      <Header style={{ backgroundColor: '#34d0fb' }}>
+      <Header style={{ backgroundColor: '#8F2000' }}>
         <Left>
           <Button transparent onPress={() => this.props.navigation.openDrawer()}>
             <Icon name='menu' />
