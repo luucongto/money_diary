@@ -1,23 +1,20 @@
 import _ from 'lodash'
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Container, Content, Fab, Header, Icon, Right, Text, View } from 'native-base'
+import { Body, Button, Container, Header, Icon, Right, Text, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { connect } from 'react-redux'
-import TransactionDetailModal from '../Components/MoneyDairy/TransactionDetailModal'
-import TransactionList from '../Components/MoneyDairy/TransactionLists'
+import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
 import { Category, Wallet } from '../Realm'
 import TransactionRedux from '../Redux/TransactionRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-import { RefreshControl } from 'react-native'
-import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
 
 class TransactionScreen extends Component {
   constructor (props) {
     super(props)
-    const { wallet, category, useWalletTitle } = props?.route?.params
+    Utils.log('TransactionScreen props?.route?.params', props?.route?.params)
+    const { wallet, category, useWalletTitle, walletId, categoryId } = props?.route?.params
     const { wallets, categories } = this.props
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
     const categoryMapping = Utils.createMapFromArray(categories, 'id')
@@ -31,7 +28,9 @@ class TransactionScreen extends Component {
       walletMapping,
       categoryMapping,
       categories,
-      wallets
+      wallets,
+      walletId,
+      categoryId
     }
     Utils.log('TransactionScreen', props)
     autoBind(this)
@@ -78,13 +77,14 @@ class TransactionScreen extends Component {
   }
 
   refreshTransactions () {
-    const findConditions = {}
+    const findConditions = { ...this.props?.route?.params }
     if (this.state.wallet && this.state.wallet.id) {
       findConditions.wallet = this.state.wallet.id
     }
     if (this.state.category && this.state.category.id) {
       findConditions.category = this.state.category.id
     }
+
     Utils.log('transactionScreen findConditions', findConditions)
     this.props.transactionRequest(findConditions)
   }
@@ -127,17 +127,17 @@ class TransactionScreen extends Component {
             <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
           </Right>
         </Header>
-          <LongTransactionList
-            {...this.props}
-            wallets={this.state.wallets}
-            categories={this.state.categories}
-            walletMapping={this.state.walletMapping}
-            categoryMapping={this.state.categoryMapping}
-            wallet={this.state.wallet ? this.state.wallet.id : 0}
-            isThisTabVisible
-            tab={null}
-            openTransactionDetailModal={this.openTransactionDetailModal}
-          />
+        <LongTransactionList
+          {...this.props}
+          wallets={this.state.wallets}
+          categories={this.state.categories}
+          walletMapping={this.state.walletMapping}
+          categoryMapping={this.state.categoryMapping}
+          wallet={this.state.wallet ? this.state.wallet.id : 0}
+          isThisTabVisible
+          tab={null}
+          openTransactionDetailModal={this.openTransactionDetailModal}
+        />
       </Container>
     )
   }

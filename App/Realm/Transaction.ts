@@ -58,12 +58,16 @@ class Transaction extends RealmWrapper {
     return result
   }
 
-  static getbyPeriod = (startDate: string, endDate:string, wallet: null | number) => {
+  static findWithFilter = (startDate: string, endDate:string, params: any | null) => {
     let query = `date >= ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
+    const { wallet, category } = params
     if (wallet) {
       query = `${query} and wallet=${wallet}`
     }
-    Utils.log('getByPeriod', query)
+    if (category) {
+      query = `${query} and category=${category}`
+    }
+    Utils.log('findWithFilter', query)
     return Transaction.find(query, { sort: { date: true } })
   }
 

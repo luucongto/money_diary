@@ -76,7 +76,7 @@ class SettingScreen extends Component {
     Utils.log('result', result)
     Toast.show({
       text: `Exported ${result} transactions`,
-      buttonText: "OK",
+      buttonText: 'OK',
       duration: 3000
     })
     await this.getFileInfo()
@@ -142,11 +142,10 @@ class SettingScreen extends Component {
       Utils.log('result', result, result.wallets)
       Toast.show({
         text: `Imported ${result.transactions.length} transactions`,
-        buttonText: "OK",
+        buttonText: 'OK',
         duration: 3000
       })
       await this.asyncSetState({ doingDownload: false })
-      
     } catch (error) {
       Utils.log('download error', error)
     }
@@ -240,7 +239,7 @@ class SettingScreen extends Component {
         </CardItem>
         <CardItem bordered>
           <Body>
-            <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}`  : 'No backup'}</Text>
+            <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}` : 'No backup'}</Text>
             <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
           </Body>
 
@@ -276,7 +275,7 @@ class SettingScreen extends Component {
 
   async _pickFile () {
     try {
-      await this.asyncSetState({doingImportFromFile: true})
+      await this.asyncSetState({ doingImportFromFile: true })
       const isAllowedPermission = await this._requestStoragePermission()
       if (!isAllowedPermission) {
         Utils.log('no permission')
@@ -294,12 +293,12 @@ class SettingScreen extends Component {
       const result = await Api.importFromFile(res.uri)
       Toast.show({
         text: `Updated ${result.length} transactions`,
-        buttonText: "OK",
+        buttonText: 'OK',
         duration: 3000
       })
-      await this.asyncSetState({doingImportFromFile: false})
+      await this.asyncSetState({ doingImportFromFile: false })
     } catch (err) {
-      await this.asyncSetState({doingImportFromFile: false})
+      await this.asyncSetState({ doingImportFromFile: false })
       Utils.log('pickfile', err)
     }
   }
@@ -311,17 +310,16 @@ class SettingScreen extends Component {
           <Text>Import from File</Text>
         </CardItem>
         <CardItem bordered style={{ justifyContent: 'space-around' }}>
-          {this.state.doingImportFromFile ?
-            <ActivityIndicator></ActivityIndicator>
-            :
-            <Button info style={{  justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick MoneyLover CSV File</Text></Button>
-          }
+          {this.state.doingImportFromFile
+            ? <ActivityIndicator />
+            : <Button info style={{ justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick MoneyLover CSV File</Text></Button>}
         </CardItem>
       </Card>
     )
   }
 
   renderPhone () {
+    Utils.log('render SettingScreen')
     return (
       <Container>
         <Content>
@@ -329,7 +327,7 @@ class SettingScreen extends Component {
           {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
           {this.props.login && this.state.isSignedIn && this._renderUser()}
           {this.props.login && this.state.isSignedIn && this._renderBackup()}
-          
+
         </Content>
       </Container>
     )

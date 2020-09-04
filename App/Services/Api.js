@@ -166,7 +166,7 @@ class API {
       const startDate = Utils.startOf('month', params.month)
       const endDate = Utils.endOf('month', params.month)
       Utils.log('query', startDate, endDate)
-      return { data: Transaction.getbyPeriod(startDate, endDate, params.wallet) }
+      return { data: Transaction.findWithFilter(startDate, endDate, params) }
     }
     return { data: Transaction.find(params, { sort: { date: true } }) }
   }

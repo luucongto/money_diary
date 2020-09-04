@@ -48,6 +48,7 @@ class CategoryScreen extends Component {
   }
 
   renderPhone () {
+    Utils.log('render CategoryScreen')
     const renderItems = this.state.categories.map(item => {
       return (
         <CategoryComponent key={item.id} item={item} onPress={(item) => this.openDetailScreen(item)} />

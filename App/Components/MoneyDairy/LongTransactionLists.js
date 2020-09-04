@@ -63,16 +63,15 @@ class TransactionList extends Component {
       this.refresh(nextProps.wallet)
     }
     Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
-      Utils.log('updateTransactions list')
-      const transactions = nextProps.transactions
-      const amount = 0
-      let income = 0
-      let outcome = 0
-      transactions.forEach(transaction => {
-        income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
-        outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
-      })
-      this.setState({ items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
+    Utils.log('updateTransactions list')
+    const transactions = nextProps.transactions
+    let income = 0
+    let outcome = 0
+    transactions.forEach(transaction => {
+      income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
+      outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
+    })
+    this.setState({ items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
   }
 
   _groupTransactionByDate (items) {

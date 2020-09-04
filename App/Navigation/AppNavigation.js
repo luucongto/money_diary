@@ -1,8 +1,9 @@
 import React from 'react'
 import { Icon } from 'native-base'
 import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator } from '@react-navigation/stack'
+import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+
 import LaunchScreen from '../Containers/LaunchScreen'
 import HomeScreen from '../Containers/HomeScreen'
 import WalletScreen from '../Containers/WalletScreen'
@@ -10,6 +11,7 @@ import CategoryScreen from '../Containers/CategoryScreen'
 import SettingScreen from '../Containers/SettingScreen'
 import TransactionScreen from '../Containers/TransactionScreen'
 import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
+import TransactionReportScreen from '../Containers/TransactionReportScreen'
 
 const Stack = createStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -64,8 +66,9 @@ function AppNavigation () {
         screenOptions={{
           headerShown: false,
           gestureEnabled: false,
-          gestureDirection: 'horizontal'
-          // cardStyle: { backgroundColor: 'transparent' },
+          gestureDirection: 'horizontal',
+          cardStyle: { backgroundColor: 'transparent' },
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
           // cardStyleInterpolator: ({ current, next, layouts }) => {
           //   return {
           //     cardStyle: {
@@ -92,6 +95,7 @@ function AppNavigation () {
         <Stack.Screen name='MainScreen' component={MainScreen} />
         <Stack.Screen name='TransactionScreen' component={TransactionScreen} />
         <Stack.Screen name='TransactionDetailScreen' component={TransactionDetailScreen} />
+        <Stack.Screen name='TransactionReportScreen' component={TransactionReportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

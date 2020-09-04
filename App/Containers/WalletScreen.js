@@ -56,6 +56,7 @@ class WalletScreen extends Component {
         <WalletItem key={item.id} item={item} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
       )
     })
+    Utils.log('render WalletScreen')
     return (
       <Container>
         <Content

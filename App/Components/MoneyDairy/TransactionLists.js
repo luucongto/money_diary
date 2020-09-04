@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { SectionList, RefreshControl } from 'react-native'
-import { Container, Content, ListItem, Text, Right, Body, View, Left } from 'native-base'
+import { Container, Content, ListItem, Text, Right, Body, View, Left, Button } from 'native-base'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
@@ -61,7 +61,7 @@ class TransactionList extends Component {
       this.refresh()
     } else if (prevProps.wallet !== nextProps.wallet) {
       this.refresh(nextProps.wallet)
-    } else if(nextProps.isThisTabVisible && prevProps.isFocused !== nextProps.isFocused && nextProps.isFocused){
+    } else if (nextProps.isThisTabVisible && prevProps.isFocused !== nextProps.isFocused && nextProps.isFocused) {
       this.refresh()
     }
     Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
@@ -114,6 +114,7 @@ class TransactionList extends Component {
   }
 
   renderPhone () {
+    Utils.log('render TransactionList')
     const { amount, income, outcome } = this.state
     return (
       <Container>
@@ -132,6 +133,8 @@ class TransactionList extends Component {
               <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
             </Right>
           </ListItem>
+          <Button rounded small transparent bordered style={{ marginTop: 10, marginBottom: 10, alignSelf: 'center' }} onPress={() => this.props.navigation.navigate('TransactionReportScreen')}><Text>View Report</Text></Button>
+
           <SectionList
             sections={this.state.items}
             keyExtractor={(item, index) => item + index}

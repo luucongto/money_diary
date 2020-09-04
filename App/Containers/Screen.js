@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
+import Utils from '../Utils/Utils'
 
 function Screen (RenderComponent, mapStateToProps, mapDispatchToProps, selectors) {
   const gene = (props) => {
@@ -28,7 +29,7 @@ function Screen (RenderComponent, mapStateToProps, mapDispatchToProps, selectors
     const stateToProps = mapStateToProps(reduxSelector)
 
     const newProps = { ...props, ...state, ...requests, ...stateToProps }
-
+    Utils.log('render ', RenderComponent.name)
     return <RenderComponent {...newProps} />
   }
   return gene
