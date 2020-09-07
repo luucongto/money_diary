@@ -65,7 +65,7 @@ export default {
       })
       end = end.subtract(1, 'month')
     }
-    return result.reverse().slice(0, 5)
+    return result.slice(0, 5).reverse()
   },
 
   getAllQuartersBetweenDates (startDateStr, endDateStr) {

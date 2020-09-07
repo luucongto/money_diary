@@ -224,7 +224,7 @@ class API {
           if (!each.account) {
             return
           }
-          const date = moment('' + each.date, 'DD/MM/YYYY').format('YYYY-MM-DD')
+          const date = moment('' + each.date, 'DD/MM/YYYY').unix()
           const {
             id,
             category,
