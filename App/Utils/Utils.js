@@ -1,20 +1,20 @@
 import dayjs from 'dayjs'
-import 'dayjs/locale/vi'
+import { relativeTime } from 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
 import _ from 'lodash'
-import { relativeTime } from 'dayjs/locale/vi'
+
 export default {
-  formatBytes(bytes, decimals = 2) {
-    if (bytes === 0) return '0 Bytes';
+  formatBytes (bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes'
 
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
 
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
 
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-},
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+  },
   timeFormat (time) {
     var unix = dayjs(time).unix()
     var now = dayjs().unix()
@@ -44,6 +44,9 @@ export default {
   getDate (time) {
     return dayjs(time).format('YYYY-MM-DD')
   },
+  getDateFromUnix (time) {
+    return dayjs.unix(time).format('YYYY-MM-DD')
+  },
   startOf (param = 'month', date) {
     return dayjs(date, 'YYYY-MM').startOf(param).format('YYYY-MM-DD@00:00:00')
   },
@@ -51,27 +54,83 @@ export default {
     return dayjs(date, 'YYYY-MM').endOf(param).add(1, 'day').format('YYYY-MM-DD@00:00:00')
   },
   getAllMonthsBetweenDates (startDateStr, endDateStr) {
-    this.log('getAllMonthsBetweenDates', startDateStr, endDateStr)
+    const startDate = dayjs.unix(startDateStr).date(0)
+    var result = []
+    let end = dayjs().date(0)
+    for (var i = 0; !end.isBefore(startDate); i++) {
+      result.push({
+        label: end.add(1, 'month').format('YYYY-MM'),
+        to: end.add(1, 'month').unix(),
+        from: end.unix()
+      })
+      end = end.subtract(1, 'month')
+    }
+    return result.reverse().slice(0, 5)
+  },
+
+  getAllQuartersBetweenDates (startDateStr, endDateStr) {
     if (!startDateStr || !endDateStr) {
       return [dayjs().format('YYYY-MM')]
     }
-    var startDate = dayjs(startDateStr)
-    var endDate = dayjs(endDateStr)
+    var startDate = dayjs.unix(startDateStr)
+    var endDate = dayjs.unix(endDateStr)
 
     var result = []
-    if (endDate.isBefore(startDate)) {
-      return [endDate.format('YYYY-MM')]
+    if (endDate.isBefore(startDate) || endDate.format('YYYY-MM') === startDate.format('YYYY-MM')) {
+      return [
+        {
+          label: endDate.format('YYYY-MM'),
+          from: endDate.subtract(1, 'month').unix(),
+          to: endDate.unix()
+        }
+      ]
     }
-    if (endDate.format('YYYY-MM') === startDate.format('YYYY-MM')) {
-      return [endDate.format('YYYY-MM')]
+    const startYear = startDate.year()
+    const endYear = endDate.year()
+    for (var y = 0; startYear + y <= endYear; y++) {
+      for (var i = 0; i <= 4; i++) {
+        result.push({
+          label: `${startYear + y}Q${i}`,
+          from: dayjs(`${startYear + y}-${1 + (i - 1) * 3}`).unix(),
+          to: dayjs(`${startYear + y}-${1 + (i) * 3}`).unix()
+        })
+      }
     }
-    for (var i = 0; i < 12 && endDate.isAfter(startDate); i++) {
-      result.push(endDate.format('YYYY-MM'))
-      endDate = endDate.subtract(1, 'month')
-    }
-    return result.reverse()
+
+    return result
   },
-  log (params) {
+
+  getAllYearsBetweenDates (startDateStr, endDateStr) {
+    const startTime = new Date().getTime()
+    if (!startDateStr || !endDateStr) {
+      return [dayjs().format('YYYY-MM')]
+    }
+    var startDate = dayjs.unix(startDateStr)
+    var endDate = dayjs.unix(endDateStr)
+
+    var result = []
+    if (endDate.isBefore(startDate) || endDate.format('YYYY') === startDate.format('YYYY')) {
+      return [
+        {
+          label: endDate.format('YYYY'),
+          from: startDate.month(1).unix(),
+          to: endDate.month(11).unix()
+        }
+      ]
+    }
+    const startYear = startDate.year()
+    const endYear = endDate.year()
+    for (var y = 0; startYear + y <= endYear; y++) {
+      result.push({
+        label: `${startYear + y}`,
+        from: dayjs(`${startYear + y}-1`).unix(),
+        to: dayjs(`${startYear + y + 1}-1`).unix()
+      })
+    }
+    this.log('=========', new Date().getTime() - startTime)
+    return result
+  },
+  log () {
     if (__DEV__) console.tron.log(arguments)
   },
   clone (obj) {

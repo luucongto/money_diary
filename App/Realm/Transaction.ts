@@ -4,6 +4,7 @@ import Utils from '../Utils/Utils'
 import Wallet from './Wallet'
 import Category from './Category'
 import _ from 'lodash'
+import dayjs from 'dayjs'
 class Transaction extends RealmWrapper {
   static schema = schema
   static bulkInsertRaw = (rows: any) => {
@@ -58,8 +59,9 @@ class Transaction extends RealmWrapper {
     return result
   }
 
-  static findWithFilter = (startDate: string, endDate:string, params: any | null) => {
-    let query = `date >= ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
+  static findWithFilter = (startDate: number, endDate:number, params: any | null) => {
+    // let query = `date >= ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
+    let query = `date >= ${startDate} and date < ${endDate}`
     const { wallet, category } = params
     if (wallet) {
       query = `${query} and wallet=${wallet}`
@@ -73,7 +75,9 @@ class Transaction extends RealmWrapper {
 
   static beforeInsert (params: any) {
     if (!params.date) {
-      params.date = new Date()
+      params.date = dayjs().unix()
+    } else if (typeof (params.date) === 'string') {
+      params.date = dayjs(params.date).unix()
     }
     params = Transaction.appendId(params)
     if (typeof (params.category) === 'string') {
@@ -100,6 +104,7 @@ class Transaction extends RealmWrapper {
         params.wallet = newWallet.id
       }
     }
+    Utils.log('insert', params)
     return params
   }
 
@@ -108,6 +113,22 @@ class Transaction extends RealmWrapper {
     const minDate = realm.objects(schema.name).min('date')
     const maxDate = realm.objects(schema.name).max('date')
     const months = Utils.getAllMonthsBetweenDates(minDate, maxDate)
+    return months
+  }
+
+  static getQuarters () {
+    const realm = Transaction.realm
+    const minDate = realm.objects(schema.name).min('date')
+    const maxDate = realm.objects(schema.name).max('date')
+    const months = Utils.getAllQuartersBetweenDates(minDate, maxDate)
+    return months
+  }
+
+  static getYears () {
+    const realm = Transaction.realm
+    const minDate = realm.objects(schema.name).min('date')
+    const maxDate = realm.objects(schema.name).max('date')
+    const months = Utils.getAllYearsBetweenDates(minDate, maxDate)
     return months
   }
   // static _updateWalletAmount (doc:any, modifier: null|any) {

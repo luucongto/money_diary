@@ -6,5 +6,10 @@ module.exports = Object.freeze({
     ACTIVED: 1
   },
   USER_USER_TYPE_GUEST: '0',
-  USER_USER_TYPE_NORMAL: '1'
+  USER_USER_TYPE_NORMAL: '1',
+  CALENDAR_TYPES: {
+    MONTH: 'ctmonth',
+    QUARTER: 'ctquarter',
+    YEAR: 'ctyear'
+  }
 })

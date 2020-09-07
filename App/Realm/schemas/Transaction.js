@@ -5,7 +5,7 @@ const schema = {
     id: { type: 'int', default: 0 },
     amount: { type: 'int', default: 0 },
     note: { type: 'string', default: '' },
-    date: 'date',
+    date: { type: 'int', default: 0 },
     category: { type: 'int', default: 0 },
     wallet: { type: 'int', default: 0 },
     event: { type: 'string', default: '' },

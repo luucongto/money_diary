@@ -23,5 +23,8 @@
   "deviceDetails": "Device Details",
   "noItems": "No Items",
   "search": "Search",
-  "copyright": "© 2019 by Company"
+  "copyright": "© 2019 by Company",
+  "ctmonth": "View By Month",
+  "ctquarter": "View By Quarter",
+  "ctyear": "View By Year"
 }

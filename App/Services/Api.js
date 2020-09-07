@@ -162,9 +162,9 @@ class API {
   }
 
   transaction (params) {
-    if (params && params.month) {
-      const startDate = Utils.startOf('month', params.month)
-      const endDate = Utils.endOf('month', params.month)
+    if (params && params.from) {
+      const startDate = params.from
+      const endDate = params.to
       Utils.log('query', startDate, endDate)
       return { data: Transaction.findWithFilter(startDate, endDate, params) }
     }

@@ -34,12 +34,10 @@ class TransactionList extends Component {
       currentTransaction: null
     }
     autoBind(this)
-  }
-
-  componentDidMount () {
-    if (this.props.isThisTabVisible) {
+    if (props.isThisTabVisible) {
       this.refresh()
     }
+    Utils.log('construct TransactionList')
   }
 
   shouldComponentUpdate (nextProps) {
@@ -50,6 +48,7 @@ class TransactionList extends Component {
     if (!this.shouldComponentUpdate(nextProps)) {
       return
     }
+    Utils.log('componentWillReceiveProps TransactionList')
     const prevProps = this.props
     if (prevProps.tab !== nextProps.tab) {
       this.refresh()
@@ -79,7 +78,7 @@ class TransactionList extends Component {
 
   _groupTransactionByDate (items) {
     const result = []
-    const groups = _.groupBy(items, item => Utils.getDate(item.date))
+    const groups = _.groupBy(items, item => Utils.getDateFromUnix(item.date))
     _.each(groups, (v, k) => {
       let amount = 0
       v.forEach(item => { amount += item.amount })
@@ -94,8 +93,10 @@ class TransactionList extends Component {
 
   refresh (wallet = this.props.wallet) {
     const query = { wallet }
-    if (this.props.tab) {
-      query.month = this.props.tab.key
+    if (this.props.tab && this.props.tab.key) {
+      const _t = this.props.tab.key.split('#')
+      query.from = parseInt(_t[0])
+      query.to = parseInt(_t[1])
     }
     this.props.transactionRequest(query)
   }

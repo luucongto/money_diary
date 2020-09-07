@@ -1,31 +1,31 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
 // import { Images, Metrics } from '../Themes'
-import { Container, Icon, Fab, View, Card, CardItem, Item, Picker } from 'native-base'
-import { TabView, TabBar } from 'react-native-tab-view'
-// import I18n from 'react-native-i18n'
-import Utils from '../Utils/Utils'
-import { Metrics } from '../Themes'
+import { Body, Button, Container, Fab, Header, Icon, Item, Left, Right, View } from 'native-base'
+import React, { Component } from 'react'
+import autoBind from 'react-autobind'
+import { ActivityIndicator, Picker } from 'react-native'
+import { TabBar, TabView } from 'react-native-tab-view'
+import TransactionList from '../Components/MoneyDairy/TransactionLists'
+import Constants from '../Config/Constants'
+import I18n from '../I18n'
+import { Category, Transaction, Wallet } from '../Realm'
+import CategoryRedux from '../Redux/CategoryRedux'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import TransactionRedux from '../Redux/TransactionRedux'
-import CategoryRedux from '../Redux/CategoryRedux'
 import WalletRedux from '../Redux/WalletRedux'
-import { Transaction, Wallet, Category } from '../Realm'
-import autoBind from 'react-autobind'
-import TransactionList from '../Components/MoneyDairy/TransactionLists'
-import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
-import { ActivityIndicator } from 'react-native'
+import { Metrics } from '../Themes'
+// import I18n from 'react-native-i18n'
+import Utils from '../Utils/Utils'
 import Screen from './Screen'
+
 class HomeScreen extends Component {
   constructor (props) {
     super(props)
-    const months = Transaction.getMonths()
-    const tabs = months.map(month => { return { key: month, title: month } })
     const wallets = Wallet.find()
     const categories = Category.find()
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
     const categoryMapping = Utils.createMapFromArray(categories, 'id')
+    const tabData = this._calendarChangeData(Constants.CALENDAR_TYPES.MONTH)
     this.state = {
       wallets,
       categories,
@@ -34,10 +34,10 @@ class HomeScreen extends Component {
       wallet: wallets[0].id,
       start: {},
       items: [],
-      tabIndex: tabs.length - 1,
-      tabs,
+      ...tabData,
       currentTransaction: null
     }
+    this.calandarTypes = Object.values(Constants.CALENDAR_TYPES)
     autoBind(this)
   }
 
@@ -135,34 +135,88 @@ class HomeScreen extends Component {
     })
   }
 
-  _renderHeader () {
-    if (!this.state.wallets) {
-      return null
+  _calendarChangeData (value) {
+    let items = []
+    switch (value) {
+      case Constants.CALENDAR_TYPES.MONTH:
+        items = Transaction.getMonths()
+        break
+      case Constants.CALENDAR_TYPES.QUARTER:
+        items = Transaction.getQuarters()
+        break
+      case Constants.CALENDAR_TYPES.YEAR:
+        items = Transaction.getYears()
+        break
     }
-    return (
-      <Item picker>
+
+    const tabs = items.map(item => { return { key: `${item.from}#${item.to}`, title: item.label } })
+    Utils.log('onCalendarChange', value, items, tabs)
+    return {
+      tabs,
+      tabIndex: tabs.length - 1,
+      calendarType: value
+    }
+  }
+
+  onCalendarChange (value) {
+    this.setState(this._calendarChangeData(value))
+  }
+
+  _renderHeader () {
+    let walletChoosing = null
+    if (this.state.wallets) {
+      walletChoosing = (
+        <Item picker>
+          <Picker
+            mode='dropdown'
+            iosIcon={<Icon name='arrow-down' />}
+            style={{ width: undefined }}
+            placeholder='Select Wallet'
+            placeholderStyle={{ color: '#bfc6ea' }}
+            placeholderIconColor='#007aff'
+            itemTextStyle={{ color: 'red' }}
+            selectedValue={this.state.wallet}
+            onValueChange={this.onValueChangeWallet.bind(this)}
+          >
+            {this.state.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+          </Picker>
+        </Item>
+      )
+    }
+    const calendarPicker = (
+      <Item picker style={{ width: 50, height: 50, justifyContent: 'center', alignContent: 'center' }}>
         <Picker
           mode='dropdown'
-          iosIcon={<Icon name='arrow-down' />}
-          style={{ width: undefined }}
-          placeholder='Select Wallet'
-          placeholderStyle={{ color: '#bfc6ea' }}
-          placeholderIconColor='#007aff'
-          itemTextStyle={{ color: 'red' }}
-          selectedValue={this.state.wallet}
-          onValueChange={this.onValueChangeWallet.bind(this)}
+          style={{ width: 50, height: 50, opacity: 0, position: 'absolute', left: 0 }}
+          selectedValue={this.state.calendarType}
+          onValueChange={value => this.onCalendarChange(value)}
         >
-          {this.state.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
-
+          {this.calandarTypes.map(item => <Picker.Item style={{ width: 50 }} key={item} label={I18n.t(item)} value={item} />)}
         </Picker>
+        <Icon name='calendar' style={{ color: 'white', left: 5 }} />
       </Item>
+    )
+    return (
+      <Header style={{ backgroundColor: '#8F2000', paddingLeft: 0, paddingRight: 0 }}>
+        <Left>
+          <Button transparent onPress={() => this.props.navigation.openDrawer()}>
+            <Icon name='menu' />
+          </Button>
+        </Left>
+        <Body stye={{ justifyContent: 'center', alignItem: 'center' }}>
+          {walletChoosing}
+        </Body>
+        <Right>
+          {calendarPicker}
+        </Right>
+      </Header>
+
     )
   }
 
   renderPhone () {
     return (
       <Container>
-        <ScreenHeader navigation={this.props.navigation} title='Home' />
         {this._renderHeader()}
         {this._renderTabs()}
         <Fab

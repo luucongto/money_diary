@@ -7,6 +7,7 @@ import TransactionRedux from '../Redux/TransactionRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+import dayjs from 'dayjs'
 
 class TransactionDetailScreen extends Component {
   constructor (props) {
@@ -36,7 +37,7 @@ class TransactionDetailScreen extends Component {
   }
 
   setDate (newDate) {
-    this.setState({ date: newDate })
+    this.setState({ date: Utils.getDate(newDate) })
   }
 
   _assignTransactionToStart (transaction) {
@@ -44,7 +45,7 @@ class TransactionDetailScreen extends Component {
       transaction: transaction,
       wallet: transaction?.wallet,
       category: transaction?.category,
-      date: transaction ? new Date(transaction.date) : new Date(),
+      date: transaction ? dayjs.unix(transaction.date) : new Date(),
       amount: transaction?.amount || 0,
       include: transaction ? transaction.include : true,
       note: transaction?.note
@@ -75,7 +76,7 @@ class TransactionDetailScreen extends Component {
       wallet: this.state.wallet ? this.state.wallet : this.props.wallets[0].id,
       category: this.state.category ? this.state.category : this.props.categories[0].label,
       amount: this.state.amount || 0,
-      date: this.state.date,
+      date: dayjs(this.state.date).unix(),
       include: this.state.include
     }
     this.transactionCreate(data)
@@ -99,7 +100,7 @@ class TransactionDetailScreen extends Component {
     const transaction = this.state.transaction
     updateData = lodash.omitBy(updateData, (v, k) => transaction[k] === v)
     if (Utils.getDate(transaction.date) !== Utils.getDate(this.state.date)) {
-      updateData.date = new Date(this.state.date)
+      updateData.date = dayjs(this.state.date).unix()
     } else {
       Utils.log(Utils.getDate(transaction.date), Utils.getDate(this.state.date))
     }
@@ -179,6 +180,7 @@ class TransactionDetailScreen extends Component {
                 textStyle={{ color: 'green', opacity: 1 }}
                 placeHolderTextStyle={{ color: 'green', opacity: 1 }}
                 onDateChange={this.setDate.bind(this)}
+                formatChosenDate={Utils.getDate.bind(this)}
                 disabled={false}
               />
 
