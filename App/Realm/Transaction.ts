@@ -79,6 +79,9 @@ class Transaction extends RealmWrapper {
     } else if (typeof (params.date) === 'string') {
       params.date = dayjs(params.date).unix()
     }
+    params.monthTag = Utils.getMonth(params.date)
+    params.quarterTag = Utils.getQuarter(params.date)
+    params.dateTag = Utils.getDateFromUnix(params.date)
     params = Transaction.appendId(params)
     if (typeof (params.category) === 'string') {
       const category = Category.findOne({ label: params.category })
@@ -89,7 +92,7 @@ class Transaction extends RealmWrapper {
           label: params.category,
           color: '#' + Math.floor(Math.random() * 16777215).toString(16)
         }, true)
-        params.category = newCategory.id
+        params.category = newCategory ? newCategory.id : 0
       }
     }
     if (typeof (params.wallet) === 'string') {

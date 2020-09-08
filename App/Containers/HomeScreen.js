@@ -21,6 +21,7 @@ import Screen from './Screen'
 class HomeScreen extends Component {
   constructor (props) {
     super(props)
+    Utils.log('constructor Homescreen')
     const wallets = Wallet.find()
     const categories = Category.find()
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
@@ -38,10 +39,12 @@ class HomeScreen extends Component {
       currentTransaction: null
     }
     this.calandarTypes = Object.values(Constants.CALENDAR_TYPES)
+    Utils.log('constructor Homescreen 2')
     autoBind(this)
   }
 
   componentDidMount () {
+    Utils.log('componentDidmount Homescreen')
     this.props.categoryRequest()
     this.props.walletRequest()
   }
@@ -215,6 +218,7 @@ class HomeScreen extends Component {
   }
 
   renderPhone () {
+    Utils.log('renderhome')
     return (
       <Container>
         {this._renderHeader()}

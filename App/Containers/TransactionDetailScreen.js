@@ -77,16 +77,11 @@ class TransactionDetailScreen extends Component {
       category: this.state.category ? this.state.category : this.props.categories[0].label,
       amount: this.state.amount || 0,
       date: dayjs(this.state.date).unix(),
+      note: this.state.note,
       include: this.state.include
     }
     this.transactionCreate(data)
-    this.setState({
-      wallet: this.props.wallets ? this.props.wallets[0].id : null,
-      category: this.props.categories ? this.props.categories[0].label : null,
-      date: new Date(),
-      amount: 0,
-      include: true
-    })
+    this.goBack()
   }
 
   update () {
@@ -101,8 +96,6 @@ class TransactionDetailScreen extends Component {
     updateData = lodash.omitBy(updateData, (v, k) => transaction[k] === v)
     if (Utils.getDate(transaction.date) !== Utils.getDate(this.state.date)) {
       updateData.date = dayjs(this.state.date).unix()
-    } else {
-      Utils.log(Utils.getDate(transaction.date), Utils.getDate(this.state.date))
     }
     Utils.log('updateData', updateData)
     if (!lodash.isEmpty(updateData)) {

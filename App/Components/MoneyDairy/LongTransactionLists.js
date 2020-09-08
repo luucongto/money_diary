@@ -76,7 +76,7 @@ class TransactionList extends Component {
 
   _groupTransactionByDate (items) {
     const result = []
-    const groups = _.groupBy(items, item => Utils.getDate(item.date))
+    const groups = _.groupBy(items, item => Utils.getDateFromUnix(item.date))
     _.each(groups, (v, k) => {
       let amount = 0
       v.forEach(item => { amount += item.amount })

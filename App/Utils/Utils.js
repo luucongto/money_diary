@@ -1,8 +1,9 @@
 import dayjs from 'dayjs'
 import { relativeTime } from 'dayjs/locale/vi'
 import ApiConfig from '../Config/ApiConfig'
-import _ from 'lodash'
-
+import _, { times } from 'lodash'
+var advancedFormat = require('dayjs/plugin/advancedFormat')
+dayjs.extend(advancedFormat)
 export default {
   formatBytes (bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes'
@@ -44,6 +45,12 @@ export default {
   getDate (time) {
     return dayjs(time).format('YYYY-MM-DD')
   },
+  getMonth (timestamp) {
+    return dayjs.unix(timestamp).format('YYYY-MM')
+  },
+  getQuarter (timestamp) {
+    return 'Q' + dayjs.unix(timestamp).format('Q-YYYY')
+  },
   getDateFromUnix (time) {
     return dayjs.unix(time).format('YYYY-MM-DD')
   },
@@ -54,10 +61,19 @@ export default {
     return dayjs(date, 'YYYY-MM').endOf(param).add(1, 'day').format('YYYY-MM-DD@00:00:00')
   },
   getAllMonthsBetweenDates (startDateStr, endDateStr) {
+    let end = dayjs().date(0)
+    if (!startDateStr || !endDateStr) {
+      return [
+        {
+          label: dayjs().format('YYYY-MM'),
+          from: end.subtract(1, 'month').unix(),
+          to: end.unix()
+        }
+      ]
+    }
     const startDate = dayjs.unix(startDateStr).date(0)
     var result = []
-    let end = dayjs().date(0)
-    for (var i = 0; !end.isBefore(startDate); i++) {
+    for (var i = 0; i < 30 && !end.isBefore(startDate); i++) {
       result.push({
         label: end.add(1, 'month').format('YYYY-MM'),
         to: end.add(1, 'month').unix(),
@@ -70,7 +86,14 @@ export default {
 
   getAllQuartersBetweenDates (startDateStr, endDateStr) {
     if (!startDateStr || !endDateStr) {
-      return [dayjs().format('YYYY-MM')]
+      const end = dayjs().date(0)
+      return [
+        {
+          label: dayjs().format('YYYY-MM'),
+          from: end.subtract(1, 'month').unix(),
+          to: end.unix()
+        }
+      ]
     }
     var startDate = dayjs.unix(startDateStr)
     var endDate = dayjs.unix(endDateStr)
