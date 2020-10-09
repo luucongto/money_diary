@@ -63,10 +63,14 @@ class WalletScreen extends Component {
           refreshControl={
             <RefreshControl refreshing={this.props.fetching} onRefresh={this.refresh.bind(this)} />
           }
-          style={{ paddingTop: 10 }}
+          style={{
+            paddingTop: 10,
+            backgroundColor: '#f0efeb'
+          }}
         >
           {renderItems}
           <WalletAddComponent walletCreate={this.walletCreate.bind(this)} />
+          <View style={{ height: 80 }} />
         </Content>
         <Fab
           direction='up'

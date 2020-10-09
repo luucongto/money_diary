@@ -8,6 +8,7 @@ import TransactionRedux from '../Redux/TransactionRedux'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
 import dayjs from 'dayjs'
+import I18n from '../I18n'
 
 class TransactionDetailScreen extends Component {
   constructor (props) {
@@ -151,9 +152,6 @@ class TransactionDetailScreen extends Component {
             </Button>
           </View>
           <Body />
-          <Right>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
-          </Right>
         </Header>
         <Content>
           <Form>
@@ -211,12 +209,10 @@ class TransactionDetailScreen extends Component {
               </Picker>
             </Item>
             <Item inlineLabel>
-              <Label>Amount</Label>
-              <Input value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
+              <Input placeholder={I18n.t('amount')} value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
             </Item>
             <Item inlineLabel>
-              <Label>Note</Label>
-              <Textarea multiline rowSpan={4} value={this.state.note} onChangeText={note => this.setState({ note })} />
+              <Textarea placeholder={I18n.t('note')} multiline rowSpan={4} value={this.state.note} onChangeText={note => this.setState({ note })} />
             </Item>
             <Item inlineLabel style={{ height: 50 }}>
               <Label>Included</Label>

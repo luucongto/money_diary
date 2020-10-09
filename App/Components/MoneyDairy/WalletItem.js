@@ -16,38 +16,33 @@ class WalletItem extends PureComponent {
       <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
           flexDirection: 'row',
-          borderBottomColor: wallet.color,
-          borderBottomWidth: 1,
+          backgroundColor: 'white',
+          borderColor: wallet.color,
+          borderWidth: 1,
+          borderRadius: 10,
           height: 120,
           overflow: 'hidden',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          paddingHorizontal: 10
         }}
         >
-          <View
-            style={{
-              backgroundColor: wallet.color,
-              width: 10,
-              height: 120,
-              marginRight: 10
-            }}
-          />
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Text style={[Fonts.style.h3, { color: wallet.color }]}>
+            <Text style={[Fonts.style.h3, { color: '#0096c7' }]}>
               {wallet.label}
             </Text>
             <Text style={{ ...Fonts.style.h5, marginTop: 10, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
-            <Text note>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>
+            {wallet.count > 0 && <Text note>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
           </Body>
           <View style={{
             flexDirection: 'column',
-            justifyContent: 'space-between'
-
+            justifyContent: 'space-between',
+            alignSelf: 'flex-end'
           }}
           >
-            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
               <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'gray', alignSelf: 'center' }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
               <Icon name='plus' type='FontAwesome' style={{ alignSelf: 'center', color: 'gray' }} />
             </TouchableOpacity>
           </View>

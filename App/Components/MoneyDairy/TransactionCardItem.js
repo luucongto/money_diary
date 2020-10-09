@@ -8,7 +8,13 @@ import FadeComponent from './FadeComponent'
 import autoBind from 'react-autobind'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import dayjs from 'dayjs'
+import Category from '../../Realm/Category'
 class TransactionCardItem extends PureComponent {
+  delete () {
+    this.props.transactionDeleteRequest({ id: this.props.transaction.id })
+    this.props.refresh()
+  }
+
   render () {
     const transaction = this.props.transaction
     if (!transaction) return null
@@ -22,6 +28,7 @@ class TransactionCardItem extends PureComponent {
     return (
       <FadeComponent fadeInTime={300 + this.props.index * 100} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, height }}>
         <View style={{
+          backgroundColor: 'white',
           flexDirection: 'row',
           borderBottomColor: wallet.color,
           borderBottomWidth: 1,
@@ -53,10 +60,10 @@ class TransactionCardItem extends PureComponent {
           }}
           >
             <TouchableOpacity style={{ width: 50, height: height / 2, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openTransactionDetailModal(transaction)}>
-              <Icon name='angle-right' type='FontAwesome' style={{ fontSize: height / 4, color: 'gray', alignSelf: 'center' }} />
+              <Icon name='pencil-square-o' type='FontAwesome' style={{ fontSize: height / 4, color: 'blue', alignSelf: 'center' }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ width: 50, height: height / 2, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openTransactionDetailModal(transaction)}>
-              <Icon name='plus' type='FontAwesome' style={{ alignSelf: 'center', color: 'gray' }} />
+            <TouchableOpacity style={{ width: 50, height: height / 2, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.delete()}>
+              <Icon name='trash' type='FontAwesome' style={{ alignSelf: 'center', color: 'red' }} />
             </TouchableOpacity>
           </View>
         </View>
@@ -68,8 +75,11 @@ class TransactionCardItem extends PureComponent {
 class TransactionCardAddComponent extends PureComponent {
   constructor (props) {
     super(props)
+    const categories = Category.find()
     this.state = {
       amount: 0,
+      categoryId: categories[0],
+      categories,
       note: ''
     }
     autoBind(this)
@@ -82,22 +92,32 @@ class TransactionCardAddComponent extends PureComponent {
   create () {
     const data = {
       wallet: this.props.walletId,
-      category: 1,
+      category: this.state.categoryId,
       amount: this.state.amount || 0,
       date: dayjs().unix(),
       note: this.state.note,
       include: true
     }
     this.transactionCreate(data)
+    this.setState({
+      amount: 0,
+      note: ''
+    })
+  }
+
+  onValueChangeCategory (categoryId) {
+    this.setState({
+      categoryId
+    })
   }
 
   render () {
-    const wallet = this.props.wallet
-    const height = 100
+    const height = 140
     const margin = 10
     return (
-      <FadeComponent fadeInTime={300 + this.props.index * 100} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, height }}>
+      <FadeComponent fadeInTime={300} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, height }}>
         <View style={{
+          backgroundColor: 'white',
           flexDirection: 'row',
           borderBottomColor: 'green',
           borderBottomWidth: 1,
@@ -114,7 +134,23 @@ class TransactionCardAddComponent extends PureComponent {
               marginRight: margin
             }}
           />
+
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <Item inlineLabel>
+              <Label>Category</Label>
+              <Picker
+                mode='dropdown'
+                iosIcon={<Icon name='arrow-down' />}
+                style={{ width: undefined }}
+                placeholder='Select Category'
+                placeholderStyle={{ color: '#bfc6ea' }}
+                placeholderIconColor='#007aff'
+                selectedValue={this.state.categoryId}
+                onValueChange={this.onValueChangeCategory.bind(this)}
+              >
+                {this.state.categories.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+              </Picker>
+            </Item>
             <Item inlineLabel>
               <Input label={I18n.t('note')} placeholder={I18n.t('note')} value={this.state.note} onChangeText={note => this.setState({ note })} />
             </Item>
@@ -124,7 +160,7 @@ class TransactionCardAddComponent extends PureComponent {
           </Body>
           <View style={{
             flexDirection: 'column',
-            justifyContent: 'space-between'
+            justifyContent: 'center'
 
           }}
           >

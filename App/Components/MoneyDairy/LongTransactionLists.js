@@ -70,7 +70,7 @@ class TransactionList extends Component {
       income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
       outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
     })
-    this.setState({ transactions, items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
+    this.setState({ transactions: transactions.slice(0, 20), items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
   }
 
   _groupTransactionByDate (items) {
@@ -105,6 +105,8 @@ class TransactionList extends Component {
         wallet={this.props.walletMapping[item.wallet]}
         category={this.props.categoryMapping[item.category]}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
+        transactionDeleteRequest={this.props.transactionDeleteRequest}
+        refresh={this.refresh}
       />)
 
     return itemView
@@ -119,6 +121,9 @@ class TransactionList extends Component {
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }
+          style={{
+            backgroundColor: '#f0efeb'
+          }}
         >
           <ListItem noIndent>
             <Body>
@@ -130,7 +135,10 @@ class TransactionList extends Component {
               <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
             </Right>
           </ListItem>
-          <TransactionCardAddComponent wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category} />
+          <TransactionCardAddComponent
+            transactionCreateRequest={this.props.transactionCreateRequest}
+            wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category}
+          />
           {
             transactions.map((item, index) => this._renderItem(item, index))
           }
