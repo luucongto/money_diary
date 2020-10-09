@@ -53,7 +53,7 @@ class SettingScreen extends Component {
     const backupContents = {
       wallets: Wallet.find(),
       categories: Category.find(),
-      transactions: Transaction.find()
+      transactions: Transaction.getBy()
     }
     GDrive.setAccessToken(tokens.accessToken)
     GDrive.init()
@@ -299,6 +299,11 @@ class SettingScreen extends Component {
     } catch (err) {
       await this.asyncSetState({ doingImportFromFile: false })
       Utils.log('pickfile', err)
+      Toast.show({
+        text: 'Updated failed',
+        buttonText: 'OK',
+        duration: 3000
+      })
     }
   }
 

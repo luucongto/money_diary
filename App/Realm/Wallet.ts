@@ -32,16 +32,19 @@ class Wallet extends RealmWrapper {
   }
 
   static calculate = (id: number) => {
-    let transactions = Transaction.find({ wallet: id })
+    let transactions = Transaction.getBy({ wallet: id }, { sort: { date: true } })
     if (!id) {
-      transactions = Transaction.find()
+      transactions = Transaction.getBy()
     }
     const result = {
       amount: 0,
       income: 0,
-      outcome: 0
+      outcome: 0,
+      count: transactions.length,
+      lastUpdate: 0
     }
     _.forEach(transactions, transaction => {
+      result.lastUpdate = result.lastUpdate < transaction.date ? transaction.date : result.lastUpdate
       result.amount = result.amount + transaction.amount
       if (transaction.include) {
         if (transaction.amount > 0) {

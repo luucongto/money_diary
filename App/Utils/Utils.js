@@ -17,7 +17,8 @@ export default {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
   },
   timeFormat (time) {
-    var unix = dayjs(time).unix()
+    const isUnix = typeof time === 'number'
+    var unix = isUnix ? time : dayjs(time).unix()
     var now = dayjs().unix()
     var timePass = (now - unix)
     var minPass = Math.round(timePass / 60)
@@ -28,7 +29,7 @@ export default {
     if (hourPass < 24) {
       return `${hourPass} giờ trước`
     }
-    return dayjs(time).format('DD/MM/YYYY')
+    return dayjs.unix(unix).format('DD/MM/YYYY')
     //     return moment()
     //   .startOf('hour')
     //   .fromNow() // 23 phút trước

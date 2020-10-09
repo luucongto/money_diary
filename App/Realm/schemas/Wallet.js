@@ -1,4 +1,5 @@
 
+import Realm from 'realm'
 const schema = {
   name: 'Wallet',
   primaryKey: 'id',
@@ -13,4 +14,6 @@ const schema = {
   }
 }
 
-export default schema
+export default class Wallet extends Realm.Object {
+  static schema = schema
+}

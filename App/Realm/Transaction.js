@@ -59,9 +59,13 @@ class Transaction extends RealmWrapper {
     return result
   }
 
+  static getBy (condition, option) {
+    return Transaction.find({ ...condition, deleted: false }, option)
+  }
+
   static findWithFilter = (startDate: number, endDate:number, params: any | null) => {
     // let query = `date >= ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
-    let query = `date >= ${startDate} and date < ${endDate}`
+    let query = `date >= ${startDate} and date < ${endDate} and deleted==false`
     const { wallet, category } = params
     if (wallet) {
       query = `${query} and wallet=${wallet}`
@@ -134,36 +138,11 @@ class Transaction extends RealmWrapper {
     const months = Utils.getAllYearsBetweenDates(minDate, maxDate)
     return months
   }
-  // static _updateWalletAmount (doc:any, modifier: null|any) {
-  //   const wallet = Wallet.get(doc.wallet)
-  //   if (wallet) {
-  //     const sign = modifier && modifier.include === false ? -1 : 1
-  //     const walletUpdateData = {
-  //       amount: wallet.amount + sign * doc.amount,
-  //       income: wallet.income,
-  //       outcome: wallet.outcome
-  //     }
-  //     if (doc.amount > 0) {
-  //       walletUpdateData.income = wallet.income + sign * doc.amount
-  //     } else {
-  //       walletUpdateData.outcome = wallet.outcome + sign * doc.amount
-  //     }
-  //     Wallet.update({ label: wallet.label }, walletUpdateData, true)
-  //   }
-  //   return doc
-  // }
 
-  // static afterInsert (doc: any) {
-  //   return Transaction._updateWalletAmount(doc, null)
-  // }
-
-  // static afterUpdate (doc: any, modifier: any) {
-  //   if (modifier.include !== undefined) {
-  //     return Transaction._updateWalletAmount(doc, modifier)
-  //   } else {
-  //     return doc
-  //   }
-  // }
+  static remove (filter = {}, inTx = false) {
+    var className = this
+    return className.update(filter, { deleted: true }, inTx)
+  }
 }
 
 export default Transaction

@@ -45,11 +45,9 @@ export const walletSuccess = (state, { data }) => {
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
-      state = state.setIn(['deleteObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
-    state = state.setIn(['deleteObjects', data.id], data)
   }
   state = state.setIn(['data'], data)
 
@@ -80,7 +78,7 @@ export const walletDeleteSuccess = (state, { data }) => {
   return state
 }
 
-export const walletFailure = (state, { error }) => state.merge({ fetching: false, error})
+export const walletFailure = (state, { error }) => state.merge({ fetching: false, error })
 
 /* ------------- Hookup Reducers To Types ------------- */
 const types = { [Types.WALLET_FAILURE]: walletFailure }

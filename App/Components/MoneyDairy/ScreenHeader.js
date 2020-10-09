@@ -3,14 +3,14 @@ import React, { PureComponent } from 'react'
 export default class WalletComponent extends PureComponent {
   render () {
     return (
-      <Header style={{ backgroundColor: '#8F2000' }}>
+      <Header style={{ backgroundColor: 'white' }}>
         <Left>
           <Button transparent onPress={() => this.props.navigation.openDrawer()}>
-            <Icon name='menu' />
+            <Icon name='menu' style={{ color: '#0096c7' }} />
           </Button>
         </Left>
         <Body stye={{ justifyContent: 'center', alignItem: 'center' }}>
-          <Title>{this.props.title}</Title>
+          <Title style={{ color: '#0096c7' }}>{this.props.title}</Title>
         </Body>
         <Right />
       </Header>

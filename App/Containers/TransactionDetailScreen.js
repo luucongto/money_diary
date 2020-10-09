@@ -246,8 +246,8 @@ const mapStateToProps = (state) => {
     transactionParams: state.transaction.params,
     transactionUpdateObjects: state.transaction.updateObjects,
     transactionDeleteObjects: state.transaction.deleteObjects,
-    categories: state.category.data,
-    wallets: state.wallet.data
+    categories: Object.values(state.category.objects),
+    wallets: Object.values(state.wallet.objects)
   }
 }
 

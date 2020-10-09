@@ -64,7 +64,7 @@ const Stack = createStackNavigator()
 function MainScreen () {
   return (
     <Drawer.Navigator
-      initialRouteName='Home'
+      initialRouteName='Wallet'
       screenOptions={({ route }) => ({
         drawerIcon: ({ focused, color, size }) => {
           let iconName = 'ios-albums-outline'
@@ -113,6 +113,20 @@ function AppNavigation () {
           gestureEnabled: false,
           gestureDirection: 'horizontal',
           cardStyle: { backgroundColor: 'transparent' },
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {
+                duration: 500
+              }
+            },
+            close: {
+              animation: 'timing',
+              config: {
+                duration: 500
+              }
+            }
+          },
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS
           // cardStyleInterpolator: ({ current, next, layouts }) => {
           //   return {

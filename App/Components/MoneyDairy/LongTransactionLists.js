@@ -6,6 +6,7 @@ import Utils from '../../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import TransactionComponent from './TransactionComponent'
+import { TransactionCardItem, TransactionCardAddComponent } from './TransactionCardItem'
 import autoBind from 'react-autobind'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
@@ -62,8 +63,6 @@ class TransactionList extends Component {
     } else if (prevProps.wallet !== nextProps.wallet) {
       this.refresh(nextProps.wallet)
     }
-    Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
-    Utils.log('updateTransactions list')
     const transactions = nextProps.transactions
     let income = 0
     let outcome = 0
@@ -71,7 +70,7 @@ class TransactionList extends Component {
       income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
       outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
     })
-    this.setState({ items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
+    this.setState({ transactions, items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
   }
 
   _groupTransactionByDate (items) {
@@ -97,13 +96,14 @@ class TransactionList extends Component {
     this.props.transactionRequest(query)
   }
 
-  _renderItem ({ item, index }) {
+  _renderItem (item, index) {
     const itemView = (
-      <TransactionComponent
+      <TransactionCardItem
         key={item.id}
+        index={index}
         transaction={item}
-        walletItem={this.props.walletMapping[item.wallet]}
-        categoryItem={this.props.categoryMapping[item.category]}
+        wallet={this.props.walletMapping[item.wallet]}
+        category={this.props.categoryMapping[item.category]}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
       />)
 
@@ -112,6 +112,7 @@ class TransactionList extends Component {
 
   renderPhone () {
     const { amount, income, outcome } = this.state
+    const transactions = this.state.transactions || []
     return (
       <Container>
         <Content
@@ -129,21 +130,11 @@ class TransactionList extends Component {
               <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
             </Right>
           </ListItem>
-          <SectionList
-            sections={this.state.items}
-            keyExtractor={(item, index) => item + index}
-            renderItem={item => this._renderItem(item)}
-            renderSectionHeader={({ section: { title, amount } }) => (
-              <ListItem itemDivider>
-                <Left>
-                  <Text>{title}</Text>
-                </Left>
-                <Right>
-                  <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
-                </Right>
-              </ListItem>
-            )}
-          />
+          <TransactionCardAddComponent wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category} />
+          {
+            transactions.map((item, index) => this._renderItem(item, index))
+          }
+
         </Content>
       </Container>
     )

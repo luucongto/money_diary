@@ -1,38 +1,128 @@
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
-import { Body, Text, Right, ListItem } from 'native-base'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form } from 'native-base'
 import Utils from '../../Utils/Utils'
-export default class WalletComponent extends PureComponent {
+import { Fonts } from '../../Themes'
+import I18n from '../../I18n'
+import FadeComponent from './FadeComponent'
+import autoBind from 'react-autobind'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+class WalletItem extends PureComponent {
   render () {
     const wallet = this.props.item
     if (!wallet) return null
     const amount = wallet.amount
-    const income = wallet.income
-    const outcome = wallet.outcome
     return (
-      <TouchableOpacity onPress={() => this.props.openWalletDetailModal(wallet)}>
-        <ListItem noIndent noBorder>
+      <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+        <View style={{
+          flexDirection: 'row',
+          borderBottomColor: wallet.color,
+          borderBottomWidth: 1,
+          height: 120,
+          overflow: 'hidden',
+          justifyContent: 'center'
+        }}
+        >
           <View
             style={{
               backgroundColor: wallet.color,
               width: 10,
-              height: '100%'
+              height: 120,
+              marginRight: 10
             }}
           />
-          <Body>
-
-            <Text>{wallet.label}</Text>
-            <Text note style={{ color: income > 0 ? 'green' : 'red' }}>Income {Utils.numberWithCommas(income)}</Text>
-            <Text note style={{ color: outcome > 0 ? 'green' : 'red' }}>Outcome {Utils.numberWithCommas(outcome)}</Text>
+          <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <Text style={[Fonts.style.h3, { color: wallet.color }]}>
+              {wallet.label}
+            </Text>
+            <Text style={{ ...Fonts.style.h5, marginTop: 10, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
+            <Text note>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>
           </Body>
-          <Right>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
+          <View style={{
+            flexDirection: 'column',
+            justifyContent: 'space-between'
 
-          </Right>
-        </ListItem>
-      </TouchableOpacity>
-
+          }}
+          >
+            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+              <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'gray', alignSelf: 'center' }} />
+            </TouchableOpacity>
+            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+              <Icon name='plus' type='FontAwesome' style={{ alignSelf: 'center', color: 'gray' }} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </FadeComponent>
     )
   }
+}
+
+class WalletAddComponent extends PureComponent {
+  constructor (props) {
+    super(props)
+    const colors = Utils.randomPaletteColors(100)
+    this.state = {
+      label: '',
+      color: colors[0],
+      colors
+    }
+    autoBind(this)
+  }
+
+  insert () {
+    if (!this.state.label) {
+      return
+    }
+    const data = {
+      label: this.state.label,
+      color: this.state.color
+    }
+    this.setState({
+      label: ''
+    })
+    this.props.walletCreate(data)
+  }
+
+  onValueChangeColor (color) {
+    this.setState({ color })
+  }
+
+  render () {
+    return (
+      <Card style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }}>
+        <Form style={{ width: '60%' }}>
+          <Item inlineLabel>
+            <Input placeholder='Wallet Name' value={this.state.label} onChangeText={label => this.setState({ label })} />
+          </Item>
+          <Item inlineLabel>
+            <Label>Color</Label>
+            <Picker
+              mode='dropdown'
+              iosIcon={<Icon name='arrow-down' />}
+              style={{ width: undefined }}
+              placeholder='Select Color'
+              placeholderStyle={{ color: '#bfc6ea' }}
+              placeholderIconColor='#007aff'
+              itemTextStyle={{ color: 'red' }}
+              selectedValue={this.state.color}
+              onValueChange={this.onValueChangeColor.bind(this)}
+            >
+              {this.state.colors.map(item => <Picker.Item color={item} key={item} label={item} value={item} />)}
+
+            </Picker>
+          </Item>
+        </Form>
+
+        <Button iconLeft rounded success style={{ alignSelf: 'center' }} onPress={this.insert.bind()}>
+          <Icon name='check' type='FontAwesome' />
+          <Text>{I18n.t('save')}</Text>
+        </Button>
+      </Card>
+    )
+  }
+}
+
+module.exports = {
+  WalletItem,
+  WalletAddComponent
 }

@@ -118,7 +118,7 @@ class API {
           Category.initializeDatas()
         })
         setTimeout(() => {
-          Utils.log('api.startup done', Wallet.find(), Category.find(), Transaction.find())
+          Utils.log('api.startup done', Wallet.find(), Category.find(), Transaction.getBy())
           resolve({ data: true })
         }, 1000)
       } catch (e) {
@@ -168,7 +168,8 @@ class API {
       Utils.log('query', startDate, endDate)
       return { data: Transaction.findWithFilter(startDate, endDate, params) }
     }
-    return { data: Transaction.find(params, { sort: { date: true } }) }
+    Utils.log('transaction query', params)
+    return { data: Transaction.getBy({ ...params, deleted: false }, { sort: { date: true } }) }
   }
 
   transactionUpdate (params) {

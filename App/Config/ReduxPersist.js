@@ -13,7 +13,7 @@ const REDUX_PERSIST = {
     // Optionally, just specify the keys you DO want stored to persistence.
     // An empty array means 'don't store any reducers' -> infinitered/ignite#409
     // whitelist: [],
-    whitelist: ['login', 'user'], // Optionally, just specify the keys you DO want stored to
+    whitelist: ['login', 'user', 'wallet', 'category'], // Optionally, just specify the keys you DO want stored to
     transforms: [immutablePersistenceTransform]
   }
 }

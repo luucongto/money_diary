@@ -3,10 +3,9 @@ import { Container, Content, Fab, Icon, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { RefreshControl } from 'react-native'
-import AddWalletModal from '../Components/MoneyDairy/AddWalletModal'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import WalletItem from '../Components/MoneyDairy/WalletItem'
+import { WalletItem, WalletAddComponent } from '../Components/MoneyDairy/WalletItem'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Wallet } from '../Realm'
 import WalletRedux from '../Redux/WalletRedux'
@@ -31,7 +30,7 @@ class WalletScreen extends Component {
   componentWillReceiveProps (nextProps) {
     Utils.log('Wallet', nextProps)
     const prevProps = this.props
-    if (prevProps.walletObjects !== nextProps.walletObjects) {
+    if (prevProps.isFocused !== nextProps.isFocused || prevProps.walletObjects !== nextProps.walletObjects) {
       this.refresh()
     }
   }
@@ -52,12 +51,11 @@ class WalletScreen extends Component {
   }
 
   renderPhone () {
-    const renderItems = this.state.wallets.map(item => {
+    const renderItems = this.state.wallets.map((item, index) => {
       return (
-        <WalletItem key={item.id} item={item} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
+        <WalletItem key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
       )
     })
-    Utils.log('render WalletScreen')
     return (
       <Container>
         <ScreenHeader navigation={this.props.navigation} title='Wallet' />
@@ -65,25 +63,19 @@ class WalletScreen extends Component {
           refreshControl={
             <RefreshControl refreshing={this.props.fetching} onRefresh={this.refresh.bind(this)} />
           }
+          style={{ paddingTop: 10 }}
         >
           {renderItems}
-          <View style={{ height: 50 }} />
+          <WalletAddComponent walletCreate={this.walletCreate.bind(this)} />
         </Content>
-
-        <AddWalletModal
-          setRef={(ref) => { this.addWalletModalRef = ref }}
-          walletCreate={this.walletCreate.bind(this)}
-        />
-
         <Fab
-          active={this.state.active}
           direction='up'
           containerStyle={{ }}
           style={{ backgroundColor: '#5067FF' }}
           position='bottomRight'
-          onPress={() => this.addWalletModalRef.setModalVisible(true)}
+          onPress={() => this.props.navigation.navigate('TransactionDetailScreen')}
         >
-          <Icon name='plus-square' type='FontAwesome' />
+          <Icon name='plus' type='FontAwesome' />
         </Fab>
       </Container>
     )

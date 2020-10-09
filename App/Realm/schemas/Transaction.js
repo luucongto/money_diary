@@ -1,3 +1,5 @@
+
+import Realm from 'realm'
 const schema = {
   name: 'Transaction',
   primaryKey: 'id',
@@ -12,8 +14,11 @@ const schema = {
     category: { type: 'int', default: 0 },
     wallet: { type: 'int', default: 0 },
     event: { type: 'string', default: '' },
-    include: { type: 'bool', default: true }
+    include: { type: 'bool', default: true },
+    deleted: { type: 'bool', default: false }
   }
 }
 
-export default schema
+export default class Transaction extends Realm.Object {
+  static schema = schema
+}

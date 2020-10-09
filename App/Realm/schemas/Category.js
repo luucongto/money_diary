@@ -1,3 +1,4 @@
+import Realm from 'realm'
 const schema = {
   name: 'Category',
   primaryKey: 'id',
@@ -8,5 +9,7 @@ const schema = {
     color: { type: 'string', default: '' }
   }
 }
-
-export default schema
+class Category extends Realm.Object {
+  static schema = schema
+}
+export default Category

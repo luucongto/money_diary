@@ -25,7 +25,7 @@ class Category extends RealmWrapper {
 
   static calculate = (item: any) => {
     const category = item.id
-    const transactions = Transaction.find({ category })
+    const transactions = Transaction.getBy({ category })
     const result = {
       amount: 0,
       income: 0,

@@ -37,12 +37,12 @@ class RealmWrapper {
     const className = this
     let objects = []
     if (!conditions) {
-      objects = realm.objects(className.schema.name)
+      objects = realm.objects(className.schema)
     } else {
       if (typeof (conditions) === 'object') {
-        objects = realm.objects(className.schema.name).filtered(className._buildFilter(conditions), {})
+        objects = realm.objects(className.schema).filtered(className._buildFilter(conditions), {})
       } else {
-        objects = realm.objects(className.schema.name).filtered(conditions, {})
+        objects = realm.objects(className.schema).filtered(conditions, {})
       }
     }
     // set find option
@@ -107,7 +107,7 @@ class RealmWrapper {
       let o = null
       const action = () => {
         params = className.beforeInsert(params)
-        o = className.realm.create(className.schema.name, params, true)
+        o = className.realm.create(className.schema, params, true)
         o = className.afterInsert(o)
       }
       if (inTx) {
@@ -151,7 +151,7 @@ class RealmWrapper {
     if (_.isEmpty(modifier)) return false
     modifier = className.beforeUpdate(modifier)
     if (_.isEmpty(modifier)) return false
-    let objects = className.realm.objects(className.schema.name)
+    let objects = className.realm.objects(className.schema)
     if (!_.isEmpty(filter)) {
       const filterStr = className._buildFilter(filter)
       if (filterStr) {
@@ -183,7 +183,7 @@ class RealmWrapper {
 
   static remove (filter = {}, inTx = false) {
     var className = this
-    let objects = className.realm.objects(className.schema.name)
+    let objects = className.realm.objects(className.schema)
     if (!_.isEmpty(filter)) {
       const filterStr = className._buildFilter(filter)
       if (filterStr) {
