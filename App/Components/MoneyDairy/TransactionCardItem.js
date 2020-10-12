@@ -9,15 +9,49 @@ import autoBind from 'react-autobind'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import dayjs from 'dayjs'
 import Category from '../../Realm/Category'
+import Transaction from '../../Realm/Transaction'
 class TransactionCardItem extends PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {
+      transaction: this.props.transaction
+    }
+  }
+
   delete () {
-    this.props.transactionDeleteRequest({ id: this.props.transaction.id })
-    this.props.refresh()
+    const transaction = this.state.transaction
+    Transaction.update({
+      id: transaction.id
+    }, {
+      deleted: true
+    })
+    this.setState({
+      transaction: {
+        ...this.state.transaction,
+        deleted: true
+      }
+    })
+  }
+
+  toggleCheckInclude () {
+    Utils.log('toggleCheckInclude')
+    const transaction = this.state.transaction
+    Transaction.update({
+      id: transaction.id
+    }, {
+      include: !transaction.include
+    })
+    this.setState({
+      transaction: {
+        ...this.state.transaction,
+        include: !transaction.include
+      }
+    })
   }
 
   render () {
-    const transaction = this.props.transaction
-    if (!transaction) return null
+    const transaction = this.state.transaction
+    if (!transaction || transaction.deleted) return null
     const wallet = this.props.wallet
     if (!wallet) return null
     const category = this.props.category
@@ -26,7 +60,7 @@ class TransactionCardItem extends PureComponent {
     const height = 100
     const margin = 10
     return (
-      <FadeComponent fadeInTime={300 + this.props.index * 100} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, height }}>
+      <FadeComponent fadeInTime={300 + (this.props.index % 20) * 100} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, height }}>
         <View style={{
           backgroundColor: 'white',
           flexDirection: 'row',
@@ -47,6 +81,7 @@ class TransactionCardItem extends PureComponent {
           />
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Text style={[Fonts.style.h5]}>
+              <Icon name={transaction.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: transaction.include ? 'green' : 'gray' }} onPress={() => this.toggleCheckInclude()} />
               {category.label}
             </Text>
 
@@ -80,20 +115,27 @@ class TransactionCardAddComponent extends PureComponent {
       amount: 0,
       categoryId: categories[0],
       categories,
+      isIncome: false,
       note: ''
     }
     autoBind(this)
   }
 
   transactionCreate (transaction) {
-    this.props.transactionCreateRequest(transaction)
+    if (transaction.amount !== 0) {
+      this.props.transactionCreateRequest(transaction)
+    }
+
+    if (this.props.callback) {
+      this.props.callback(transaction)
+    }
   }
 
   create () {
     const data = {
       wallet: this.props.walletId,
       category: this.state.categoryId,
-      amount: this.state.amount || 0,
+      amount: (this.state.isIncome ? 1 : -1) * Math.abs(this.state.amount || 0),
       date: dayjs().unix(),
       note: this.state.note,
       include: true
@@ -108,6 +150,12 @@ class TransactionCardAddComponent extends PureComponent {
   onValueChangeCategory (categoryId) {
     this.setState({
       categoryId
+    })
+  }
+
+  toggleCheckIncome () {
+    this.setState({
+      isIncome: !this.state.isIncome
     })
   }
 
@@ -155,7 +203,8 @@ class TransactionCardAddComponent extends PureComponent {
               <Input label={I18n.t('note')} placeholder={I18n.t('note')} value={this.state.note} onChangeText={note => this.setState({ note })} />
             </Item>
             <Item inlineLabel>
-              <Input label={I18n.t('amount')} placeholder={I18n.t('amount')} value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
+              <Icon name={this.state.isIncome ? 'plussquareo' : 'minussquareo'} type='AntDesign' style={{ color: this.state.isIncome ? 'green' : 'red' }} onPress={() => this.toggleCheckIncome()} />
+              <Input label={I18n.t('amount')} style={{ color: this.state.isIncome ? 'green' : 'red' }} placeholder={I18n.t('amount')} value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
             </Item>
           </Body>
           <View style={{

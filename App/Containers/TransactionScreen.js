@@ -45,37 +45,6 @@ class TransactionScreen extends Component {
     this.refreshTransactions()
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.transactions) {
-      this.setState({ items: this._groupTransactionByDate(nextProps.transactions) })
-    }
-    if (nextProps.categories !== this.state.categories) {
-      const categories = nextProps.categories
-      const categoryMapping = Utils.createMapFromArray(categories, 'id')
-      this.setState({ categories, categoryMapping })
-    }
-    if (nextProps.wallets !== this.state.wallets) {
-      const wallets = nextProps.wallets
-      const walletMapping = Utils.createMapFromArray(wallets, 'id')
-      this.setState({ wallets, walletMapping })
-    }
-  }
-
-  _groupTransactionByDate (items) {
-    const result = []
-    const groups = _.groupBy(items, item => Utils.getDateFromUnix(item.date))
-    _.each(groups, (v, k) => {
-      let amount = 0
-      v.forEach(item => { amount += item.amount })
-      result.push({
-        title: k,
-        amount,
-        data: v
-      })
-    })
-    return result
-  }
-
   refreshTransactions () {
     const findConditions = { ...this.props?.route?.params }
     if (this.state.wallet && this.state.wallet.id) {
@@ -85,7 +54,6 @@ class TransactionScreen extends Component {
       findConditions.category = this.state.category.id
     }
 
-    Utils.log('transactionScreen findConditions', findConditions)
     this.props.transactionRequest(findConditions)
   }
 
@@ -109,7 +77,6 @@ class TransactionScreen extends Component {
   }
 
   renderPhone () {
-    Utils.log('items', this.state.items, this.state.walletMapping)
     const amount = this.state.wallet ? this.state.wallet.amount : 0
     return (
       <Container>
@@ -136,6 +103,7 @@ class TransactionScreen extends Component {
           wallet={this.state.wallet ? this.state.wallet.id : 0}
           isThisTabVisible
           tab={null}
+          refreshTransactions={this.refreshTransactions}
           openTransactionDetailModal={this.openTransactionDetailModal}
         />
       </Container>

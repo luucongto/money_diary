@@ -3,6 +3,7 @@ import schema from './schemas/Wallet'
 import RealmWrapper from './RealmWrapper'
 import Transaction from './Transaction'
 import _ from 'lodash'
+import Utils from '../Utils/Utils'
 class Wallet extends RealmWrapper {
   static schema = schema
   static initializeDatas = () => {
@@ -28,7 +29,7 @@ class Wallet extends RealmWrapper {
   static findOneWithAmount = (id: number) => {
     const wallet = Wallet.findOne({ id })
     const amounts = Wallet.calculate(id)
-    return { ...wallet, ...amounts }
+    return { ...Utils.clone(wallet), ...amounts }
   }
 
   static calculate = (id: number) => {

@@ -1,13 +1,41 @@
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
-import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form } from 'native-base'
+import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Row, Col } from 'native-base'
 import Utils from '../../Utils/Utils'
 import { Fonts } from '../../Themes'
 import I18n from '../../I18n'
 import FadeComponent from './FadeComponent'
 import autoBind from 'react-autobind'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TransactionCardAddComponent } from './TransactionCardItem'
 class WalletItem extends PureComponent {
+  constructor (props) {
+    super(props)
+    this.state = {
+      togglePanel: false
+    }
+  }
+
+  toggleAddTransactionPanel () {
+    this.setState({
+      togglePanel: !this.state.togglePanel
+    })
+  }
+
+  _renderAddTransactionPanen () {
+    return (
+      <TransactionCardAddComponent
+        transactionCreateRequest={this.props.transactionCreateRequest}
+        wallet={this.props.item}
+        walletId={this.props.item.id}
+        callback={() => {
+          this.toggleAddTransactionPanel()
+          this.props.refresh()
+        }}
+      />
+    )
+  }
+
   render () {
     const wallet = this.props.item
     if (!wallet) return null
@@ -27,11 +55,31 @@ class WalletItem extends PureComponent {
         }}
         >
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <Text style={[Fonts.style.h3, { color: '#0096c7' }]}>
-              {wallet.label}
-            </Text>
-            <Text style={{ ...Fonts.style.h5, marginTop: 10, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
-            {wallet.count > 0 && <Text note>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
+            <Grid>
+              <Col>
+                <Row style={{ height: 50 }}>
+                  <Text style={[Fonts.style.h3, { color: '#0096c7', alignSelf: 'flex-end' }]}>
+                    {wallet.label}
+                  </Text>
+                </Row>
+                <Row>
+                  <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}>đ {Utils.numberWithCommas(amount)}</Text>
+                </Row>
+              </Col>
+              <Col style={{ alignItems: 'flex-end' }}>
+                <Row style={{ height: 50 }}>
+                  <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
+                    <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> đ {Utils.numberWithCommas(wallet.income)}
+                  </Text>
+                </Row>
+                <Row>
+                  <Text note style={{ color: 'red', alignSelf: 'flex-start' }}>
+                    <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} /> đ{Utils.numberWithCommas(wallet.outcome)}
+                  </Text>
+                </Row>
+              </Col>
+            </Grid>
+            {wallet.count > 0 && <Text note style={{ marginBottom: 10 }}>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
           </Body>
           <View style={{
             flexDirection: 'column',
@@ -40,13 +88,15 @@ class WalletItem extends PureComponent {
           }}
           >
             <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
-              <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'gray', alignSelf: 'center' }} />
+              <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
-              <Icon name='plus' type='FontAwesome' style={{ alignSelf: 'center', color: 'gray' }} />
+            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.toggleAddTransactionPanel()}>
+              <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
             </TouchableOpacity>
           </View>
+
         </View>
+        {this.state.togglePanel && this._renderAddTransactionPanen()}
       </FadeComponent>
     )
   }

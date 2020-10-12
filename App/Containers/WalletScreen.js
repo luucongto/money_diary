@@ -8,6 +8,7 @@ import { RefreshControl } from 'react-native'
 import { WalletItem, WalletAddComponent } from '../Components/MoneyDairy/WalletItem'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Wallet } from '../Realm'
+import TransactionRedux from '../Redux/TransactionRedux'
 import WalletRedux from '../Redux/WalletRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
@@ -23,6 +24,10 @@ class WalletScreen extends Component {
     autoBind(this)
   }
 
+  shouldComponentUpdate (props) {
+    return props.isFocused
+  }
+
   componentDidMount () {
     this.refresh()
   }
@@ -30,7 +35,7 @@ class WalletScreen extends Component {
   componentWillReceiveProps (nextProps) {
     Utils.log('Wallet', nextProps)
     const prevProps = this.props
-    if (prevProps.isFocused !== nextProps.isFocused || prevProps.walletObjects !== nextProps.walletObjects) {
+    if ((nextProps.isFocused && prevProps.isFocused !== nextProps.isFocused) || prevProps.walletObjects !== nextProps.walletObjects) {
       this.refresh()
     }
   }
@@ -53,7 +58,11 @@ class WalletScreen extends Component {
   renderPhone () {
     const renderItems = this.state.wallets.map((item, index) => {
       return (
-        <WalletItem key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)} />
+        <WalletItem
+          key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
+          transactionCreateRequest={this.props.transactionCreateRequest}
+          refresh={() => this.refresh()}
+        />
       )
     })
     return (
@@ -61,7 +70,7 @@ class WalletScreen extends Component {
         <ScreenHeader navigation={this.props.navigation} title='Wallet' />
         <Content
           refreshControl={
-            <RefreshControl refreshing={this.props.fetching} onRefresh={this.refresh.bind(this)} />
+            <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }
           style={{
             paddingTop: 10,
@@ -99,7 +108,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params))
+    walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params)),
+    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
   }
 }
 const screenHook = Screen(WalletScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])

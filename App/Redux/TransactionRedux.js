@@ -39,6 +39,7 @@ export const INITIAL_STATE = Immutable({
 
 export const transactionRequest = (state, { params }) => state.merge({ fetching: true, params: params })
 export const transactionSuccess = (state, { data }) => {
+  data = Utils.clone(data)
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
 

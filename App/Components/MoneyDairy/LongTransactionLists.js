@@ -1,15 +1,14 @@
+import { Body, Container, Content, ListItem, Right, Text } from 'native-base'
+import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { SectionList, RefreshControl } from 'react-native'
-import { Container, Content, ListItem, Text, Right, Body, View, Left } from 'native-base'
+import autoBind from 'react-autobind'
+import { FlatList, RefreshControl } from 'react-native'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import TransactionComponent from './TransactionComponent'
-import { TransactionCardItem, TransactionCardAddComponent } from './TransactionCardItem'
-import autoBind from 'react-autobind'
-import _ from 'lodash'
-import PropTypes from 'prop-types'
+import { TransactionCardAddComponent, TransactionCardItem } from './TransactionCardItem'
+
 class TransactionList extends Component {
   propTypes = {
     transaction: PropTypes.object.isRequired,
@@ -28,7 +27,7 @@ class TransactionList extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      items: [],
+      renderItems: [],
       amount: 0,
       income: 0,
       outcome: 0,
@@ -37,63 +36,16 @@ class TransactionList extends Component {
     autoBind(this)
   }
 
-  componentDidMount () {
-    if (this.props.isThisTabVisible) {
-      this.refresh()
-    }
-  }
-
-  shouldComponentUpdate (nextProps) {
-    return nextProps.isThisTabVisible || (this.props.tab && nextProps.transactionParams === this.props.tab.key)
-  }
-
   componentWillReceiveProps (nextProps) {
-    if (!this.shouldComponentUpdate(nextProps)) {
-      return
-    }
-    const prevProps = this.props
-    if (prevProps.tab !== nextProps.tab) {
-      this.refresh()
-    } else if (!prevProps.isThisTabVisible && nextProps.isThisTabVisible) {
-      this.refresh()
-    } else if (prevProps.transactionUpdateObjects !== nextProps.transactionUpdateObjects && !_.isEmpty(nextProps.transactionUpdateObjects)) {
-      this.refresh()
-    } else if (prevProps.transactionDeleteObjects !== nextProps.transactionDeleteObjects && !_.isEmpty(nextProps.transactionDeleteObjects)) {
-      this.refresh()
-    } else if (prevProps.wallet !== nextProps.wallet) {
-      this.refresh(nextProps.wallet)
-    }
-    const transactions = nextProps.transactions
-    let income = 0
-    let outcome = 0
-    transactions.forEach(transaction => {
-      income += (transaction.include && transaction.amount > 0) ? transaction.amount : 0
-      outcome += (transaction.include && transaction.amount < 0) ? transaction.amount : 0
-    })
-    this.setState({ transactions: transactions.slice(0, 20), items: this._groupTransactionByDate(transactions), amount: income + outcome, income, outcome })
-  }
-
-  _groupTransactionByDate (items) {
-    const result = []
-    const groups = _.groupBy(items, item => Utils.getDateFromUnix(item.date))
-    _.each(groups, (v, k) => {
-      let amount = 0
-      v.forEach(item => { amount += item.amount })
-      result.push({
-        title: k,
-        amount,
-        data: v
+    if (nextProps.transactions !== this.props.transactions) {
+      this.setState({
+        renderItems: nextProps.transactions.slice(0, 20) || []
       })
-    })
-    return result
+    }
   }
 
-  refresh (wallet = this.props.wallet) {
-    const query = { wallet }
-    if (this.props.tab) {
-      query.month = this.props.tab.key
-    }
-    this.props.transactionRequest(query)
+  refresh () {
+    this.props.refreshTransactions()
   }
 
   _renderItem (item, index) {
@@ -106,6 +58,7 @@ class TransactionList extends Component {
         category={this.props.categoryMapping[item.category]}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
         transactionDeleteRequest={this.props.transactionDeleteRequest}
+        transactionUpdateRequest={this.props.transactionUpdateRequest}
         refresh={this.refresh}
       />)
 
@@ -114,36 +67,46 @@ class TransactionList extends Component {
 
   renderPhone () {
     const { amount, income, outcome } = this.state
-    const transactions = this.state.transactions || []
+    const transactions = this.state.renderItems || []
     return (
       <Container>
-        <Content
+        <ListItem noIndent>
+          <Body>
+            <Text>Total</Text>
+            <Text note style={{ color: income > 0 ? 'green' : 'red' }}>Income {Utils.numberWithCommas(income)}</Text>
+            <Text note style={{ color: outcome > 0 ? 'green' : 'red' }}>Outcome {Utils.numberWithCommas(outcome)}</Text>
+          </Body>
+          <Right>
+            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
+          </Right>
+        </ListItem>
+        <TransactionCardAddComponent
+          transactionCreateRequest={this.props.transactionCreateRequest}
+          wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category}
+        />
+
+        <FlatList
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }
-          style={{
-            backgroundColor: '#f0efeb'
+          data={transactions}
+          renderItem={({ item, index }) => this._renderItem(item, index)}
+          keyExtractor={(item) => item.id}
+          onEndReachedThreshold={0.05}
+          getItemLayout={(data, index) => (
+            { length: 160, offset: 160 * index, index }
+          )}
+          initialNumToRender={10}
+          onEndReached={() => {
+            if (this.state.renderItems.length < this.props.transactions.length) {
+              Utils.log('onEndReached', this.state.renderItems.length)
+              this.setState({
+                renderItems: this.props.transactions.slice(0, this.state.renderItems.length + 20)
+              })
+            }
           }}
-        >
-          <ListItem noIndent>
-            <Body>
-              <Text>Total</Text>
-              <Text note style={{ color: income > 0 ? 'green' : 'red' }}>Income {Utils.numberWithCommas(income)}</Text>
-              <Text note style={{ color: outcome > 0 ? 'green' : 'red' }}>Outcome {Utils.numberWithCommas(outcome)}</Text>
-            </Body>
-            <Right>
-              <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
-            </Right>
-          </ListItem>
-          <TransactionCardAddComponent
-            transactionCreateRequest={this.props.transactionCreateRequest}
-            wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category}
-          />
-          {
-            transactions.map((item, index) => this._renderItem(item, index))
-          }
+        />
 
-        </Content>
       </Container>
     )
   }
