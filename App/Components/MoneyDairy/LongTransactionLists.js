@@ -7,7 +7,8 @@ import { FlatList, RefreshControl } from 'react-native'
 import Utils from '../../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import { TransactionCardAddComponent, TransactionCardItem } from './TransactionCardItem'
+import _ from 'lodash'
+import { TransactionCardAddComponent, TransactionCardItem, TransactionMonthTag } from './TransactionCardItem'
 
 class TransactionList extends Component {
   propTypes = {
@@ -27,7 +28,10 @@ class TransactionList extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      renderItems: [],
+      renderItems: [{
+        type: 'addnew'
+      }],
+      stickIndices: [0],
       amount: 0,
       income: 0,
       outcome: 0,
@@ -36,11 +40,44 @@ class TransactionList extends Component {
     autoBind(this)
   }
 
+  componentDidMount () {
+    this.setState(this.appendData(this.props.transactions))
+  }
+
   componentWillReceiveProps (nextProps) {
     if (nextProps.transactions !== this.props.transactions) {
-      this.setState({
-        renderItems: nextProps.transactions.slice(0, 20) || []
+      this.setState(this.appendData(nextProps.transactions))
+    }
+  }
+
+  appendData (transactions) {
+    let result = [{
+      type: 'addnew'
+    }]
+    const stickIndices = [0]
+    const renderItems = transactions.slice(0, this.state.renderItems.length + 20)
+    const groups = _.groupBy(renderItems, item => item.monthTag)
+    Utils.log('groups', groups)
+    _.each(groups, (items, monthTag) => {
+      const monthTagItem = {
+        type: 'monthTag',
+        title: monthTag,
+        income: 0,
+        outcome: 0
+      }
+      items.forEach(item => {
+        monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
+        monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
       })
+      monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
+      result.push(monthTagItem)
+      stickIndices.push(result.length - 1)
+      result = result.concat(items)
+    })
+
+    return {
+      renderItems: result,
+      stickIndices
     }
   }
 
@@ -49,6 +86,22 @@ class TransactionList extends Component {
   }
 
   _renderItem (item, index) {
+    if (index === 0) {
+      return (
+        <TransactionCardAddComponent
+          transactionCreateRequest={this.props.transactionCreateRequest}
+          wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category}
+          callback={() => this.refresh()}
+        />
+      )
+    }
+    if (item.type === 'monthTag') {
+      return (
+        <TransactionMonthTag
+          {...item}
+        />
+      )
+    }
     const itemView = (
       <TransactionCardItem
         key={item.id}
@@ -66,24 +119,10 @@ class TransactionList extends Component {
   }
 
   renderPhone () {
-    const { amount, income, outcome } = this.state
     const transactions = this.state.renderItems || []
+    Utils.log('transactions', transactions, this.state.stickIndices)
     return (
       <Container>
-        <ListItem noIndent>
-          <Body>
-            <Text>Total</Text>
-            <Text note style={{ color: income > 0 ? 'green' : 'red' }}>Income {Utils.numberWithCommas(income)}</Text>
-            <Text note style={{ color: outcome > 0 ? 'green' : 'red' }}>Outcome {Utils.numberWithCommas(outcome)}</Text>
-          </Body>
-          <Right>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
-          </Right>
-        </ListItem>
-        <TransactionCardAddComponent
-          transactionCreateRequest={this.props.transactionCreateRequest}
-          wallet={this.props.walletMapping[this.props.wallet]} walletId={this.props.wallet} category={this.props.category}
-        />
 
         <FlatList
           refreshControl={
@@ -96,15 +135,13 @@ class TransactionList extends Component {
           getItemLayout={(data, index) => (
             { length: 160, offset: 160 * index, index }
           )}
-          initialNumToRender={10}
-          onEndReached={() => {
-            if (this.state.renderItems.length < this.props.transactions.length) {
-              Utils.log('onEndReached', this.state.renderItems.length)
-              this.setState({
-                renderItems: this.props.transactions.slice(0, this.state.renderItems.length + 20)
-              })
-            }
-          }}
+          stickyHeaderIndices={this.state.stickIndices}
+          // onEndReached={() => {
+          //   if (this.state.renderItems.length < this.props.transactions.length) {
+          //     Utils.log('onEndReached', this.state.renderItems.length)
+          //     this.setState(this.appendData(this.props.transactions))
+          //   }
+          // }}
         />
 
       </Container>

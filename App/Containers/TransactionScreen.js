@@ -15,7 +15,8 @@ class TransactionScreen extends Component {
     super(props)
     Utils.log('TransactionScreen props?.route?.params', props?.route?.params)
     const { wallet, category, useWalletTitle, walletId, categoryId } = props?.route?.params
-    const { wallets, categories } = this.props
+    const wallets = Wallet.find()
+    const categories = Category.find()
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
     const categoryMapping = Utils.createMapFromArray(categories, 'id')
     this.state = {
@@ -37,11 +38,6 @@ class TransactionScreen extends Component {
   }
 
   componentDidMount () {
-    const wallets = Wallet.find()
-    const categories = Category.find()
-    const walletMapping = Utils.createMapFromArray(wallets, 'id')
-    const categoryMapping = Utils.createMapFromArray(categories, 'id')
-    this.setState({ wallets, categories, walletMapping, categoryMapping })
     this.refreshTransactions()
   }
 

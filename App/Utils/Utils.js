@@ -46,7 +46,7 @@ export default {
   getDate (time) {
     return dayjs(time).format('YYYY-MM-DD')
   },
-  getMonth (timestamp) {
+  getMonth (timestamp = dayjs().unix()) {
     return dayjs.unix(timestamp).format('YYYY-MM')
   },
   getQuarter (timestamp) {

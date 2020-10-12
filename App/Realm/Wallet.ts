@@ -37,6 +37,7 @@ class Wallet extends RealmWrapper {
     if (!id) {
       transactions = Transaction.getBy()
     }
+    const currentMonthTag = Utils.getMonth()
     const result = {
       amount: 0,
       income: 0,
@@ -47,7 +48,7 @@ class Wallet extends RealmWrapper {
     _.forEach(transactions, transaction => {
       result.lastUpdate = result.lastUpdate < transaction.date ? transaction.date : result.lastUpdate
       result.amount = result.amount + transaction.amount
-      if (transaction.include) {
+      if (transaction.include && transaction.monthTag === currentMonthTag) {
         if (transaction.amount > 0) {
           result.income += transaction.amount
         } else {

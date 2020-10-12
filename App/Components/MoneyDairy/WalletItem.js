@@ -40,6 +40,7 @@ class WalletItem extends PureComponent {
     const wallet = this.props.item
     if (!wallet) return null
     const amount = wallet.amount
+    const font = wallet.label.length > 8 ? Fonts.style.h6 : Fonts.style.h3
     return (
       <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
@@ -58,7 +59,7 @@ class WalletItem extends PureComponent {
             <Grid>
               <Col>
                 <Row style={{ height: 50 }}>
-                  <Text style={[Fonts.style.h3, { color: '#0096c7', alignSelf: 'flex-end' }]}>
+                  <Text style={[font, { color: '#0096c7', alignSelf: 'flex-end' }]}>
                     {wallet.label}
                   </Text>
                 </Row>
@@ -67,7 +68,12 @@ class WalletItem extends PureComponent {
                 </Row>
               </Col>
               <Col style={{ alignItems: 'flex-end' }}>
-                <Row style={{ height: 50 }}>
+                <Row>
+                  <Text note style={{ color: 'blue', alignSelf: 'flex-end' }}>
+                    {I18n.t('report_this_month')}
+                  </Text>
+                </Row>
+                <Row style={{ height: 20 }}>
                   <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
                     <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> đ {Utils.numberWithCommas(wallet.income)}
                   </Text>
@@ -84,15 +90,19 @@ class WalletItem extends PureComponent {
           <View style={{
             flexDirection: 'column',
             justifyContent: 'space-between',
+            alignItems: 'center',
             alignSelf: 'flex-end'
           }}
           >
             <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
               <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.toggleAddTransactionPanel()}>
-              <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
-            </TouchableOpacity>
+            {
+              wallet.id > 0 && (
+                <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.toggleAddTransactionPanel()}>
+                  <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
+                </TouchableOpacity>)
+            }
           </View>
 
         </View>

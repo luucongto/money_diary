@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
-import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Col } from 'native-base'
+import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Col, Row } from 'native-base'
 import Utils from '../../Utils/Utils'
 import { Fonts } from '../../Themes'
 import I18n from '../../I18n'
@@ -107,6 +107,43 @@ class TransactionCardItem extends PureComponent {
   }
 }
 
+class TransactionMonthTag extends PureComponent {
+  render () {
+    const { title, amount, income, outcome } = this.props
+    return (
+      <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+        <View style={{
+          flexDirection: 'row',
+          backgroundColor: 'white',
+          borderBottomColor: 'gray',
+          borderBottomWidth: 1,
+          paddingHorizontal: 25,
+          height: 70,
+          overflow: 'hidden',
+          justifyContent: 'center'
+        }}
+        >
+          <Body style={{ justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'flex-start' }}>
+            <Col>
+              <Text style={[Fonts.style.h5, { color: '#0096c7', alignSelf: 'flex-start' }]}>
+                {title}
+              </Text>
+              <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}>đ {Utils.numberWithCommas(amount)}</Text>
+            </Col>
+            <Col style={{ justifyContent: 'center', paddingTop: 10 }}>
+              <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
+                <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> đ {Utils.numberWithCommas(income)}
+              </Text>
+              <Text note style={{ color: 'red', alignSelf: 'flex-end' }}>
+                <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} /> đ{Utils.numberWithCommas(outcome)}
+              </Text>
+            </Col>
+          </Body>
+        </View>
+      </FadeComponent>
+    )
+  }
+}
 class TransactionCardAddComponent extends PureComponent {
   constructor (props) {
     super(props)
@@ -225,5 +262,6 @@ class TransactionCardAddComponent extends PureComponent {
 
 module.exports = {
   TransactionCardItem,
-  TransactionCardAddComponent
+  TransactionCardAddComponent,
+  TransactionMonthTag
 }
