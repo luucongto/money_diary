@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { Text, View } from 'react-native'
 import { connect } from 'react-redux'
 // import DevscreensButton from '../../ignite/DevScreens/DevscreensButton.js'
-import WalletRedux from '../Redux/WalletRedux'
-import CategoryRedux from '../Redux/CategoryRedux'
+
 // import { Images, Metrics } from '../Themes'
 
 import I18n from 'react-native-i18n'
@@ -23,8 +22,6 @@ class LaunchScreen extends Component {
   }
 
   componentDidMount () {
-    this.props.categoryRequest()
-    this.props.walletRequest()
     this.checkStartUpAndGoNext()
   }
 
@@ -65,8 +62,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    categoryRequest: (params) => dispatch(CategoryRedux.categoryRequest(params)),
-    walletRequest: (params) => dispatch(WalletRedux.walletRequest(params))
+
   }
 }
 

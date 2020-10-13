@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Col, Row } from 'native-base'
 import Utils from '../../Utils/Utils'
-import { Fonts } from '../../Themes'
+import { Colors, Fonts } from '../../Themes'
 import I18n from '../../I18n'
 import FadeComponent from './FadeComponent'
 import autoBind from 'react-autobind'
@@ -81,8 +81,7 @@ class TransactionCardItem extends PureComponent {
           />
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Text style={[Fonts.style.h5]}>
-              <Icon name={transaction.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: transaction.include ? 'green' : 'gray' }} onPress={() => this.toggleCheckInclude()} />
-              {category.label}
+              <Icon name={transaction.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: transaction.include ? 'green' : 'gray' }} onPress={() => this.toggleCheckInclude()} />  {category.label}
             </Text>
 
             <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
@@ -114,7 +113,7 @@ class TransactionMonthTag extends PureComponent {
       <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
           flexDirection: 'row',
-          backgroundColor: 'white',
+          backgroundColor: Colors.listBackground,
           borderBottomColor: 'gray',
           borderBottomWidth: 1,
           paddingHorizontal: 25,
@@ -132,10 +131,10 @@ class TransactionMonthTag extends PureComponent {
             </Col>
             <Col style={{ justifyContent: 'center', paddingTop: 10 }}>
               <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
-                <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> đ {Utils.numberWithCommas(income)}
+              đ {Utils.numberWithCommas(income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
               </Text>
               <Text note style={{ color: 'red', alignSelf: 'flex-end' }}>
-                <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} /> đ{Utils.numberWithCommas(outcome)}
+                đ{Utils.numberWithCommas(outcome)} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
               </Text>
             </Col>
           </Body>
@@ -153,9 +152,16 @@ class TransactionCardAddComponent extends PureComponent {
       categoryId: categories[0],
       categories,
       isIncome: false,
+      include: true,
       note: ''
     }
     autoBind(this)
+  }
+
+  toggleCheckInclude () {
+    this.setState({
+      include: !this.state.include
+    })
   }
 
   transactionCreate (transaction) {
@@ -175,7 +181,7 @@ class TransactionCardAddComponent extends PureComponent {
       amount: (this.state.isIncome ? 1 : -1) * Math.abs(this.state.amount || 0),
       date: dayjs().unix(),
       note: this.state.note,
-      include: true
+      include: this.state.include
     }
     this.transactionCreate(data)
     this.setState({
@@ -222,7 +228,8 @@ class TransactionCardAddComponent extends PureComponent {
 
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Item inlineLabel>
-              <Label>Category</Label>
+              <Icon name={this.state.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: this.state.include ? 'green' : 'gray' }} onPress={() => this.toggleCheckInclude()} />
+              <Label>{I18n.t('category')}</Label>
               <Picker
                 mode='dropdown'
                 iosIcon={<Icon name='arrow-down' />}

@@ -60,7 +60,7 @@ class WalletItem extends PureComponent {
               <Col>
                 <Row style={{ height: 50 }}>
                   <Text style={[font, { color: '#0096c7', alignSelf: 'flex-end' }]}>
-                    {wallet.label}
+                    {wallet.id ? wallet.label : I18n.t(wallet.label)}
                   </Text>
                 </Row>
                 <Row>
@@ -75,12 +75,12 @@ class WalletItem extends PureComponent {
                 </Row>
                 <Row style={{ height: 20 }}>
                   <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
-                    <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> đ {Utils.numberWithCommas(wallet.income)}
+                    đ {Utils.numberWithCommas(wallet.income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
                   </Text>
                 </Row>
                 <Row>
                   <Text note style={{ color: 'red', alignSelf: 'flex-start' }}>
-                    <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} /> đ{Utils.numberWithCommas(wallet.outcome)}
+                    đ{Utils.numberWithCommas(wallet.outcome)} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
                   </Text>
                 </Row>
               </Col>

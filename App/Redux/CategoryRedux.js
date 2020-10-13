@@ -1,6 +1,7 @@
 
 import { createReducer, createActions } from 'reduxsauce'
 import Immutable from 'seamless-immutable'
+import Utils from '../Utils/Utils'
 
 /* ------------- Types and Action Creators ------------- */
 const actions = {
@@ -39,17 +40,16 @@ export const INITIAL_STATE = Immutable({
 
 export const categoryRequest = (state, { params }) => state.merge({ fetching: true, params: params })
 export const categorySuccess = (state, { data }) => {
+  data = Utils.clone(data)
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
 
   if (Array.isArray(data)) {
     data.forEach(element => {
       state = state.setIn(['objects', element.id], element)
-      state = state.setIn(['deleteObjects', element.id], element)
     })
   } else if (data && data.id) {
     state = state.setIn(['objects', data.id], data)
-    state = state.setIn(['deleteObjects', data.id], data)
   }
   state = state.setIn(['data'], data)
 
@@ -80,7 +80,7 @@ export const categoryDeleteSuccess = (state, { data }) => {
   return state
 }
 
-export const categoryFailure = (state, { error }) => state.merge({ fetching: false, error})
+export const categoryFailure = (state, { error }) => state.merge({ fetching: false, error })
 
 /* ------------- Hookup Reducers To Types ------------- */
 const types = { [Types.CATEGORY_FAILURE]: categoryFailure }

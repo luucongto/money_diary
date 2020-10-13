@@ -9,6 +9,7 @@ import Utils from '../../Utils/Utils'
 // import styles from './Styles/LaunchScreenStyles'
 import _ from 'lodash'
 import { TransactionCardAddComponent, TransactionCardItem, TransactionMonthTag } from './TransactionCardItem'
+import { Colors } from '../../Themes'
 
 class TransactionList extends Component {
   propTypes = {
@@ -125,6 +126,7 @@ class TransactionList extends Component {
       <Container>
 
         <FlatList
+          style={{ backgroundColor: Colors.listBackground, paddingTop: 10 }}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }

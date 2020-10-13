@@ -9,7 +9,7 @@ import Utils from '../Utils/Utils'
 import Screen from './Screen'
 import dayjs from 'dayjs'
 import I18n from '../I18n'
-
+const t = I18n.t
 class TransactionDetailScreen extends Component {
   constructor (props) {
     super(props)
@@ -114,25 +114,24 @@ class TransactionDetailScreen extends Component {
 
   renderPhone () {
     const transaction = this.state.transaction
-    const amount = this.state.amount
     const buttons = (
       <Grid style={{ padding: 20 }}>
         {transaction &&
           <Col size={0.35}>
             <Button success onPress={this.update.bind(this)}>
-              <Text>Update</Text>
+              <Text>{t('Update')}</Text>
             </Button>
           </Col>}
         {transaction &&
           <Col size={0.35}>
             <Button danger onPress={this.delete.bind(this)}>
-              <Text>Delete</Text>
+              <Text>{t('Delete')}</Text>
             </Button>
           </Col>}
         {!transaction &&
           <Col size={0.65}>
             <Button success onPress={this.create.bind()}>
-              <Text>Create</Text>
+              <Text>{t('Create')}</Text>
             </Button>
           </Col>}
         <Col size={0.35}>
@@ -156,7 +155,7 @@ class TransactionDetailScreen extends Component {
         <Content>
           <Form>
             <Item inlineLabel>
-              <Label>Date</Label>
+              <Label>{t('Date')}</Label>
               <DatePicker
                 style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
                 defaultDate={this.state.date}
@@ -177,7 +176,7 @@ class TransactionDetailScreen extends Component {
 
             </Item>
             <Item inlineLabel>
-              <Label>Category</Label>
+              <Label>{t('Category')}</Label>
               <Picker
                 mode='dropdown'
                 iosIcon={<Icon name='arrow-down' />}
@@ -192,7 +191,7 @@ class TransactionDetailScreen extends Component {
               </Picker>
             </Item>
             <Item inlineLabel>
-              <Label>Wallet</Label>
+              <Label>{t('Wallet')}</Label>
               <Picker
                 mode='dropdown'
                 iosIcon={<Icon name='arrow-down' />}
@@ -215,7 +214,7 @@ class TransactionDetailScreen extends Component {
               <Textarea placeholder={I18n.t('note')} multiline rowSpan={4} value={this.state.note} onChangeText={note => this.setState({ note })} />
             </Item>
             <Item inlineLabel style={{ height: 50 }}>
-              <Label>Included</Label>
+              <Label>{t('Included')}</Label>
               <Right>
                 <Switch
                   value={this.state.include} onValueChange={value => {

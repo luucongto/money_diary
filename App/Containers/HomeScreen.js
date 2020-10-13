@@ -1,5 +1,5 @@
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Container, Fab, Header, Icon, Item, Left, Right, View } from 'native-base'
+import { Body, Button, Container, Fab, Header, Icon, Item, Label, Left, Right, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { ActivityIndicator, Picker } from 'react-native'
@@ -22,7 +22,7 @@ class HomeScreen extends Component {
   constructor (props) {
     super(props)
     Utils.log('constructor Homescreen')
-    const wallets = Wallet.find()
+    const wallets = Wallet.findWithAmount()
     const categories = Category.find()
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
     const categoryMapping = Utils.createMapFromArray(categories, 'id')
@@ -47,24 +47,6 @@ class HomeScreen extends Component {
     Utils.log('componentDidmount Homescreen')
     this.props.categoryRequest()
     this.props.walletRequest()
-  }
-
-  static getDerivedStateFromProps (nextProps, state) {
-    if (!nextProps.isFocused) {
-      return state
-    }
-    const newState = {}
-    if (nextProps.categories.length) {
-      const categories = nextProps.categories
-      const categoryMapping = Utils.createMapFromArray(categories, 'id')
-      newState.categories = categories
-      newState.categoryMapping = categoryMapping
-    }
-    if (nextProps.wallets.length) {
-      newState.wallets = nextProps.wallets
-      newState.walletMapping = Utils.createMapFromArray(newState.wallets, 'id')
-    }
-    return { ...state, ...newState }
   }
 
   openTransactionDetailModal (transaction) {
@@ -169,11 +151,11 @@ class HomeScreen extends Component {
     let walletChoosing = null
     if (this.state.wallets) {
       walletChoosing = (
-        <Item picker>
+        <Item inlineLabel>
           <Picker
             mode='dropdown'
             iosIcon={<Icon name='arrow-down' />}
-            style={{ width: undefined }}
+            style={{ width: 280, color: '#0096c7' }}
             placeholder='Select Wallet'
             placeholderStyle={{ color: '#bfc6ea' }}
             placeholderIconColor='#007aff'
@@ -181,7 +163,7 @@ class HomeScreen extends Component {
             selectedValue={this.state.wallet}
             onValueChange={this.onValueChangeWallet.bind(this)}
           >
-            {this.state.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+            {this.state.wallets.map(item => <Picker.Item color='#0096c7' key={item.id} label={`${item.id === 0 ? I18n.t(item.label) : item.label} đ${Utils.numberWithCommas(item.amount)}`} value={item.id} />)}
           </Picker>
         </Item>
       )
@@ -196,14 +178,14 @@ class HomeScreen extends Component {
         >
           {this.calandarTypes.map(item => <Picker.Item style={{ width: 50 }} key={item} label={I18n.t(item)} value={item} />)}
         </Picker>
-        <Icon name='calendar' style={{ color: 'white', left: 5 }} />
+        <Icon name='calendar' style={{ color: '#0096c7', left: 5 }} />
       </Item>
     )
     return (
-      <Header style={{ backgroundColor: '#8F2000', paddingLeft: 0, paddingRight: 0 }}>
+      <Header style={{ backgroundColor: 'white', paddingLeft: 0, paddingRight: 0 }}>
         <Left>
           <Button transparent onPress={() => this.props.navigation.openDrawer()}>
-            <Icon name='menu' />
+            <Icon name='menu' style={{ color: '#0096c7' }} />
           </Button>
         </Left>
         <Body stye={{ justifyContent: 'center', alignItem: 'center' }}>
@@ -248,9 +230,7 @@ const mapStateToProps = (state) => {
     transactions: state.transaction.data,
     transactionParams: state.transaction.params,
     transactionUpdateObjects: state.transaction.updateObjects,
-    transactionDeleteObjects: state.transaction.deleteObjects,
-    categories: state.category.data,
-    wallets: state.wallet.data
+    transactionDeleteObjects: state.transaction.deleteObjects
   }
 }
 

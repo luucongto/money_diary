@@ -3,10 +3,10 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header, Spinner } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { PermissionsAndroid, Platform, ActivityIndicator } from 'react-native'
+import { PermissionsAndroid, Platform, ActivityIndicator, View } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import { Category, Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
@@ -16,6 +16,7 @@ import GDrive from '../Services/GDrive'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
+import ConfirmationButton from '../Components/ConfirmationButton'
 class SettingScreen extends Component {
   constructor (props) {
     super(props)
@@ -107,6 +108,7 @@ class SettingScreen extends Component {
   async getFileInfo () {
     try {
       Utils.log('getFileInfo')
+      await this.asyncSetState({ isGettingFile: true })
       const currentFileId = await this.getFileId()
       if (!currentFileId) {
         Utils.log('getFileInfo fileidnull')
@@ -114,7 +116,7 @@ class SettingScreen extends Component {
       }
 
       const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
-      await this.asyncSetState({ fileInfo })
+      await this.asyncSetState({ fileInfo, isGettingFile: false })
     } catch (error) {
       Utils.log('getFileInfoerror', error)
     }
@@ -237,15 +239,24 @@ class SettingScreen extends Component {
           <Text>Backup And Download</Text>
         </CardItem>
         <CardItem bordered>
-          <Body>
-            <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}` : 'No backup'}</Text>
-            <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
-          </Body>
-
+          {!this.state.isGettingFile && (
+            <Body>
+              <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}` : 'No backup'}</Text>
+              <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
+            </Body>)}
+          {this.state.isGettingFile && <Body><Spinner /></Body>}
         </CardItem>
         <CardItem bordered style={{ justifyContent: 'space-around' }}>
-          <Button info style={{ width: 150, justifyContent: 'center' }} onPress={() => this.backup()}><Text>{this.state.doingBackup ? 'Doing backup' : 'Backup'}</Text></Button>
-          <Button success style={{ width: 150, justifyContent: 'center' }} onPress={() => this.download()}><Text>{this.state.doingDownload ? 'Doing Download' : 'Download'}</Text></Button>
+          <ConfirmationButton
+            onConfirm={() => this.backup()}
+            buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>Backup</Text>)}
+            info
+          />
+          <ConfirmationButton
+            onConfirm={() => this.download()}
+            buttonContent={this.state.doingDownload ? <Spinner /> : (<Text>Download</Text>)}
+            success
+          />
         </CardItem>
       </Card>
     )
@@ -344,7 +355,7 @@ class SettingScreen extends Component {
         <ScreenHeader navigation={this.props.navigation} title='Setting' />
         <Content>
           {this._renderImportFromFile()}
-          {(!this.props.login || !this.state.isSignedIn) && this._renderLoginButton()}
+          {(!this.props.login) && this._renderLoginButton()}
           {this.props.login && this.state.isSignedIn && this._renderUser()}
           {this.props.login && this.state.isSignedIn && this._renderBackup()}
 

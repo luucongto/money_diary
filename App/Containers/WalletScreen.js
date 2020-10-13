@@ -8,11 +8,14 @@ import { RefreshControl } from 'react-native'
 import { WalletItem, WalletAddComponent } from '../Components/MoneyDairy/WalletItem'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Wallet } from '../Realm'
+import CategoryRedux from '../Redux/CategoryRedux'
 import TransactionRedux from '../Redux/TransactionRedux'
 import WalletRedux from '../Redux/WalletRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+import { Colors } from '../Themes'
+import I18n from '../I18n'
 class WalletScreen extends Component {
   constructor (props) {
     super(props)
@@ -29,6 +32,8 @@ class WalletScreen extends Component {
   }
 
   componentDidMount () {
+    this.props.categoryRequest()
+    this.props.walletRequest()
     this.refresh()
   }
 
@@ -67,14 +72,14 @@ class WalletScreen extends Component {
     })
     return (
       <Container>
-        <ScreenHeader navigation={this.props.navigation} title='Wallet' />
+        <ScreenHeader navigation={this.props.navigation} title={I18n.t('wallet')} />
         <Content
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }
           style={{
             paddingTop: 10,
-            backgroundColor: '#f0efeb'
+            backgroundColor: Colors.listBackground
           }}
         >
           {renderItems}
@@ -109,7 +114,9 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
+    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params)),
+    categoryRequest: (params) => dispatch(CategoryRedux.categoryRequest(params)),
+    walletRequest: (params) => dispatch(WalletRedux.walletRequest(params))
   }
 }
 const screenHook = Screen(WalletScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])

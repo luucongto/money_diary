@@ -1,6 +1,7 @@
 
 import { createReducer, createActions } from 'reduxsauce'
 import Immutable from 'seamless-immutable'
+import Utils from '../Utils/Utils'
 
 /* ------------- Types and Action Creators ------------- */
 const actions = {
@@ -39,6 +40,7 @@ export const INITIAL_STATE = Immutable({
 
 export const walletRequest = (state, { params }) => state.merge({ fetching: true, params: params })
 export const walletSuccess = (state, { data }) => {
+  data = Utils.clone(data)
   state = state.setIn(['fetching'], false)
   state = state.setIn(['error'], null)
 

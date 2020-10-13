@@ -1,18 +1,19 @@
-import React from 'react'
-import { Icon, Button, Text } from 'native-base'
-import { NavigationContainer } from '@react-navigation/native'
-import { createStackNavigator, CardStyleInterpolators } from '@react-navigation/stack'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import LaunchScreen from '../Containers/LaunchScreen'
-import HomeScreen from '../Containers/HomeScreen'
-import WalletScreen from '../Containers/WalletScreen'
+import { NavigationContainer } from '@react-navigation/native'
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
+import { Icon } from 'native-base'
+import React from 'react'
 import CategoryScreen from '../Containers/CategoryScreen'
+import HomeScreen from '../Containers/HomeScreen'
+import LaunchScreen from '../Containers/LaunchScreen'
 import SettingScreen from '../Containers/SettingScreen'
-import TransactionScreen from '../Containers/TransactionScreen'
 import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
 import TransactionReportScreen from '../Containers/TransactionReportScreen'
+import TransactionScreen from '../Containers/TransactionScreen'
+import WalletScreen from '../Containers/WalletScreen'
+import I18n from '../I18n'
+import Utils from '../Utils/Utils'
+
 const Drawer = createDrawerNavigator()
 const Stack = createStackNavigator()
 // const Tab = createBottomTabNavigator()
@@ -64,27 +65,28 @@ const Stack = createStackNavigator()
 function MainScreen () {
   return (
     <Drawer.Navigator
-      initialRouteName='Wallet'
+      initialRouteName={I18n.t('Wallet')}
       screenOptions={({ route }) => ({
         drawerIcon: ({ focused, color, size }) => {
           let iconName = 'ios-albums-outline'
+          Utils.log('============', route)
           switch (route.name) {
-            case 'Home':
+            case I18n.t('Home'):
               iconName = focused
                 ? 'home'
                 : 'home-outline'
               break
-            case 'Wallet':
+            case I18n.t('Wallet'):
               iconName = focused
                 ? 'wallet'
                 : 'wallet-outline'
               break
-            case 'Settings':
+            case I18n.t('Settings'):
               iconName = focused
                 ? 'settings'
                 : 'settings-outline'
               break
-            case 'Category':
+            case I18n.t('Category'):
               iconName = focused
                 ? 'pricetags'
                 : 'pricetags-outline'
@@ -95,12 +97,10 @@ function MainScreen () {
         }
       })}
     >
-      <Drawer.Screen
-        name='Home' component={HomeScreen}
-      />
-      <Drawer.Screen name='Wallet' component={WalletScreen} />
-      <Drawer.Screen name='Category' component={CategoryScreen} />
-      <Drawer.Screen name='Settings' component={SettingScreen} />
+      <Drawer.Screen tag='Home' name={I18n.t('Home')} component={HomeScreen} />
+      <Drawer.Screen tag='Wallet' name={I18n.t('Wallet')} component={WalletScreen} />
+      <Drawer.Screen tag='Category' name={I18n.t('Category')} component={CategoryScreen} />
+      <Drawer.Screen tag='Settings' name={I18n.t('Settings')} component={SettingScreen} />
     </Drawer.Navigator>
   )
 }

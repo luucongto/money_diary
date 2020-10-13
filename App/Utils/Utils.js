@@ -5,6 +5,22 @@ import _, { times } from 'lodash'
 var advancedFormat = require('dayjs/plugin/advancedFormat')
 dayjs.extend(advancedFormat)
 export default {
+  animatedParallelize (animations) {
+    const parallelize = (animations, cb) => {
+      cb?.onStart && cb.onStart()
+      const promises = animations.map(a => {
+        return new Promise(resolve => {
+          a.start(() => {
+            resolve()
+          })
+        })
+      })
+      return Promise.all(promises).then(() => {
+        cb?.onDone && cb.onDone()
+      })
+    }
+    return parallelize(animations)
+  },
   formatBytes (bytes, decimals = 2) {
     if (bytes === 0) return '0 Bytes'
 

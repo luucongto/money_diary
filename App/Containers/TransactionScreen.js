@@ -4,8 +4,10 @@ import { Body, Button, Container, Header, Icon, Right, Text, View } from 'native
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import I18n from '../I18n'
 import { Category, Wallet } from '../Realm'
 import TransactionRedux from '../Redux/TransactionRedux'
+import { Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
@@ -75,7 +77,7 @@ class TransactionScreen extends Component {
   renderPhone () {
     const amount = this.state.wallet ? this.state.wallet.amount : 0
     return (
-      <Container>
+      <Container style={{ backgroundColor: Colors.listBackground }}>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
           <View style={{ width: 60 }}>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
@@ -84,7 +86,7 @@ class TransactionScreen extends Component {
           </View>
           <Body>
             <Text>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Text>
-            <Text note>{this.state.items.length} days</Text>
+            <Text note>{this.props.transactions.length} {I18n.t('transactions')}</Text>
           </Body>
           <Right>
             <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>

@@ -26,5 +26,13 @@
   "copyright": "© 2019 by Company",
   "ctmonth": "View By Month",
   "ctquarter": "View By Quarter",
-  "ctyear": "View By Year"
+  "ctyear": "View By Year",
+  "amount": "Amount",
+  "note": "Note",
+  "transactions" : "Transactions",
+  "report_this_month": "Report This Month",
+  "last_update": "Last update",
+  "category": "Category",
+  "save": "Save"
+
 }
