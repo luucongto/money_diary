@@ -4,16 +4,16 @@ import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 export default class FadeComponent extends PureComponent {
   constructor (props) {
     super(props)
-    this.opacity = new Value(0)
+    this.opacity = new Value(1)
     this.transX = new Value(500)
   }
 
   _in () {
-    timing(this.opacity, {
-      duration: this.props.fadeInTime || 500,
-      toValue: 1,
-      easing: Easing.inOut(Easing.ease)
-    }).start()
+    // timing(this.opacity, {
+    //   duration: this.props.fadeInTime || 500,
+    //   toValue: 1,
+    //   easing: Easing.inOut(Easing.ease)
+    // }).start()
     timing(this.transX, {
       duration: this.props.fadeInTime || 500,
       toValue: 0,
@@ -22,11 +22,11 @@ export default class FadeComponent extends PureComponent {
   }
 
   _out () {
-    timing(this.opacity, {
-      duration: this.props.fadOutTime || 500,
-      toValue: 0,
-      easing: Easing.inOut(Easing.ease)
-    }).start()
+    // timing(this.opacity, {
+    //   duration: this.props.fadeInTime || 500,
+    //   toValue: 0,
+    //   easing: Easing.inOut(Easing.ease)
+    // }).start()
     timing(this.transX, {
       duration: this.props.fadeInTime || 500,
       toValue: 500,

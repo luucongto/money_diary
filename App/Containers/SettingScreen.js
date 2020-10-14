@@ -3,7 +3,7 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header, Spinner } from 'native-base'
+import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header, Spinner, Row } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { PermissionsAndroid, Platform, ActivityIndicator, View } from 'react-native'
@@ -17,6 +17,7 @@ import Utils from '../Utils/Utils'
 import Screen from './Screen'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import ConfirmationButton from '../Components/ConfirmationButton'
+import I18n from '../I18n'
 class SettingScreen extends Component {
   constructor (props) {
     super(props)
@@ -111,6 +112,7 @@ class SettingScreen extends Component {
       await this.asyncSetState({ isGettingFile: true })
       const currentFileId = await this.getFileId()
       if (!currentFileId) {
+        await this.asyncSetState({ isGettingFile: false })
         Utils.log('getFileInfo fileidnull')
         return null
       }
@@ -118,6 +120,7 @@ class SettingScreen extends Component {
       const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
       await this.asyncSetState({ fileInfo, isGettingFile: false })
     } catch (error) {
+      await this.asyncSetState({ isGettingFile: false })
       Utils.log('getFileInfoerror', error)
     }
   }
@@ -236,28 +239,31 @@ class SettingScreen extends Component {
     return (
       <Card>
         <CardItem header bordered>
-          <Text>Backup And Download</Text>
+          <Text>{I18n.t('Backup And Download')}</Text>
         </CardItem>
         <CardItem bordered>
+          {this.state.isGettingFile && <Row style={{ justifyContent: 'center' }}><Spinner /></Row>}
           {!this.state.isGettingFile && (
             <Body>
               <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}` : 'No backup'}</Text>
               <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
             </Body>)}
-          {this.state.isGettingFile && <Body><Spinner /></Body>}
+
         </CardItem>
-        <CardItem bordered style={{ justifyContent: 'space-around' }}>
-          <ConfirmationButton
-            onConfirm={() => this.backup()}
-            buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>Backup</Text>)}
-            info
-          />
-          <ConfirmationButton
-            onConfirm={() => this.download()}
-            buttonContent={this.state.doingDownload ? <Spinner /> : (<Text>Download</Text>)}
-            success
-          />
-        </CardItem>
+        {!this.state.isGettingFile && (
+          <CardItem bordered style={{ justifyContent: 'space-around' }}>
+            <ConfirmationButton
+              onConfirm={() => this.backup()}
+              buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>Backup</Text>)}
+              info
+            />
+            <ConfirmationButton
+              onConfirm={() => this.download()}
+              buttonContent={this.state.doingDownload ? <Spinner /> : (<Text>Download</Text>)}
+              success
+            />
+          </CardItem>
+        )}
       </Card>
     )
   }

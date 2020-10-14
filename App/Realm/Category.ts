@@ -28,20 +28,18 @@ class Category extends RealmWrapper {
     const transactions = Transaction.getBy({ category })
     const result = {
       amount: 0,
-      income: 0,
-      outcome: 0
+      includeAmount: 0,
+      count: transactions.length,
+      includeCount: 0
     }
     forEach(transactions, transaction => {
       result.amount = result.amount + transaction.amount
       if (transaction.include) {
-        if (transaction.amount > 0) {
-          result.income += transaction.amount
-        } else {
-          result.outcome += transaction.amount
-        }
+        result.includeCount++
+        result.includeAmount += transaction.amount
       }
     })
-    return { ...item, ...result }
+    return { ...Utils.clone(item), ...result }
   }
 }
 

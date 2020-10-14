@@ -60,7 +60,9 @@ export default {
     return dayjs(time).format('DD')
   },
   getDate (time) {
-    return dayjs(time).format('YYYY-MM-DD')
+    const isUnix = typeof time === 'number'
+    var date = isUnix ? dayjs.unix(time) : dayjs(time)
+    return date.format('YYYY-MM-DD')
   },
   getMonth (timestamp = dayjs().unix()) {
     return dayjs.unix(timestamp).format('YYYY-MM')

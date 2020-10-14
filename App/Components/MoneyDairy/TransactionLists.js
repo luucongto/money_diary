@@ -66,7 +66,6 @@ class TransactionList extends Component {
     Utils.log('componentWillReceiveProps', prevProps.transactionParams, nextProps.transactionParams, nextProps.transactions)
     Utils.log('updateTransactions list')
     const transactions = nextProps.transactions
-    const amount = 0
     let income = 0
     let outcome = 0
     transactions.forEach(transaction => {
@@ -81,7 +80,7 @@ class TransactionList extends Component {
     const groups = _.groupBy(items, item => item.dateTag)
     _.each(groups, (v, k) => {
       let amount = 0
-      v.forEach(item => { amount += item.amount })
+      v.forEach(item => { amount += item.include ? item.amount : 0 })
       result.push({
         title: k,
         amount,

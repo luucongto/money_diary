@@ -9,12 +9,17 @@ import Utils from '../Utils/Utils'
 import Screen from './Screen'
 import dayjs from 'dayjs'
 import I18n from '../I18n'
+import Wallet from '../Realm/Wallet'
+import Category from '../Realm/Category'
+import Transaction from '../Realm/Transaction'
 const t = I18n.t
 class TransactionDetailScreen extends Component {
   constructor (props) {
     super(props)
     const transaction = props?.route?.params?.transaction
     const stateTransaction = this._assignTransactionToStart(transaction)
+    this.categories = lodash.sortBy(Category.find(), 'label')
+    this.wallets = Wallet.find()
     this.state = {
       ...stateTransaction
     }
@@ -22,19 +27,25 @@ class TransactionDetailScreen extends Component {
   }
 
   transactionUpdate (transaction) {
-    this.props.transactionUpdateRequest(transaction)
+    Transaction.insert(transaction)
+    this.goBack()
+    // this.props.transactionUpdateRequest(transaction)
   }
 
   transactionDelete (transaction) {
-    this.props.transactionDeleteRequest(transaction)
+    Transaction.remove({ id: transaction.id })
+    this.goBack()
+    // this.props.transactionDeleteRequest(transaction)
   }
 
   transactionCreate (transaction) {
-    this.props.transactionCreateRequest(transaction)
+    Transaction.insert(transaction)
+    this.goBack()
+    // this.props.transactionCreateRequest(transaction)
   }
 
   goBack () {
-    this.props.navigation.goBack()
+    lodash.debounce(this.props.navigation.goBack, 1000)()
   }
 
   setDate (newDate) {
@@ -74,8 +85,8 @@ class TransactionDetailScreen extends Component {
 
   create () {
     const data = {
-      wallet: this.state.wallet ? this.state.wallet : this.props.wallets[0].id,
-      category: this.state.category ? this.state.category : this.props.categories[0].label,
+      wallet: this.state.wallet ? this.state.wallet : this.wallets[0].id,
+      category: this.state.category ? this.state.category : this.categories[0].label,
       amount: this.state.amount || 0,
       date: dayjs(this.state.date).unix(),
       note: this.state.note,
@@ -87,6 +98,7 @@ class TransactionDetailScreen extends Component {
 
   update () {
     let updateData = {
+      ...Utils.clone(this.state.transaction),
       amount: this.state.amount,
       wallet: this.state.wallet,
       category: this.state.category,
@@ -94,17 +106,14 @@ class TransactionDetailScreen extends Component {
       note: this.state.note
     }
     const transaction = this.state.transaction
-    updateData = lodash.omitBy(updateData, (v, k) => transaction[k] === v)
     if (Utils.getDate(transaction.date) !== Utils.getDate(this.state.date)) {
       updateData.date = dayjs(this.state.date).unix()
     }
-    Utils.log('updateData', updateData)
+    Utils.log('updateData1', updateData)
     if (!lodash.isEmpty(updateData)) {
       updateData.id = transaction.id
       this.transactionUpdate(updateData)
     }
-
-    this.goBack(false)
   }
 
   delete () {
@@ -114,6 +123,7 @@ class TransactionDetailScreen extends Component {
 
   renderPhone () {
     const transaction = this.state.transaction
+    Utils.log('TransactionDetailScreen, transaction', transaction)
     const buttons = (
       <Grid style={{ padding: 20 }}>
         {transaction &&
@@ -146,7 +156,7 @@ class TransactionDetailScreen extends Component {
       <Container>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
           <View style={{ width: 60 }}>
-            <Button transparent onPress={() => this.props.navigation.goBack()}>
+            <Button transparent onPress={() => this.goBack()}>
               <Icon color='black' name='arrow-back' />
             </Button>
           </View>
@@ -155,10 +165,14 @@ class TransactionDetailScreen extends Component {
         <Content>
           <Form>
             <Item inlineLabel>
+              <Label>ID</Label>
+              <Label>{transaction.id}</Label>
+            </Item>
+            <Item inlineLabel>
               <Label>{t('Date')}</Label>
               <DatePicker
                 style={{ backgroundColor: 'black', width: '100%', height: '100%' }}
-                defaultDate={this.state.date}
+                defaultDate={new Date(this.state.date)}
                 minimumDate={new Date(2010, 1, 1)}
                 maximumDate={new Date(2030, 12, 31)}
                 locale='en'
@@ -187,7 +201,7 @@ class TransactionDetailScreen extends Component {
                 selectedValue={this.state.category}
                 onValueChange={this.onValueChangeCategory.bind(this)}
               >
-                {this.props.categories.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+                {this.categories.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
               </Picker>
             </Item>
             <Item inlineLabel>
@@ -203,7 +217,7 @@ class TransactionDetailScreen extends Component {
                 selectedValue={this.state.wallet}
                 onValueChange={this.onValueChangeWallet.bind(this)}
               >
-                {this.props.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
+                {this.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.label} value={item.id} />)}
 
               </Picker>
             </Item>
@@ -237,21 +251,11 @@ class TransactionDetailScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transactions: state.transaction.data,
-    transactionParams: state.transaction.params,
-    transactionUpdateObjects: state.transaction.updateObjects,
-    transactionDeleteObjects: state.transaction.deleteObjects,
-    categories: Object.values(state.category.objects),
-    wallets: Object.values(state.wallet.objects)
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
-    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params)),
-    transactionDeleteRequest: (params) => dispatch(TransactionRedux.transactionDeleteRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
   }
 }
 const screenHook = Screen(TransactionDetailScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])

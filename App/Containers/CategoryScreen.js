@@ -2,6 +2,7 @@
 import { Container, Content, Fab, Icon, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
+import { RefreshControl } from 'react-native'
 import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
@@ -18,20 +19,13 @@ class CategoryScreen extends Component {
 
     this.state = {
       start: {},
-      categories: []
+      categories: Category.findWithAmount()
     }
     autoBind(this)
   }
 
   componentDidMount () {
     this.refresh()
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const prevProps = this.props
-    if (prevProps.categoryObjects !== nextProps.categoryObjects) {
-      this.refresh()
-    }
   }
 
   refresh () {
@@ -48,7 +42,7 @@ class CategoryScreen extends Component {
   }
 
   renderPhone () {
-    Utils.log('render CategoryScreen')
+    Utils.log('render CategoryScreen', this.state.categories)
     const renderItems = this.state.categories.map(item => {
       return (
         <CategoryComponent key={item.id} item={item} onPress={(item) => this.openDetailScreen(item)} />
@@ -57,7 +51,11 @@ class CategoryScreen extends Component {
     return (
       <Container>
         <ScreenHeader navigation={this.props.navigation} title='Categories' />
-        <Content>
+        <Content
+          refreshControl={
+            <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
+          }
+        >
           {renderItems}
           <View style={{ height: 50 }} />
         </Content>
@@ -88,7 +86,6 @@ class CategoryScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    categoryObjects: state.category.objects
   }
 }
 

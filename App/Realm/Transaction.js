@@ -60,7 +60,7 @@ class Transaction extends RealmWrapper {
   }
 
   static getBy (condition, option) {
-    return Transaction.find({ ...condition, deleted: false }, option)
+    return Transaction.find({ ...condition, deleted: false }, { sort: { date: true }, ...option })
   }
 
   static findWithFilter = (startDate: number, endDate:number, params: any | null) => {
