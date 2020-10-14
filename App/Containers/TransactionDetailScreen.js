@@ -85,7 +85,7 @@ class TransactionDetailScreen extends Component {
 
   create () {
     const data = {
-      wallet: this.state.wallet ? this.state.wallet : this.wallets[0].id,
+      wallet: this.state.wallet ? this.state.wallet : this.wallets[1].id,
       category: this.state.category ? this.state.category : this.categories[0].label,
       amount: this.state.amount || 0,
       date: dayjs(this.state.date).unix(),
@@ -97,7 +97,7 @@ class TransactionDetailScreen extends Component {
   }
 
   update () {
-    let updateData = {
+    const updateData = {
       ...Utils.clone(this.state.transaction),
       amount: this.state.amount,
       wallet: this.state.wallet,
@@ -166,7 +166,7 @@ class TransactionDetailScreen extends Component {
           <Form>
             <Item inlineLabel>
               <Label>ID</Label>
-              <Label>{transaction.id}</Label>
+              <Label>{transaction ? transaction.id : ''}</Label>
             </Item>
             <Item inlineLabel>
               <Label>{t('Date')}</Label>
@@ -223,6 +223,11 @@ class TransactionDetailScreen extends Component {
             </Item>
             <Item inlineLabel>
               <Input placeholder={I18n.t('amount')} value={Utils.numberWithCommas(this.state.amount)} keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })} />
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Button small rounded onPress={() => this.setState({ amount: this.state.amount * 1000 })}><Text uppercase={false}>x1K</Text></Button>
+                <Text uppercase={false}> </Text>
+                <Button small rounded onPress={() => this.setState({ amount: this.state.amount * 1000000 })}><Text uppercase={false}>x1M</Text></Button>
+              </View>
             </Item>
             <Item inlineLabel>
               <Textarea placeholder={I18n.t('note')} multiline rowSpan={4} value={this.state.note} onChangeText={note => this.setState({ note })} />
