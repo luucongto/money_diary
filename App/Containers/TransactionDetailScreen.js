@@ -45,7 +45,7 @@ class TransactionDetailScreen extends Component {
   }
 
   goBack () {
-    lodash.debounce(this.props.navigation.goBack, 1000)()
+    this.props.navigation.goBack()
   }
 
   setDate (newDate) {

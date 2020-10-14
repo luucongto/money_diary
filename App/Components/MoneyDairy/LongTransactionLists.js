@@ -205,7 +205,7 @@ class TransactionList extends Component {
             onPress={() => this.flatListRef.scrollToIndex({
               index: 0
             })}
-          ><Text>{I18n.t('sroll_to_top')}</Text>
+          ><Text>{I18n.t('scroll_to_top')}</Text>
           </Button>
           <Button
             success rounded style={{ width: '40%', justifyContent: 'center' }}

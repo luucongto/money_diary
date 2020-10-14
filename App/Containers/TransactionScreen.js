@@ -90,7 +90,7 @@ class TransactionScreen extends Component {
       <Container style={{ backgroundColor: Colors.listBackground }}>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
           <View style={{ width: 60 }}>
-            <Button style={{ width: 60, height: 60 }} transparent onPress={() => _.debounce(this.props.navigation.goBack, 10000)()}>
+            <Button style={{ width: 60, height: 60 }} transparent onPress={() => this.props.navigation.goBack()}>
               <Icon color='black' name='arrow-back' />
             </Button>
           </View>
