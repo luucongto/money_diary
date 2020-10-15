@@ -147,10 +147,10 @@ class WalletAddComponent extends PureComponent {
       <Card style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }}>
         <Form style={{ width: '60%' }}>
           <Item inlineLabel>
-            <Input placeholder='Wallet Name' value={this.state.label} onChangeText={label => this.setState({ label })} />
+            <Input placeholder={I18n.t('WalletName')} value={this.state.label} onChangeText={label => this.setState({ label })} />
           </Item>
           <Item inlineLabel>
-            <Label>Color</Label>
+            <Label>{I18n.t('Color')}</Label>
             <Picker
               mode='dropdown'
               iosIcon={<Icon name='arrow-down' />}

@@ -24,7 +24,7 @@ class TransactionList extends Component {
 
   constructor (props) {
     super(props)
-    const preprocessTransactions = this.preprocessTransactions(props.transaction)
+    const preprocessTransactions = props.transactions
     this.state = {
       preprocessTransactions,
       ...this.appendData(preprocessTransactions),
@@ -41,41 +41,13 @@ class TransactionList extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.transactions !== this.props.transactions) {
-      const preprocessTransactions = this.preprocessTransactions(nextProps.transactions)
+      // const preprocessTransactions = [].concat(this.state.preprocessTransactions).concat(nextProps.transactions)
+      const preprocessTransactions = nextProps.transactions
       this.setState({
         preprocessTransactions,
         ...this.appendData(preprocessTransactions)
       })
     }
-  }
-
-  preprocessTransactions (transactions) {
-    let result = [{
-      type: 'addnew'
-    }]
-    Utils.log('processedTransactions 1', transactions)
-    if (!transactions || !transactions.length) return result
-    const stickIndices = [0]
-    const groups = _.groupBy(transactions, item => item.monthTag)
-    _.each(groups, (items, monthTag) => {
-      const monthTagItem = {
-        type: 'monthTag',
-        title: monthTag,
-        count: items.length,
-        income: 0,
-        outcome: 0
-      }
-      items.forEach(item => {
-        monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
-        monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
-      })
-      monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
-      result.push(monthTagItem)
-      stickIndices.push(result.length - 1)
-      result = result.concat(items)
-    })
-    Utils.log('processedTransactions', transactions, result)
-    return result
   }
 
   appendData (transactions, currentRenderCount = 0) {
@@ -155,6 +127,7 @@ class TransactionList extends Component {
 
   renderPhone () {
     const transactions = this.state.renderItems || []
+    Utils.log('LongTransactionList render', transactions.length, this.state.stickIndices)
     return (
       <Container>
         <FlatList
@@ -167,7 +140,6 @@ class TransactionList extends Component {
           renderItem={({ item, index }) => this._renderItem(item, index)}
           keyExtractor={(item) => item.id}
           onEndReachedThreshold={0.1}
-          initialNumToRender={10}
           getItemLayout={(data, index) => (
             { length: 160, offset: 160 * index, index }
           )}
@@ -176,6 +148,8 @@ class TransactionList extends Component {
             if (this.state.renderItems.length < this.state.preprocessTransactions.length) {
               Utils.log('onEndReached', this.state.renderItems.length)
               this.setState(this.appendData(this.state.preprocessTransactions, this.state.renderItems.length))
+            } else if (this.state.renderItems.length) {
+              // this.props.getPrevMonth()
             }
           }}
           ListFooterComponent={(

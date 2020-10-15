@@ -167,7 +167,7 @@ class TransactionReportScreen extends Component {
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
           <View style={{ width: 60, alignSelf: 'flex-start' }}>
             <Button transparent onPress={() => this.props.navigation.goBack()}>
-              <Icon color='black' name='arrow-back' />
+              <Icon color='black' name='back' type='AntDesign' />
             </Button>
           </View>
           <Body>

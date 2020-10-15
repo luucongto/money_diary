@@ -64,6 +64,9 @@ export default {
     var date = isUnix ? dayjs.unix(time) : dayjs(time)
     return date.format('YYYY-MM-DD')
   },
+  getPrevMonth (timeString = dayjs().format('YYYY-MM')) {
+    return dayjs(timeString, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM')
+  },
   getMonth (timestamp = dayjs().unix()) {
     return dayjs.unix(timestamp).format('YYYY-MM')
   },

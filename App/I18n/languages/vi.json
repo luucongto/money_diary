@@ -23,5 +23,16 @@
     "Delete": "Xóa",
     "Backup And Download": "Sao lưu và tải về từ GDrive",
     "scroll_to_top": "Về đầu trang",
-    "refresh": "Cập nhật"
+    "refresh": "Cập nhật",
+    "Color": "Màu sắc",
+    "WalletName": "Tên Ví",
+    "Signin to backup with GDrive": "Đăng nhập để sao lưu với Google",
+    "User": "Người Dùng",
+    "Logout": "Đăng xuất",
+    "Backup": "Sao Lưu",
+    "Download": "Tải Về",
+    "Import from File": "Nhập từ file",
+    "Pick MoneyLover CSV File": "Chọn File CSV xuất từ MoneyLover",
+    "imported_transaction": "Imported {{num}} transactions",
+    "exported": "Đã upload lên GDriver"
 }

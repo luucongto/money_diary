@@ -50,7 +50,10 @@ class TransactionCardItem extends PureComponent {
 
   render () {
     const transaction = this.state.transaction
-    if (!transaction || transaction.deleted) return null
+    if (!transaction || transaction.deleted) {
+      Utils.log('transactionCardItem, index', this.props.index, 'null')
+      return null
+    }
     const wallet = this.props.wallet
     if (!wallet) return null
     const category = this.props.category

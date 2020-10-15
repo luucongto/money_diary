@@ -97,7 +97,7 @@ function MainScreen () {
         }
       })}
     >
-      <Drawer.Screen tag='Home' name={I18n.t('Home')} component={HomeScreen} />
+      {/* <Drawer.Screen tag='Home' name={I18n.t('Home')} component={HomeScreen} /> */}
       <Drawer.Screen tag='Wallet' name={I18n.t('Wallet')} component={WalletScreen} />
       {/* <Drawer.Screen tag='Category' name={I18n.t('Category')} component={CategoryScreen} /> */}
       <Drawer.Screen tag='Settings' name={I18n.t('Settings')} component={SettingScreen} />

@@ -18,6 +18,7 @@ import Screen from './Screen'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import ConfirmationButton from '../Components/ConfirmationButton'
 import I18n from '../I18n'
+const t = I18n.t
 class SettingScreen extends Component {
   constructor (props) {
     super(props)
@@ -77,7 +78,7 @@ class SettingScreen extends Component {
       false)
     Utils.log('result', result)
     Toast.show({
-      text: 'Exported to Gdrive',
+      text: t('exported'),
       duration: 3000
     })
     await this.getFileInfo()
@@ -145,7 +146,7 @@ class SettingScreen extends Component {
       const result = await Api.downloadFile(currentFileId, tokens.accessToken)
       Utils.log('result', result, result.wallets)
       Toast.show({
-        text: `Imported ${result.transactions.length} transactions`,
+        text: t('imported_transactions', { num: result.transactions.length }),
         buttonText: 'OK',
         duration: 3000
       })
@@ -193,7 +194,7 @@ class SettingScreen extends Component {
     return (
       <Card>
         <CardItem header>
-          <Text>Signin to backup with GDrive</Text>
+          <Text>{I18n.t('Signin to backup with GDrive')}</Text>
         </CardItem>
         <CardItem>
           <GoogleSigninButton
@@ -217,7 +218,7 @@ class SettingScreen extends Component {
     return (
       <Card>
         <CardItem header bordered>
-          <Text>User</Text>
+          <Text>{t('User')}</Text>
         </CardItem>
         <CardItem bordered>
           <Left>
@@ -227,7 +228,7 @@ class SettingScreen extends Component {
               <Text note>{user.email}</Text>
             </Body>
           </Left>
-          <Button onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>Logout</Text></Button>
+          <Button onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>{t('Logout')}</Text></Button>
         </CardItem>
       </Card>
     )
@@ -254,12 +255,12 @@ class SettingScreen extends Component {
           <CardItem bordered style={{ justifyContent: 'space-around' }}>
             <ConfirmationButton
               onConfirm={() => this.backup()}
-              buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>Backup</Text>)}
+              buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>{t('Backup')}</Text>)}
               info
             />
             <ConfirmationButton
               onConfirm={() => this.download()}
-              buttonContent={this.state.doingDownload ? <Spinner /> : (<Text>Download</Text>)}
+              buttonContent={this.state.doingDownload ? <Spinner /> : (<Text>{t('Download')}</Text>)}
               success
             />
           </CardItem>
@@ -328,12 +329,12 @@ class SettingScreen extends Component {
     return (
       <Card>
         <CardItem header bordered>
-          <Text>Import from File</Text>
+          <Text>{t('Import from File')}</Text>
         </CardItem>
         <CardItem bordered style={{ justifyContent: 'space-around' }}>
           {this.state.doingImportFromFile
             ? <ActivityIndicator />
-            : <Button info style={{ justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>Pick MoneyLover CSV File</Text></Button>}
+            : <Button info style={{ justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>{t('Pick MoneyLover CSV File')}</Text></Button>}
         </CardItem>
       </Card>
     )
@@ -348,7 +349,7 @@ class SettingScreen extends Component {
           </Button>
         </Left>
         <Body>
-          <Title>Setting</Title>
+          <Title>{t('Settings')}</Title>
         </Body>
       </Header>
     )

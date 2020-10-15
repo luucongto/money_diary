@@ -38,7 +38,6 @@ class WalletScreen extends Component {
   }
 
   componentWillReceiveProps (nextProps) {
-    Utils.log('Wallet', nextProps)
     const prevProps = this.props
     if ((nextProps.isFocused && prevProps.isFocused !== nextProps.isFocused) || prevProps.walletObjects !== nextProps.walletObjects) {
       this.refresh()

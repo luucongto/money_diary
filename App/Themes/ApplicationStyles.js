@@ -45,6 +45,22 @@ const ApplicationStyles = {
       color: Colors.text
     }
   },
+  components: {
+    card: {
+      backgroundColor: 'white',
+      borderColor: 'black',
+      borderWidth: 1,
+      borderRadius: 10,
+      elevation: 2,
+      height: 120,
+      overflow: 'hidden',
+      paddingHorizontal: 10,
+      marginHorizontal: 10
+    },
+    button: {
+      width: 80, height: 40, flexDirection: 'row', justifyContent: 'center', borderRadius: 10, borderWidth: 1, borderColor: 'green', alignItems: 'center'
+    }
+  },
   darkLabelContainer: {
     padding: Metrics.smallMargin,
     paddingBottom: Metrics.doubleBaseMargin,
