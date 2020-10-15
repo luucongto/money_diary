@@ -47,9 +47,11 @@ const ApplicationStyles = {
   },
   components: {
     card: {
-      backgroundColor: 'white',
-      borderColor: 'black',
-      borderWidth: 1,
+      borderTopWidth: 0,
+      borderLeftWidth: 0,
+      borderWidth: 2,
+      backgroundColor: Colors.cardBackground,
+      borderColor: '#999999',
       borderRadius: 10,
       elevation: 2,
       height: 120,

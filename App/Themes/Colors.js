@@ -22,7 +22,8 @@ const colors = {
   border: '#483F53',
   banner: '#5F3E63',
   text: '#E0D7E5',
-  listBackground: '#f0efeb'
+  listBackground: '#f0efeb',
+  cardBackground: '#fdfffc'
 }
 
 export default colors

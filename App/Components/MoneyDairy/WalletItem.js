@@ -2,12 +2,13 @@ import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Row, Col } from 'native-base'
 import Utils from '../../Utils/Utils'
-import { Fonts } from '../../Themes'
+import { Fonts, ApplicationStyles } from '../../Themes'
 import I18n from '../../I18n'
 import FadeComponent from './FadeComponent'
 import autoBind from 'react-autobind'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { TransactionCardAddComponent } from './TransactionCardItem'
+
 class WalletItem extends PureComponent {
   constructor (props) {
     super(props)
@@ -44,15 +45,8 @@ class WalletItem extends PureComponent {
     return (
       <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
-          flexDirection: 'row',
-          backgroundColor: 'white',
-          borderColor: wallet.color,
-          borderWidth: 1,
-          borderRadius: 10,
-          height: 120,
-          overflow: 'hidden',
-          justifyContent: 'center',
-          paddingHorizontal: 10
+          ...ApplicationStyles.components.card,
+          flexDirection: 'row'
         }}
         >
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -88,18 +82,22 @@ class WalletItem extends PureComponent {
             {wallet.count > 0 && <Text note style={{ marginBottom: 10 }}>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
           </Body>
           <View style={{
+            width: 40,
+            marginLeft: 10,
+            borderLeftWidth: 1,
+            borderLeftColor: '#999999',
             flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'center',
             alignSelf: 'flex-end'
           }}
           >
-            <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+            <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.props.openWalletDetailModal(wallet)}>
               <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
             </TouchableOpacity>
             {
               wallet.id > 0 && (
-                <TouchableOpacity style={{ width: 50, height: 60, flexDirection: 'row', justifyContent: 'flex-end' }} onPress={() => this.toggleAddTransactionPanel()}>
+                <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.toggleAddTransactionPanel()}>
                   <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
                 </TouchableOpacity>)
             }

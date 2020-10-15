@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Col, Row } from 'native-base'
 import Utils from '../../Utils/Utils'
-import { Colors, Fonts } from '../../Themes'
+import { ApplicationStyles, Colors, Fonts } from '../../Themes'
 import I18n from '../../I18n'
 import lodash from 'lodash'
 import FadeComponent from './FadeComponent'
@@ -63,26 +63,29 @@ class TransactionCardItem extends PureComponent {
     const margin = 10
     return (
       <View style={{
+        ...ApplicationStyles.components.card,
         opacity: transaction.include ? 1 : 0.2,
         marginTop: 10,
         marginHorizontal: 10,
-        backgroundColor: 'white',
+        backgroundColor: Colors.cardBackground,
         flexDirection: 'row',
-        borderBottomColor: wallet.color,
-        borderBottomWidth: 1,
+        borderLeftWidth: 2,
+        borderRightWidth: 0,
         height,
+        elevation: 5,
+        paddingLeft: 10,
         overflow: 'hidden',
         justifyContent: 'center'
       }}
       >
-        <View
+        {/* <View
           style={{
             backgroundColor: wallet.color,
             width: margin,
             height,
             marginRight: margin
           }}
-        />
+        /> */}
         <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
 
           <TouchableOpacity onPress={() => this.toggleCheckInclude()}>
