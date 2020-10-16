@@ -4,36 +4,50 @@ import RealmWrapper from './RealmWrapper'
 import Transaction from './Transaction'
 import _ from 'lodash'
 import Utils from '../Utils/Utils'
+import Constants from '../Config/Constants'
 class Wallet extends RealmWrapper {
   static schema = schema
   static initializeDatas = () => {
     Wallet.bulkInsert(require('./data/wallet.json'), true)
   }
 
-  static getColor = (id: number) => {
+  static appendId (params) {
+    const realm = this.realm
+    if (params.position === undefined) {
+      const newPosition = realm.objects(this.schema.name).max('position')
+      params.position = (newPosition || 0) + 1
+    }
+    return params
+  }
+
+  static getColor = (id) => {
     const item = Wallet.findOne({ id })
     const color = item ? item.color : 'black'
     return color
   }
 
-  static get = (id: number) => {
+  static get = (id) => {
     return Wallet.findOne({ id })
   }
 
   static findWithAmount = () => {
-    const wallets = Wallet.find()
-    const result = wallets.map((wallet: { id: number }) => Wallet.findOneWithAmount(wallet.id))
+    const wallets = Wallet.find(null, { sort: { position: false } })
+    const result = wallets.map((wallet) => Wallet.findOneWithAmount(wallet.id))
     return result
   }
 
-  static findOneWithAmount = (id: number) => {
+  static findOneWithAmount = (id) => {
     const wallet = Wallet.findOne({ id })
     const amounts = Wallet.calculate(id)
     return { ...Utils.clone(wallet), ...amounts }
   }
 
-  static calculate = (id: number) => {
-    let transactions = Transaction.getBy({ wallet: id }, { sort: { date: true } })
+  static calculate = (id) => {
+    let findConditions = { wallet: id }
+    if (id === Constants.DEFAULT_WALLET_ID) {
+      findConditions = null
+    }
+    let transactions = Transaction.getBy(findConditions, { sort: { date: true } })
     if (!id) {
       transactions = Transaction.getBy()
     }

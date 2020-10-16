@@ -11,5 +11,6 @@ module.exports = Object.freeze({
     MONTH: 'ctmonth',
     QUARTER: 'ctquarter',
     YEAR: 'ctyear'
-  }
+  },
+  DEFAULT_WALLET_ID: 'Total'
 })

@@ -54,7 +54,7 @@ class WalletItem extends PureComponent {
               <Col>
                 <Row style={{ height: 50 }}>
                   <Text style={[font, { color: '#0096c7', alignSelf: 'flex-end' }]}>
-                    {wallet.id ? wallet.label : I18n.t(wallet.label)}
+                    {wallet.position ? wallet.label : I18n.t(wallet.label)}
                   </Text>
                 </Row>
                 <Row>
@@ -83,11 +83,12 @@ class WalletItem extends PureComponent {
           </Body>
           <View style={{
             width: 40,
+            height: '100%',
             marginLeft: 10,
             borderLeftWidth: 1,
             borderLeftColor: '#999999',
             flexDirection: 'column',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             alignItems: 'center',
             alignSelf: 'flex-end'
           }}
@@ -96,7 +97,7 @@ class WalletItem extends PureComponent {
               <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
             </TouchableOpacity>
             {
-              wallet.id > 0 && (
+              wallet.position > 0 && (
                 <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.toggleAddTransactionPanel()}>
                   <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
                 </TouchableOpacity>)

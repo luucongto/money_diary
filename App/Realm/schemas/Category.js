@@ -3,8 +3,8 @@ const schema = {
   name: 'Category',
   primaryKey: 'id',
   properties: {
-    id: { type: 'int', default: 0 },
-    label: { type: 'string', default: '' },
+    id: { type: 'string', default: '', indexed: true },
+    label: { type: 'string', default: '', indexed: true },
     icon: { type: 'string', default: '' },
     color: { type: 'string', default: '' }
   }

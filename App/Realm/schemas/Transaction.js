@@ -8,14 +8,14 @@ const schema = {
     amount: { type: 'int', default: 0 },
     note: { type: 'string', default: '' },
     date: { type: 'int', default: 0 },
-    monthTag: { type: 'string', default: '' },
-    quarterTag: { type: 'string', default: '' },
-    dateTag: { type: 'string', default: '' },
-    category: { type: 'int', default: 0 },
-    wallet: { type: 'int', default: 0 },
+    monthTag: { type: 'string', default: '', indexed: true },
+    quarterTag: { type: 'string', default: '', indexed: true },
+    dateTag: { type: 'string', default: '', indexed: true },
+    category: { type: 'string', default: '', indexed: true },
+    wallet: { type: 'string', default: '', indexed: true },
     event: { type: 'string', default: '' },
-    include: { type: 'bool', default: true },
-    deleted: { type: 'bool', default: false }
+    include: { type: 'bool', default: true, indexed: true },
+    deleted: { type: 'bool', default: false, indexed: true }
   }
 }
 

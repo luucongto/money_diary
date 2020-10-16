@@ -18,6 +18,7 @@ import Screen from './Screen'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import ConfirmationButton from '../Components/ConfirmationButton'
 import I18n from '../I18n'
+import { ApplicationStyles } from '../Themes'
 const t = I18n.t
 class SettingScreen extends Component {
   constructor (props) {
@@ -58,6 +59,24 @@ class SettingScreen extends Component {
       categories: Category.find(),
       transactions: Transaction.getBy()
     }
+    // const walletObjects = Utils.createMapFromArray(backupContents.wallets, 'id')
+    // const categoriesObjects = Utils.createMapFromArray(backupContents.categories, 'id')
+    // backupContents.transactions = backupContents.transactions.map(each => {
+    //   each = Utils.clone(each)
+    //   each.wallet = walletObjects[each.wallet].label
+    //   each.category = categoriesObjects[each.category].label
+    //   return each
+    // })
+    // backupContents.wallets = backupContents.wallets.map(each => {
+    //   each = Utils.clone(each)
+    //   each.id = each.label
+    //   return each
+    // })
+    // backupContents.categories = backupContents.categories.map(each => {
+    //   each = Utils.clone(each)
+    //   each.id = each.label
+    //   return each
+    // })
     GDrive.setAccessToken(tokens.accessToken)
     GDrive.init()
     Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
@@ -192,8 +211,8 @@ class SettingScreen extends Component {
 
   _renderLoginButton () {
     return (
-      <Card>
-        <CardItem header>
+      <View style={[ApplicationStyles.components.card, { height: 150, marginTop: 10 }]}>
+        <CardItem header bordered>
           <Text>{I18n.t('Signin to backup with GDrive')}</Text>
         </CardItem>
         <CardItem>
@@ -205,7 +224,7 @@ class SettingScreen extends Component {
             disabled={this.state.isSigninInProgress}
           />
         </CardItem>
-      </Card>
+      </View>
 
     )
   }
@@ -216,21 +235,17 @@ class SettingScreen extends Component {
     }
     const user = this.state.user
     return (
-      <Card>
-        <CardItem header bordered>
-          <Text>{t('User')}</Text>
-        </CardItem>
-        <CardItem bordered>
+      <View style={[ApplicationStyles.components.card, { height: 90, marginTop: 10 }]}>
+        <CardItem>
           <Left>
             <Thumbnail source={{ uri: user.photo }} />
             <Body>
               <Text> {user.name}</Text>
-              <Text note>{user.email}</Text>
             </Body>
           </Left>
-          <Button onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>{t('Logout')}</Text></Button>
+          <Button danger onPress={() => this.signOut()} style={{ alignSelf: 'flex-end' }}><Text>{t('Logout')}</Text></Button>
         </CardItem>
-      </Card>
+      </View>
     )
   }
 
@@ -238,7 +253,7 @@ class SettingScreen extends Component {
     const fileInfo = this.state.fileInfo || {}
     Utils.log('fileInfo', fileInfo)
     return (
-      <Card>
+      <View style={[ApplicationStyles.components.card, { height: 200, marginTop: 10 }]}>
         <CardItem header bordered>
           <Text>{I18n.t('Backup And Download')}</Text>
         </CardItem>
@@ -252,7 +267,7 @@ class SettingScreen extends Component {
 
         </CardItem>
         {!this.state.isGettingFile && (
-          <CardItem bordered style={{ justifyContent: 'space-around' }}>
+          <CardItem style={{ justifyContent: 'space-around' }}>
             <ConfirmationButton
               onConfirm={() => this.backup()}
               buttonContent={this.state.doingBackup ? <Spinner /> : (<Text>{t('Backup')}</Text>)}
@@ -265,7 +280,7 @@ class SettingScreen extends Component {
             />
           </CardItem>
         )}
-      </Card>
+      </View>
     )
   }
 
@@ -327,16 +342,16 @@ class SettingScreen extends Component {
 
   _renderImportFromFile () {
     return (
-      <Card>
+      <View style={[ApplicationStyles.components.card, { height: 130, marginTop: 10 }]}>
         <CardItem header bordered>
           <Text>{t('Import from File')}</Text>
         </CardItem>
-        <CardItem bordered style={{ justifyContent: 'space-around' }}>
+        <CardItem style={{ justifyContent: 'space-around' }}>
           {this.state.doingImportFromFile
             ? <ActivityIndicator />
             : <Button info style={{ justifyContent: 'center' }} onPress={() => this._pickFile()}><Text>{t('Pick MoneyLover CSV File')}</Text></Button>}
         </CardItem>
-      </Card>
+      </View>
     )
   }
 
@@ -360,7 +375,7 @@ class SettingScreen extends Component {
     return (
       <Container>
         <ScreenHeader navigation={this.props.navigation} title='Setting' />
-        <Content>
+        <Content style={{ padding: 10 }}>
           {this._renderImportFromFile()}
           {(!this.props.login) && this._renderLoginButton()}
           {this.props.login && this.state.isSignedIn && this._renderUser()}

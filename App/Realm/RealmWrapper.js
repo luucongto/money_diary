@@ -5,11 +5,6 @@ class RealmWrapper {
   static schema = null
   static realm = realm
   static appendId (params) {
-    const realm = this.realm
-    if (params.id === undefined) {
-      const maxId = realm.objects(this.schema.name).max('id')
-      params.id = (maxId || 0) + 1
-    }
     return params
   }
 

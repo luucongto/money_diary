@@ -33,6 +33,6 @@
     "Download": "Tải Về",
     "Import from File": "Nhập từ file",
     "Pick MoneyLover CSV File": "Chọn File CSV xuất từ MoneyLover",
-    "imported_transaction": "Imported {{num}} transactions",
+    "imported_transactions": "Imported {{num}} transactions",
     "exported": "Đã upload lên GDriver"
 }

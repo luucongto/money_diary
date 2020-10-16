@@ -4,6 +4,7 @@ import { Body, Button, Container, Header, Icon, Right, Spinner, Text, View } fro
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import { Category, Wallet } from '../Realm'
 import Transaction from '../Realm/Transaction'
@@ -66,7 +67,9 @@ class TransactionScreen extends Component {
 
     if (this.state.wallet && this.state.wallet.id) {
       wallet = Wallet.findOneWithAmount(this.state.wallet.id)
-      findConditions.wallet = this.state.wallet.id
+      if (wallet.id !== Constants.DEFAULT_WALLET_ID) {
+        findConditions.wallet = this.state.wallet.id
+      }
     }
     if (this.state.category && this.state.category.id) {
       findConditions.category = this.state.category.id

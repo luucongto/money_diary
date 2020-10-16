@@ -7,6 +7,15 @@ import _ from 'lodash'
 import dayjs from 'dayjs'
 class Transaction extends RealmWrapper {
   static schema = schema
+  static appendId (params) {
+    const realm = this.realm
+    if (params.id === undefined) {
+      const maxId = realm.objects(this.schema.name).max('id')
+      params.id = (maxId || 0) + 1
+    }
+    return params
+  }
+
   static bulkInsertRaw = (rows: any) => {
     let result = {}
     Transaction.realm.write(() => {
@@ -94,7 +103,7 @@ class Transaction extends RealmWrapper {
       } else {
         const newCategory = Category.insert({
           label: params.category,
-          color: '#' + Math.floor(Math.random() * 16777215).toString(16)
+          color: params.amount > 0 ? 'green' : 'red'
         }, true)
         params.category = newCategory ? newCategory.id : 0
       }
