@@ -3,22 +3,23 @@ import {
   GoogleSigninButton,
   statusCodes
 } from '@react-native-community/google-signin'
-import { Body, Button, Card, CardItem, Container, Content, Left, Text, Thumbnail, Toast, Icon, Title, Header, Spinner, Row } from 'native-base'
+import { Body, Button, CardItem, Container, Content, Header, Icon, Left, Row, Spinner, Text, Thumbnail, Title, Toast } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { PermissionsAndroid, Platform, ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, PermissionsAndroid, Platform, View } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
-import { Category, Transaction, Wallet } from '../Realm'
+import ConfirmationButton from '../Components/ConfirmationButton'
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
+import I18n from '../I18n'
+import { Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
 import GDrive from '../Services/GDrive'
+import lodash from 'lodash'
+import { ApplicationStyles } from '../Themes'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
-import ConfirmationButton from '../Components/ConfirmationButton'
-import I18n from '../I18n'
-import { ApplicationStyles } from '../Themes'
 const t = I18n.t
 class SettingScreen extends Component {
   constructor (props) {
@@ -55,10 +56,12 @@ class SettingScreen extends Component {
     await this.asyncSetState({ doingBackup: true })
     const tokens = this.props.login
     const backupContents = {
-      wallets: Wallet.find(),
-      categories: Category.find(),
+      wallets: Wallet.findWithAmount(),
+      categories: Api.category(),
       transactions: Transaction.getBy()
+
     }
+    backupContents.tempCategories = lodash.map(backupContents.transactions, 'category')
     // const walletObjects = Utils.createMapFromArray(backupContents.wallets, 'id')
     // const categoriesObjects = Utils.createMapFromArray(backupContents.categories, 'id')
     // backupContents.transactions = backupContents.transactions.map(each => {
@@ -107,8 +110,13 @@ class SettingScreen extends Component {
   async getFileId () {
     try {
       const tokens = this.props.login
+      if (!tokens) {
+        throw new Error('Token empty')
+      }
       GDrive.setAccessToken(tokens.accessToken)
+      Utils.log('0')
       GDrive.init()
+      Utils.log('1')
       const folderRes = await GDrive.files.safeCreateFolder({
         name: 'MoneyDairy',
         parents: ['root']
@@ -121,7 +129,7 @@ class SettingScreen extends Component {
       }
       return currentFileId
     } catch (error) {
-      Utils.log('getFileIdError', error)
+      Utils.log(error)
       return null
     }
   }

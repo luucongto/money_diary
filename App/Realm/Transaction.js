@@ -1,10 +1,10 @@
-import schema from './schemas/Transaction'
-import RealmWrapper from './RealmWrapper'
-import Utils from '../Utils/Utils'
-import Wallet from './Wallet'
-import Category from './Category'
-import _ from 'lodash'
 import dayjs from 'dayjs'
+import _ from 'lodash'
+import Utils from '../Utils/Utils'
+import Category from './Category'
+import RealmWrapper from './RealmWrapper'
+import schema from './schemas/Transaction'
+import Wallet from './Wallet'
 class Transaction extends RealmWrapper {
   static schema = schema
   static appendId (params) {
@@ -16,77 +16,53 @@ class Transaction extends RealmWrapper {
     return params
   }
 
-  static bulkInsertRaw = (rows: any) => {
+  static bulkInsertFromCSV = (rows = []) => {
+    if (!rows.length) {
+      return []
+    }
     let result = {}
     Transaction.realm.write(() => {
-      const categories = _.map(rows, 'category')
-      const wallets = _.map(rows, 'wallet')
-      const walletMap: any = {}
-      wallets.forEach((wallet:string) => {
-        const obj = Wallet.findOne({ label: wallet })
-        if (obj) {
-          walletMap[wallet] = obj.id
-        } else {
-          const newObj = Wallet.insert({
-            label: wallet,
-            color: Utils.randomColor()
-          }, true)
-          Utils.log('newWallet', wallet, newObj)
-          if (newObj) {
-            walletMap[wallet] = newObj.id
-          }
-        }
+      const walletObjs = {}
+      const categoryObjs = {}
+      rows.forEach(row => {
+        const wallet = walletObjs[row.wallet] || { label: row.wallet, amount: 0, income: 0, outcome: 0 }
+        wallet.amount += row.amount
+        wallet.income += row.amount > 0 ? row.amount : 0
+        wallet.outcome += row.amount < 0 ? row.amount : 0
+        const category = categoryObjs[row.category] || { label: row.category, amount: 0, income: 0, outcome: 0 }
+        category.amount += row.amount
+        category.income += row.amount > 0 ? row.amount : 0
+        category.outcome += row.amount < 0 ? row.amount : 0
       })
-
-      const categoryMap: any = {}
-      categories.forEach((item:string) => {
-        const obj = Category.findOne({ label: item })
-        if (obj) {
-          categoryMap[item] = obj.id
-        } else {
-          const newObj = Category.insert({
-            label: item,
-            color: Utils.randomColor()
-          }, true)
-          if (newObj) {
-            categoryMap[item] = newObj.id
-          }
-        }
+      result = Transaction.bulkInsert(rows, true)
+      Utils.log('====================bulk', walletObjs)
+      // process wallet
+      _.forEach(walletObjs, (wallet, label) => {
+        Wallet.insert(wallet)
       })
-      const processedRows = rows.map((item:any) => {
-        if (typeof (item.wallet) === 'string') {
-          item.wallet = walletMap[item.wallet]
-        }
-        if (typeof (item.category) === 'string') {
-          item.category = categoryMap[item.category]
-        }
-        return item
+      _.forEach(categoryObjs, (item, label) => {
+        Category.insert(item)
       })
-      Utils.log('processedRows', walletMap, categoryMap, processedRows)
-      result = Transaction.bulkInsert(processedRows, true)
+      // process category
     })
     return result
   }
 
-  static getBy (condition, option) {
+  static getBy (condition, option = null) {
     return Transaction.find({ ...condition, deleted: false }, { sort: { date: true }, ...option })
   }
 
-  static findWithFilter = (startDate: number, endDate:number, params: any | null) => {
-    // let query = `date >= ${Utils.formatDateForRealmQuery(startDate)} and date < ${Utils.formatDateForRealmQuery(endDate)}`
-    let query = `date >= ${startDate} and date < ${endDate} and deleted==false`
-    const { wallet, category } = params
-    if (wallet) {
-      query = `${query} and wallet=${wallet}`
+  static findWithFilter = (startDate, endDate, params) => {
+    const query = { wallet: params.wallet, category: params.category }
+    query.date = {
+      '>=': startDate,
+      '<': endDate
     }
-    if (category) {
-      query = `${query} and category=${category}`
-    }
-    Utils.log('findWithFilter', query)
-    return Transaction.find(query, { sort: { date: true } })
+
+    return Transaction.getBy(query)
   }
 
-  static beforeInsert (params: any) {
+  static beforeInsert (params) {
     if (!params.date) {
       params.date = dayjs().unix()
     } else if (typeof (params.date) === 'string') {
@@ -96,31 +72,6 @@ class Transaction extends RealmWrapper {
     params.quarterTag = Utils.getQuarter(params.date)
     params.dateTag = Utils.getDateFromUnix(params.date)
     params = Transaction.appendId(params)
-    if (typeof (params.category) === 'string') {
-      const category = Category.findOne({ label: params.category })
-      if (category) {
-        params.category = category.id
-      } else {
-        const newCategory = Category.insert({
-          label: params.category,
-          color: params.amount > 0 ? 'green' : 'red'
-        }, true)
-        params.category = newCategory ? newCategory.id : 0
-      }
-    }
-    if (typeof (params.wallet) === 'string') {
-      const wallet = Wallet.findOne({ label: params.wallet })
-      if (wallet) {
-        params.wallet = wallet.id
-      } else {
-        const newWallet = Category.insert({
-          label: params.wallet,
-          color: '#' + Math.floor(Math.random() * 16777215).toString(16)
-        }, true)
-        params.wallet = newWallet.id
-      }
-    }
-    Utils.log('insert', params)
     return params
   }
 

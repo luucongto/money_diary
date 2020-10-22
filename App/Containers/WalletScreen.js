@@ -1,21 +1,20 @@
 // import { Images, Metrics } from '../Themes'
-import { Container, Content, Fab, Icon, View } from 'native-base'
+import { Button, Container, Content, Fab, Icon, Label, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { RefreshControl } from 'react-native'
+import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import { WalletItem, WalletAddComponent } from '../Components/MoneyDairy/WalletItem'
-import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
-import { Wallet } from '../Realm'
-import CategoryRedux from '../Redux/CategoryRedux'
-import TransactionRedux from '../Redux/TransactionRedux'
-import WalletRedux from '../Redux/WalletRedux'
+import { WalletAddComponent, WalletItem } from '../Components/MoneyDairy/WalletItem'
+import Constants from '../Config/Constants'
+import I18n from '../I18n'
+import Api from '../Services/Api'
+import { Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-import { Colors } from '../Themes'
-import I18n from '../I18n'
+const t = I18n.t
 class WalletScreen extends Component {
   constructor (props) {
     super(props)
@@ -32,22 +31,33 @@ class WalletScreen extends Component {
   }
 
   componentDidMount () {
-    this.props.categoryRequest()
-    this.props.walletRequest()
     this.refresh()
   }
 
-  componentWillReceiveProps (nextProps) {
-    const prevProps = this.props
-    if ((nextProps.isFocused && prevProps.isFocused !== nextProps.isFocused) || prevProps.walletObjects !== nextProps.walletObjects) {
-      this.refresh()
-    }
-  }
-
   refresh () {
-    Utils.log('Wallet Updates')
-    const wallets = Wallet.findWithAmount()
-    this.setState({ wallets })
+    const wallets = Api.wallet()
+    Utils.log('Wallet Updates', wallets)
+    const totalWallet = {
+      id: Constants.DEFAULT_WALLET_ID,
+      label: Constants.DEFAULT_WALLET_ID,
+      color: '#cce2ed',
+      position: 0,
+      countInTotal: true,
+      income: 0,
+      amount: 0,
+      outcome: 0,
+      count: 0,
+      lastUpdate: 0
+    }
+    wallets.forEach(wallet => {
+      if (!wallet.countInTotal) return
+      totalWallet.amount += wallet.amount
+      totalWallet.income += wallet.income
+      totalWallet.outcome += wallet.outcome
+      totalWallet.count += wallet.count
+      totalWallet.lastUpdate = totalWallet.lastUpdate < wallet.lastUpdate ? wallet.lastUpdate : totalWallet.lastUpdate
+    })
+    this.setState({ wallets: [totalWallet].concat(wallets) })
   }
 
   openWalletDetailModal (wallet) {
@@ -56,22 +66,50 @@ class WalletScreen extends Component {
   }
 
   walletCreate (params) {
-    this.props.walletCreate(params)
+    Api.walletCreate(params)
+    this.refresh()
+  }
+
+  toggleEdit () {
+    this.setState({ editing: !this.state.editing })
+  }
+
+  transactionCreateRequest (transaction) {
+    Api.transactionCreate(transaction)
+    this.refresh()
   }
 
   renderPhone () {
-    const renderItems = this.state.wallets.map((item, index) => {
+    Utils.log('wallets', this.state.wallets)
+    const renderItems = this.state.wallets.filter(each => each.countInTotal).map((item, index) => {
       return (
         <WalletItem
+          editing={this.state.editing}
           key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
-          transactionCreateRequest={this.props.transactionCreateRequest}
+          transactionCreateRequest={this.transactionCreateRequest.bind(this)}
+          refresh={() => this.refresh()}
+        />
+      )
+    })
+    const renderUncountedItems = this.state.wallets.filter(each => !each.countInTotal).map((item, index) => {
+      return (
+        <WalletItem
+          editing={this.state.editing}
+          key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
+          transactionCreateRequest={this.transactionCreateRequest.bind(this)}
           refresh={() => this.refresh()}
         />
       )
     })
     return (
       <Container>
-        <ScreenHeader navigation={this.props.navigation} title={I18n.t('wallet')} />
+        <ScreenHeader
+          navigation={this.props.navigation} title={I18n.t('wallet')}
+          right={(
+            <Button transparent onPress={() => this.toggleEdit()}>
+              <Icon name='edit' type='FontAwesome' style={{ color: '#0096c7' }} />
+            </Button>)}
+        />
         <Content
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
@@ -82,6 +120,19 @@ class WalletScreen extends Component {
           }}
         >
           {renderItems}
+          <View style={{
+            height: 50,
+            paddingHorizontal: 20,
+            marginBottom: 10,
+            backgroundColor: 'white',
+            justifyContent: 'center',
+            borderColor: '#999999',
+            elevation: 5
+          }}
+          >
+            <Label>{t('uncounted_wallets')}</Label>
+          </View>
+          {renderUncountedItems}
           <WalletAddComponent walletCreate={this.walletCreate.bind(this)} />
           <View style={{ height: 80 }} />
         </Content>
@@ -105,18 +156,12 @@ class WalletScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetching: state.wallet.fetching,
-    walletObjects: state.wallet.objects
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    walletCreate: (params) => dispatch(WalletRedux.walletCreateRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params)),
-    categoryRequest: (params) => dispatch(CategoryRedux.categoryRequest(params)),
-    walletRequest: (params) => dispatch(WalletRedux.walletRequest(params))
   }
 }
-const screenHook = Screen(WalletScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+const screenHook = Screen(WalletScreen, mapStateToProps, mapDispatchToProps, [])
 export default screenHook

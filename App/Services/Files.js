@@ -1,10 +1,10 @@
 import RNFS from 'react-native-fs'
-import utf8 from 'utf8'
 import {
   StaticUtils
 } from 'simple-common-utils'
-import GDrive from './GDrive'
+import utf8 from 'utf8'
 import Utils from '../Utils/Utils'
+import GDrive from './GDrive'
 
 const uploadUrl = 'https://www.googleapis.com/upload/drive/v3/files'
 
@@ -16,8 +16,7 @@ export default class Files {
 
     [
       ['boundary', 'foo_bar_baz']
-    ].forEach(nameValue => this.params[nameValue[0]] =
-      this.params[nameValue[0]] || nameValue[1])
+    ].forEach(nameValue => { this.params[nameValue[0]] = this.params[nameValue[0]] || nameValue[1] })
   }
 
   createFileMultipart (media, mediaType, metadata, isBase64) {
@@ -30,7 +29,7 @@ export default class Files {
       (isBase64 ? 'Content-Transfer-Encoding: base64\n' : '') +
       `Content-Type: ${mediaType}\n\n`
 
-    if (media.constructor == String) {
+    if (media.constructor === String) {
       body += `${media}${ending}`
     } else {
       body = new Uint8Array(
@@ -58,29 +57,35 @@ export default class Files {
   }
 
   async safeCreateFolder (metadata) {
-    let id = await this.getId(metadata.name, metadata.parents, Files.mimeFolder)
+    try {
+      let id = await this.getId(metadata.name, metadata.parents, Files.mimeFolder)
+      let result
+      if (!id) {
+        metadata.mimeType = Files.mimeFolder
 
-    if (!id) {
-      metadata.mimeType = Files.mimeFolder
+        const body = JSON.stringify(metadata)
 
-      const body = JSON.stringify(metadata)
+        result = await fetch(GDrive._urlFiles, {
+          method: 'POST',
+          headers: GDrive._createHeaders(
+            GDrive._contentTypeJson,
+            body.length),
+          body
+        })
 
-      result = await fetch(GDrive._urlFiles, {
-        method: 'POST',
-        headers: GDrive._createHeaders(
-          GDrive._contentTypeJson,
-          body.length),
-        body
-      })
+        if (!result.ok) {
+          Utils.log('safeCreateFolder not ok', result)
+          throw result
+        }
 
-      if (!result.ok) {
-        throw result
+        id = (await result.json()).id
       }
 
-      id = (await result.json()).id
+      return id
+    } catch (error) {
+      Utils.log('safeCreateFolder', error)
+      return null
     }
-
-    return id
   }
 
   async getId (name, parents, mimeType, trashed = false) {

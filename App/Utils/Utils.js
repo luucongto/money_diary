@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
-import { relativeTime } from 'dayjs/locale/vi'
+import _ from 'lodash'
 import ApiConfig from '../Config/ApiConfig'
-import _, { times } from 'lodash'
 var advancedFormat = require('dayjs/plugin/advancedFormat')
 dayjs.extend(advancedFormat)
 export default {
@@ -65,6 +64,7 @@ export default {
     return date.format('YYYY-MM-DD')
   },
   getPrevMonth (timeString = dayjs().format('YYYY-MM')) {
+    this.log('getPrevMonth', timeString)
     return dayjs(timeString, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM')
   },
   getMonth (timestamp = dayjs().unix()) {

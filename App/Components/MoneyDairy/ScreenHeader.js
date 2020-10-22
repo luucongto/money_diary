@@ -5,14 +5,18 @@ export default class WalletComponent extends PureComponent {
     return (
       <Header style={{ backgroundColor: 'white' }}>
         <Left>
-          <Button transparent onPress={() => this.props.navigation.openDrawer()}>
-            <Icon name='menu' style={{ color: '#0096c7' }} />
-          </Button>
+          {this.props.left || (
+            <Button transparent onPress={() => this.props.navigation.openDrawer()}>
+              <Icon name='menu' style={{ color: '#0096c7' }} />
+            </Button>)}
         </Left>
         <Body stye={{ justifyContent: 'center', alignItem: 'center' }}>
           <Title style={{ color: '#0096c7' }}>{this.props.title}</Title>
         </Body>
-        <Right />
+        <Right>
+          {this.props.right}
+        </Right>
+
       </Header>
     )
   }

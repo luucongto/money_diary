@@ -1,14 +1,16 @@
+import { Body, Button, Col, Form, Grid, Icon, Input, Item, Label, Picker, Row, Text } from 'native-base'
 import React, { PureComponent } from 'react'
-import { View } from 'react-native'
-import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Row, Col } from 'native-base'
-import Utils from '../../Utils/Utils'
-import { Fonts, ApplicationStyles } from '../../Themes'
-import I18n from '../../I18n'
-import FadeComponent from './FadeComponent'
 import autoBind from 'react-autobind'
+import { View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import Constants from '../../Config/Constants'
+import I18n from '../../I18n'
+import Wallet from '../../Realm/Wallet'
+import Api from '../../Services/Api'
+import { ApplicationStyles, Fonts } from '../../Themes'
+import Utils from '../../Utils/Utils'
+import FadeComponent from './FadeComponent'
 import { TransactionCardAddComponent } from './TransactionCardItem'
-
 class WalletItem extends PureComponent {
   constructor (props) {
     super(props)
@@ -26,7 +28,6 @@ class WalletItem extends PureComponent {
   _renderAddTransactionPanen () {
     return (
       <TransactionCardAddComponent
-        transactionCreateRequest={this.props.transactionCreateRequest}
         wallet={this.props.item}
         walletId={this.props.item.id}
         callback={() => {
@@ -37,11 +38,21 @@ class WalletItem extends PureComponent {
     )
   }
 
+  delete () {
+    Api.walletDelete(this.props.item)
+    setTimeout(() => this.props.refresh(), 1000)
+  }
+
+  toggleCheckInclude () {
+    Wallet.update({ id: this.props.item.id }, { countInTotal: !this.props.item.countInTotal })
+    this.props.refresh()
+  }
+
   render () {
     const wallet = this.props.item
     if (!wallet) return null
     const amount = wallet.amount
-    const font = wallet.label.length > 8 ? Fonts.style.h6 : Fonts.style.h3
+    const font = Fonts.style.h6 // wallet.label.length > 8 ? Fonts.style.h6 : Fonts.style.h3
     return (
       <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
@@ -52,10 +63,17 @@ class WalletItem extends PureComponent {
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Grid>
               <Col>
-                <Row style={{ height: 50 }}>
-                  <Text style={[font, { color: '#0096c7', alignSelf: 'flex-end' }]}>
-                    {wallet.position ? wallet.label : I18n.t(wallet.label)}
-                  </Text>
+                <Row style={{ height: 50, flexDirection: 'column', justifyContent: 'center' }}>
+                  {this.props.editing ? (
+                    <TouchableOpacity onPress={() => this.toggleCheckInclude()}>
+                      <Text style={[font, { color: '#0096c7', alignSelf: 'flex-start' }]}>
+                        <Icon name={wallet.countInTotal ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: wallet.countInTotal ? 'green' : 'gray' }} />   {wallet.position ? wallet.label : I18n.t(wallet.label)}
+                      </Text>
+                    </TouchableOpacity>)
+                    : (
+                      <Text style={[font, { color: '#0096c7', alignSelf: 'flex-start' }]}>
+                        {wallet.position ? wallet.label : I18n.t(wallet.label)}
+                      </Text>)}
                 </Row>
                 <Row>
                   <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}>đ {Utils.numberWithCommas(amount)}</Text>
@@ -93,11 +111,18 @@ class WalletItem extends PureComponent {
             alignSelf: 'flex-end'
           }}
           >
-            <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.props.openWalletDetailModal(wallet)}>
-              <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
-            </TouchableOpacity>
+            {this.props.editing && wallet.id !== Constants.DEFAULT_WALLET_ID && (
+              <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.delete()}>
+                <Icon name='remove' type='FontAwesome' style={{ fontSize: 30, color: 'red', alignSelf: 'center' }} />
+              </TouchableOpacity>
+            )}
+
+            {!this.props.editing && (
+              <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.props.openWalletDetailModal(wallet)}>
+                <Icon name='angle-right' type='FontAwesome' style={{ fontSize: 30, color: 'blue', alignSelf: 'center' }} />
+              </TouchableOpacity>)}
             {
-              wallet.position > 0 && (
+              !this.props.editing && wallet.position > 0 && (
                 <TouchableOpacity style={{ width: 40, height: 60, flexDirection: 'row', justifyContent: 'center', paddingLeft: 10 }} onPress={() => this.toggleAddTransactionPanel()}>
                   <Icon name={this.state.togglePanel ? 'minus' : 'plus'} type='FontAwesome' style={{ alignSelf: 'center', color: 'green' }} />
                 </TouchableOpacity>)
@@ -143,35 +168,41 @@ class WalletAddComponent extends PureComponent {
 
   render () {
     return (
-      <Card style={{ marginLeft: 10, marginRight: 10, marginBottom: 10, overflow: 'hidden', flexDirection: 'row', justifyContent: 'space-between', paddingRight: 10 }}>
-        <Form style={{ width: '60%' }}>
-          <Item inlineLabel>
-            <Input placeholder={I18n.t('WalletName')} value={this.state.label} onChangeText={label => this.setState({ label })} />
-          </Item>
-          <Item inlineLabel>
-            <Label>{I18n.t('Color')}</Label>
-            <Picker
-              mode='dropdown'
-              iosIcon={<Icon name='arrow-down' />}
-              style={{ width: undefined }}
-              placeholder='Select Color'
-              placeholderStyle={{ color: '#bfc6ea' }}
-              placeholderIconColor='#007aff'
-              itemTextStyle={{ color: 'red' }}
-              selectedValue={this.state.color}
-              onValueChange={this.onValueChangeColor.bind(this)}
-            >
-              {this.state.colors.map(item => <Picker.Item color={item} key={item} label={item} value={item} />)}
+      <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+        <View style={{
+          ...ApplicationStyles.components.card,
+          flexDirection: 'row'
+        }}
+        >
+          <Form style={{ width: '70%' }}>
+            <Item inlineLabel>
+              <Input placeholder={I18n.t('WalletName')} value={this.state.label} onChangeText={label => this.setState({ label })} />
+            </Item>
+            <Item inlineLabel>
+              <Label>{I18n.t('Color')}</Label>
+              <Picker
+                mode='dropdown'
+                iosIcon={<Icon name='arrow-down' />}
+                style={{ width: undefined }}
+                placeholder='Select Color'
+                placeholderStyle={{ color: '#bfc6ea' }}
+                placeholderIconColor='#007aff'
+                itemTextStyle={{ color: 'red' }}
+                selectedValue={this.state.color}
+                onValueChange={this.onValueChangeColor.bind(this)}
+              >
+                {this.state.colors.map(item => <Picker.Item color={item} key={item} label={item} value={item} />)}
 
-            </Picker>
-          </Item>
-        </Form>
+              </Picker>
+            </Item>
+          </Form>
 
-        <Button iconLeft rounded success style={{ alignSelf: 'center' }} onPress={this.insert.bind()}>
-          <Icon name='check' type='FontAwesome' />
-          <Text>{I18n.t('save')}</Text>
-        </Button>
-      </Card>
+          <Button iconLeft rounded success style={{ alignSelf: 'center' }} onPress={this.insert.bind()}>
+            <Icon name='check' type='FontAwesome' />
+            <Text>{I18n.t('save')}</Text>
+          </Button>
+        </View>
+      </FadeComponent>
     )
   }
 }

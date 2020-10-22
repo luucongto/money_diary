@@ -9,7 +9,6 @@ import AddCategoryModal from '../Components/MoneyDairy/AddCategoryModal'
 import CategoryComponent from '../Components/MoneyDairy/CategoryComponent'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import { Category } from '../Realm'
-import CategoryRedux from '../Redux/CategoryRedux'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
@@ -91,7 +90,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    categoryCreateRequest: (params) => dispatch(CategoryRedux.categoryCreateRequest(params))
   }
 }
 const screenHook = Screen(CategoryScreen, mapStateToProps, mapDispatchToProps, ['category'])

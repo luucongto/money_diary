@@ -1,4 +1,3 @@
-import { View } from 'native-base'
 import React, { PureComponent } from 'react'
 import Animated, { Easing, timing, Value } from 'react-native-reanimated'
 export default class FadeComponent extends PureComponent {

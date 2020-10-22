@@ -34,5 +34,6 @@
     "Import from File": "Nhập từ file",
     "Pick MoneyLover CSV File": "Chọn File CSV xuất từ MoneyLover",
     "imported_transactions": "Imported {{num}} transactions",
-    "exported": "Đã upload lên GDriver"
+    "exported": "Đã upload lên GDriver",
+    "uncounted_wallets": "Không tính trong tổng"
 }

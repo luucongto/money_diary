@@ -59,18 +59,31 @@ class RealmWrapper {
     return objects.length ? objects : []
   }
 
-  static _buildFilter (filter) {
+  static _buildFilter (filter, useOr = false) {
     const criteria = []
-    const op = ['$or', '$and']
+    const op = ['or', 'and']
+    Utils.log('=====buildfilter', filter)
     _.each(filter, (v, k) => {
       if (_.indexOf(op, k) >= 0) {
-        // not yet implement logical operator $or, $and
+        criteria.push(this._buildFilter(v, op === 'or'))
       } else {
         if (_.isString(v)) {
           criteria.push(`${k} = "${v}"`)
         } else if (_.isBoolean(v) || _.isNumber(v)) {
           criteria.push(`${k} = ${v}`)
+        } else if (_.isArray(v)) {
+          const temp = []
+          Utils.log('array', v)
+          v.forEach(each => {
+            if (_.isString(each)) {
+              temp.push(`${k} = "${each}"`)
+            } else if (_.isBoolean(each) || _.isNumber(each)) {
+              temp.push(`${k} = ${each}`)
+            }
+          })
+          criteria.push(`(${temp.join(' OR ')})`)
         } else if (_.isObject(v)) {
+          Utils.log('object', v)
           _.each(v, (opVal, op) => {
             if (_.isString(opVal)) {
               criteria.push(`${k} ${op} "${opVal}"`)
@@ -81,7 +94,7 @@ class RealmWrapper {
         }
       }
     })
-    return criteria.join(' AND ')
+    return criteria.join(` ${useOr ? 'OR' : 'AND'} `)
   }
 
   static findOne (conditions = {}) {
@@ -177,6 +190,7 @@ class RealmWrapper {
   }
 
   static remove (filter = {}, inTx = false) {
+    Utils.log(`remove realm ${filter}`)
     var className = this
     let objects = className.realm.objects(className.schema)
     if (!_.isEmpty(filter)) {
@@ -185,6 +199,7 @@ class RealmWrapper {
         objects = objects.filtered(filterStr)
       }
     }
+    Utils.log(`remove objects ${objects.length}`)
     const deletingObjects = []
     const action = () => {
       if (objects.length) {
@@ -202,6 +217,7 @@ class RealmWrapper {
     } else {
       className.realm.write(action)
     }
+    Utils.log(`ReamlWrapper ${className.name} remove ${deletingObjects.length}`)
     return deletingObjects
   }
 }

@@ -8,7 +8,30 @@ import Constants from '../Config/Constants'
 class Wallet extends RealmWrapper {
   static schema = schema
   static initializeDatas = () => {
+    const realm = this.realm
+    const maxId = realm.objects(this.schema).length
+    if (maxId) {
+      return
+    }
     Wallet.bulkInsert(require('./data/wallet.json'), true)
+  }
+
+  static insertTransaction (params) {
+    const wallet = Wallet.findOne({ label: params.wallet })
+    if (wallet) {
+      wallet.amount += params.amount
+      wallet.income += params.amount > 0 ? params.amount : 0
+      wallet.outcome += params.amount < 0 ? params.amount : 0
+    } else {
+      Wallet.insert({
+        id: params.wallet,
+        label: params.wallet,
+        color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        amount: params.amount,
+        income: params.amount > 0 ? params.amount : 0,
+        outcome: params.amount < 0 ? params.amount : 0
+      }, true)
+    }
   }
 
   static appendId (params) {
@@ -17,6 +40,7 @@ class Wallet extends RealmWrapper {
       const newPosition = realm.objects(this.schema.name).max('position')
       params.position = (newPosition || 0) + 1
     }
+    params.id = params.label
     return params
   }
 
@@ -39,7 +63,9 @@ class Wallet extends RealmWrapper {
   static findOneWithAmount = (id) => {
     const wallet = Wallet.findOne({ id })
     const amounts = Wallet.calculate(id)
-    return { ...Utils.clone(wallet), ...amounts }
+    const result = { ...Utils.clone(wallet), ...amounts }
+    Wallet.insert(result)
+    return result
   }
 
   static calculate = (id) => {

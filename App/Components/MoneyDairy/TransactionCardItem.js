@@ -1,16 +1,14 @@
-import React, { PureComponent } from 'react'
-import { View } from 'react-native'
-import { Body, Text, Right, Card, CardItem, Button, Icon, Item, Picker, Label, Input, Form, Grid, Col, Row } from 'native-base'
-import Utils from '../../Utils/Utils'
-import { ApplicationStyles, Colors, Fonts } from '../../Themes'
-import I18n from '../../I18n'
-import lodash from 'lodash'
-import FadeComponent from './FadeComponent'
-import autoBind from 'react-autobind'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import dayjs from 'dayjs'
-import Category from '../../Realm/Category'
-import Transaction from '../../Realm/Transaction'
+import lodash from 'lodash'
+import { Body, Button, Col, Icon, Input, Item, Label, Picker, Text } from 'native-base'
+import React, { PureComponent } from 'react'
+import autoBind from 'react-autobind'
+import { View } from 'react-native'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import I18n from '../../I18n'
+import Api from '../../Services/Api'
+import { ApplicationStyles, Colors, Fonts } from '../../Themes'
+import Utils from '../../Utils/Utils'
 class TransactionCardItem extends PureComponent {
   constructor (props) {
     super(props)
@@ -19,13 +17,15 @@ class TransactionCardItem extends PureComponent {
     }
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.transaction) {
+      this.setState({ transaction: nextProps.transaction })
+    }
+  }
+
   delete () {
     const transaction = this.state.transaction
-    Transaction.update({
-      id: transaction.id
-    }, {
-      deleted: true
-    })
+    Api.transactionDelete({ id: transaction.id })
     this.setState({
       transaction: {
         ...this.state.transaction,
@@ -38,9 +38,8 @@ class TransactionCardItem extends PureComponent {
     Utils.log('toggleCheckInclude')
     const transaction = Utils.clone(this.state.transaction)
     transaction.include = !transaction.include
-    Transaction.update({
-      id: transaction.id
-    }, {
+    Api.transactionUpdate({
+      id: transaction.id,
       include: transaction.include
     })
     this.setState({
@@ -60,7 +59,6 @@ class TransactionCardItem extends PureComponent {
     if (!category) return null
     const amount = transaction.amount
     const height = 100
-    const margin = 10
     return (
       <View style={{
         ...ApplicationStyles.components.card,
@@ -127,6 +125,7 @@ class TransactionMonthTag extends PureComponent {
         borderBottomWidth: 1,
         paddingHorizontal: 25,
         height: 100,
+        zIndex: 10,
         overflow: 'hidden',
         justifyContent: 'center'
       }}
@@ -155,7 +154,7 @@ class TransactionMonthTag extends PureComponent {
 class TransactionCardAddComponent extends PureComponent {
   constructor (props) {
     super(props)
-    const categories = lodash.sortBy(Category.find(), 'label')
+    const categories = lodash.sortBy(Api.category(), 'label')
     this.state = {
       amount: 0,
       categoryId: categories[0],
@@ -175,7 +174,7 @@ class TransactionCardAddComponent extends PureComponent {
 
   transactionCreate (transaction) {
     if (transaction.amount !== 0) {
-      this.props.transactionCreateRequest(transaction)
+      Api.transactionCreate(transaction)
     }
 
     if (this.props.callback) {

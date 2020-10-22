@@ -1,9 +1,9 @@
+import { Body, ListItem, Right, Text } from 'native-base'
 import React, { PureComponent } from 'react'
 import { View } from 'react-native'
-import { Body, Text, Right, ListItem, Icon } from 'native-base'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import Utils from '../../Utils/Utils'
 import I18n from '../../I18n'
+import Utils from '../../Utils/Utils'
 export default class CategoryComponent extends PureComponent {
   render () {
     const wallet = this.props.item

@@ -7,7 +7,29 @@ import Utils from '../Utils/Utils'
 class Category extends RealmWrapper {
   static schema = schema
   static initializeDatas = (inTx = true) => {
+    const maxId = Category.realm.objects(Category.schema).length
+    if (maxId) {
+      return
+    }
     Category.bulkInsert(data, inTx)
+  }
+
+  static insertTransaction (params: any) {
+    const wallet = Category.findOne({ label: params.category })
+    if (wallet) {
+      wallet.amount += params.amount
+      wallet.income += params.amount > 0 ? params.amount : 0
+      wallet.outcome += params.amount < 0 ? params.amount : 0
+    } else {
+      Category.insert({
+        id: params.category,
+        label: params.category,
+        color: '#' + Math.floor(Math.random() * 16777215).toString(16),
+        amount: params.amount,
+        income: params.amount > 0 ? params.amount : 0,
+        outcome: params.amount < 0 ? params.amount : 0
+      }, true)
+    }
   }
 
   static getColor = (label: string) => {
@@ -17,7 +39,7 @@ class Category extends RealmWrapper {
   }
 
   static findWithAmount = () => {
-    const items = Category.find()
+    const items = Api.category()
     const result = items.map((item: any) => Category.calculate(item))
     Utils.log('category with amount', result)
     return result

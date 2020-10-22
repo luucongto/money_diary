@@ -1,20 +1,17 @@
-import { Body, Button, Container, Content, ListItem, Right, Row, Spinner, Text, View } from 'native-base'
+import { Button, Container, Spinner, Text, View } from 'native-base'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { FlatList, RefreshControl } from 'react-native'
+import Animated, { Easing, Value } from 'react-native-reanimated'
+import I18n from '../../I18n'
+import Api from '../../Services/Api'
+import { Colors } from '../../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import _ from 'lodash'
 import { TransactionCardAddComponent, TransactionCardItem, TransactionMonthTag } from './TransactionCardItem'
-import { Colors } from '../../Themes'
-import Wallet from '../../Realm/Wallet'
-import Category from '../../Realm/Category'
-import Animated, { Easing, Value } from 'react-native-reanimated'
-import I18n from '../../I18n'
-
 class TransactionList extends Component {
   propTypes = {
     transaction: PropTypes.object.isRequired,
@@ -33,34 +30,28 @@ class TransactionList extends Component {
       outcome: 0,
       currentTransaction: null
     }
-    this.walletObjects = Utils.createMapFromArray(Wallet.find(), 'id')
-    this.categoryObjects = Utils.createMapFromArray(Category.find(), 'id')
+    this.walletObjects = Utils.createMapFromArray(Api.wallet(), 'id')
+    this.categoryObjects = Utils.createMapFromArray(Api.category(), 'id')
     this.bottomPanelShow = new Value(0)
     autoBind(this)
   }
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.transactions !== this.props.transactions) {
-      // const preprocessTransactions = [].concat(this.state.preprocessTransactions).concat(nextProps.transactions)
-      const preprocessTransactions = nextProps.transactions
       this.setState({
-        preprocessTransactions,
-        ...this.appendData(preprocessTransactions)
+        ...this.appendData(nextProps.transactions)
       })
     }
   }
 
-  appendData (transactions, currentRenderCount = 0) {
-    const renderItems = transactions.slice(0, currentRenderCount + 20)
-    const stickIndices = [0]
-    renderItems.forEach((item, index) => {
-      if (item.type === 'monthTag') {
+  appendData (transactions) {
+    const stickIndices = []
+    transactions.forEach((item, index) => {
+      if (item.type === 'monthTag' || item.type === 'addnew') {
         stickIndices.push(index)
       }
     })
-    Utils.log('appendData', transactions, currentRenderCount, renderItems, stickIndices)
     return {
-      renderItems,
       stickIndices
     }
   }
@@ -73,7 +64,6 @@ class TransactionList extends Component {
     if (index === 0) {
       return (
         <TransactionCardAddComponent
-          transactionCreateRequest={this.props.transactionCreateRequest}
           wallet={this.walletObjects[this.props.walletId]} walletId={this.props.walletId} category={this.props.category}
           callback={() => this.refresh()}
         />
@@ -94,8 +84,6 @@ class TransactionList extends Component {
         wallet={this.walletObjects[item.wallet]}
         category={this.categoryObjects[item.category]}
         openTransactionDetailModal={this.props.openTransactionDetailModal}
-        transactionDeleteRequest={this.props.transactionDeleteRequest}
-        transactionUpdateRequest={this.props.transactionUpdateRequest}
         refresh={this.refresh}
       />)
 
@@ -126,8 +114,7 @@ class TransactionList extends Component {
   }
 
   renderPhone () {
-    const transactions = this.state.renderItems || []
-    Utils.log('LongTransactionList render', transactions.length, this.state.stickIndices)
+    const transactions = this.props.transactions
     return (
       <Container>
         <FlatList
@@ -140,17 +127,18 @@ class TransactionList extends Component {
           renderItem={({ item, index }) => this._renderItem(item, index)}
           keyExtractor={(item) => item.id}
           onEndReachedThreshold={0.1}
-          getItemLayout={(data, index) => (
-            { length: 160, offset: 160 * index, index }
-          )}
+          // getItemLayout={(data, index) => (
+          //   { length: 160, offset: 160 * index, index }
+          // )}
           stickyHeaderIndices={this.state.stickIndices}
           onEndReached={() => {
-            if (this.state.renderItems.length < this.state.preprocessTransactions.length) {
-              Utils.log('onEndReached', this.state.renderItems.length)
-              this.setState(this.appendData(this.state.preprocessTransactions, this.state.renderItems.length))
-            } else if (this.state.renderItems.length) {
-              // this.props.getPrevMonth()
-            }
+            this.props.getPrevMonth()
+            // if (this.state.renderItems.length < this.state.preprocessTransactions.length) {
+            //   Utils.log('onEndReached', this.state.renderItems.length)
+            //   this.setState(this.appendData(this.state.preprocessTransactions, this.state.renderItems.length))
+            // } else if (this.state.renderItems.length) {
+
+            // }
           }}
           ListFooterComponent={(
             <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'center' }}>

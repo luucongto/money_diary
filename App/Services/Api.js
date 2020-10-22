@@ -1,15 +1,14 @@
 import apisauce from 'apisauce'
-import ApiConfig from '../Config/ApiConfig'
-import Utils from '../Utils/Utils'
-import { Transaction, Wallet, Category, realm } from '../Realm'
-import GDrive from './GDrive'
-import RNFetchBlob from 'rn-fetch-blob'
-import RNFS from 'react-native-fs'
-import Papa from 'papaparse'
 import { lowerCase } from 'lodash'
-import dayjs from 'dayjs'
 import moment from 'moment'
+import Papa from 'papaparse'
 import autoBind from 'react-autobind'
+import RNFS from 'react-native-fs'
+import RNFetchBlob from 'rn-fetch-blob'
+import ApiConfig from '../Config/ApiConfig'
+import { Category, realm, Transaction, Wallet } from '../Realm'
+import Utils from '../Utils/Utils'
+import GDrive from './GDrive'
 class API {
   constructor (loginToken, baseURL = ApiConfig.baseURL) {
     this.api = apisauce.create({
@@ -118,7 +117,7 @@ class API {
           Category.initializeDatas()
         })
         setTimeout(() => {
-          Utils.log('api.startup done', Wallet.find(), Category.find(), Transaction.getBy())
+          Utils.log('api.startup done', this.wallet(), this.category(), Transaction.getBy())
           resolve({ data: true })
         }, 1000)
       } catch (e) {
@@ -129,32 +128,38 @@ class API {
   }
 
   // Custom API ---------------------------------------------------------
-  async wallet () {
-    return { data: Wallet.find() }
+  wallet () {
+    return Wallet.find()
   }
 
-  async walletUpdate () {
-    return { data: null }
+  async walletUpdate (params) {
+    const { id, ...rest } = params
+    return Wallet.update({ id }, rest)
   }
 
-  async walletCreate (params) {
-    return { data: Wallet.insert(params) }
+  walletCreate (params) {
+    return Wallet.insert(params)
   }
 
-  async walletDelete () {
-    return { data: null }
+  walletDelete (params) {
+    realm.write(() => {
+      Utils.log('removing wallet', params)
+      // Transaction.remove({ wallet: params.id }, true)
+      Wallet.remove({ id: params.id }, true)
+    })
   }
 
-  async category () {
-    return { data: Category.find() }
+  category () {
+    return Category.find()
   }
 
-  async categoryUpdate () {
-    return { data: null }
+  categoryUpdate (params) {
+    const { id, ...rest } = params
+    return Category.update({ id }, rest)
   }
 
-  async categoryCreate (params) {
-    return { data: Category.insert(params) }
+  categoryCreate (params) {
+    return Category.insert(params)
   }
 
   async categoryDelete () {
@@ -173,21 +178,50 @@ class API {
   }
 
   transactionUpdate (params) {
-    const transaction = Transaction.findOne({ id: params.id })
-    if (!transaction) {
-      return { error: 'not_found' }
-    }
-    const updateResults = Transaction.insert({ ...transaction, ...params })
-    return { data: updateResults }
+    return realm.write(() => {
+      const { id } = params
+      const transaction = Transaction.findOne({ id })
+      if (!transaction) {
+        return { error: 'not_found' }
+      }
+      const newTransaction = { ...Utils.clone(transaction), ...params }
+      if (newTransaction.wallet !== transaction.wallet) {
+        // update wallet
+        const currentWallet = Wallet.findOne({ id: transaction.wallet })
+        currentWallet.removeTransaction(transaction)
+        const newWallet = Wallet.findOne({ id: newTransaction.wallet })
+        newWallet.addTransaction(newTransaction)
+      } else if (newTransaction.amount !== undefined && newTransaction.amount !== transaction.amount) {
+        const currentWallet = Wallet.findOne({ id: transaction.wallet })
+        currentWallet.removeTransaction(transaction)
+        currentWallet.addTransaction(newTransaction)
+      }
+      delete (newTransaction.id)
+      const updateResults = Transaction.update({ id }, newTransaction, true)
+      return { data: updateResults }
+    })
   }
 
-  transactionCreate (params) {
-    return { data: Transaction.insert(params) }
+  transactionCreate (transaction) {
+    return realm.write(() => {
+      const currentWallet = Wallet.findOne({ id: transaction.wallet })
+      const newAmount = transaction.amount
+      currentWallet.amount += newAmount
+      currentWallet.income += newAmount > 0 ? newAmount : 0
+      currentWallet.outcome += newAmount < 0 ? newAmount : 0
+      return Transaction.insert(transaction, true)
+    })
   }
 
   transactionDelete (params) {
     const id = params.id
-    return { data: Transaction.remove({ id: id }) }
+    return {
+      data: Transaction.update({
+        id
+      }, {
+        deleted: true
+      })
+    }
   }
 
   downloadFile (fileId, token) {
@@ -242,7 +276,7 @@ class API {
             date
           })
         })
-        const updatedResult = Transaction.bulkInsertRaw(transactions)
+        const updatedResult = Transaction.bulkInsertFromCSV(transactions)
         Utils.log('importFromFileAPi updatedResult', updatedResult)
         return updatedResult
       }

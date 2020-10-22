@@ -1,30 +1,27 @@
 // import { Images, Metrics } from '../Themes'
+import dayjs from 'dayjs'
+import lodash from 'lodash'
 import {
-  Body, Button, Container, Content, Header, Icon, Right, Text, View, Item, Label, Col, Grid, Form, DatePicker, Picker, Input, Switch, Textarea, Card, CardItem,
-  Row
+  Body, Button, Card, CardItem, Col, Container, Content, DatePicker, Grid, Header, Icon, Input, Item, Label, Picker, Right,
+  Row, Switch, Text, Textarea, View
 } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import lodash from 'lodash'
-import TransactionRedux from '../Redux/TransactionRedux'
+import { TouchableOpacity } from 'react-native'
+import I18n from '../I18n'
+import Api from '../Services/Api'
+import { ApplicationStyles, Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-import dayjs from 'dayjs'
-import I18n from '../I18n'
-import Wallet from '../Realm/Wallet'
-import Category from '../Realm/Category'
-import Transaction from '../Realm/Transaction'
-import { ApplicationStyles, Colors } from '../Themes'
-import { TouchableOpacity } from 'react-native'
 const t = I18n.t
 class TransactionDetailScreen extends Component {
   constructor (props) {
     super(props)
     const transaction = props?.route?.params?.transaction
     const stateTransaction = this._assignTransactionToStart(transaction)
-    this.categories = lodash.sortBy(Category.find(), 'label')
-    this.wallets = Wallet.find()
+    this.categories = lodash.sortBy(Api.category(), 'label')
+    this.wallets = Api.wallet()
     this.state = {
       ...stateTransaction,
       isIncome: stateTransaction.amount > 0
@@ -33,21 +30,18 @@ class TransactionDetailScreen extends Component {
   }
 
   transactionUpdate (transaction) {
-    Transaction.insert(transaction)
+    Api.transactionUpdate(transaction)
     this.goBack()
-    // this.props.transactionUpdateRequest(transaction)
   }
 
   transactionDelete (transaction) {
-    Transaction.remove({ id: transaction.id })
+    Api.transactionDelete({ id: transaction.id })
     this.goBack()
-    // this.props.transactionDeleteRequest(transaction)
   }
 
   transactionCreate (transaction) {
-    Transaction.insert(transaction)
+    Api.transactionCreate(transaction)
     this.goBack()
-    // this.props.transactionCreateRequest(transaction)
   }
 
   goBack () {

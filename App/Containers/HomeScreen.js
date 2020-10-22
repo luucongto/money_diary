@@ -1,5 +1,5 @@
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Container, Fab, Header, Icon, Item, Label, Left, Right, View } from 'native-base'
+import { Body, Button, Container, Fab, Header, Icon, Item, Left, Right, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { ActivityIndicator, Picker } from 'react-native'
@@ -7,23 +7,21 @@ import { TabBar, TabView } from 'react-native-tab-view'
 import TransactionList from '../Components/MoneyDairy/TransactionLists'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
-import { Category, Transaction, Wallet } from '../Realm'
-import CategoryRedux from '../Redux/CategoryRedux'
+import { Transaction, Wallet } from '../Realm'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import TransactionRedux from '../Redux/TransactionRedux'
 import WalletRedux from '../Redux/WalletRedux'
+import Api from '../Services/Api'
 import { Metrics } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-
 class HomeScreen extends Component {
   constructor (props) {
     super(props)
     Utils.log('constructor Homescreen')
     const wallets = Wallet.findWithAmount()
-    const categories = Category.find()
+    const categories = Api.category()
     const walletMapping = Utils.createMapFromArray(wallets, 'id')
     const categoryMapping = Utils.createMapFromArray(categories, 'id')
     const tabData = this._calendarChangeData(Constants.CALENDAR_TYPES.MONTH)
@@ -45,8 +43,8 @@ class HomeScreen extends Component {
 
   componentDidMount () {
     Utils.log('componentDidmount Homescreen')
-    this.props.categoryRequest()
-    this.props.walletRequest()
+    this.props.category()
+    this.props.wallet()
   }
 
   openTransactionDetailModal (transaction) {
@@ -62,7 +60,7 @@ class HomeScreen extends Component {
   }
 
   transactionCreate (transaction) {
-    this.props.transactionCreateRequest(transaction)
+    Api.transactionCreate(transaction)
   }
 
   _setTabIndex (index) {
@@ -227,23 +225,13 @@ class HomeScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    transactions: state.transaction.data,
-    transactionParams: state.transaction.params,
-    transactionUpdateObjects: state.transaction.updateObjects,
-    transactionDeleteObjects: state.transaction.deleteObjects
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
-    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params)),
-    transactionDeleteRequest: (params) => dispatch(TransactionRedux.transactionDeleteRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params)),
-    categoryRequest: (params) => dispatch(CategoryRedux.categoryRequest(params)),
-    walletRequest: (params) => dispatch(WalletRedux.walletRequest(params))
   }
 }
 
-const screenHook = Screen(HomeScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+const screenHook = Screen(HomeScreen, mapStateToProps, mapDispatchToProps, [])
 export default screenHook

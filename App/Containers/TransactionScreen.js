@@ -6,9 +6,8 @@ import autoBind from 'react-autobind'
 import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
-import { Category, Wallet } from '../Realm'
+import { Wallet } from '../Realm'
 import Transaction from '../Realm/Transaction'
-import TransactionRedux from '../Redux/TransactionRedux'
 import { Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
@@ -25,7 +24,6 @@ class TransactionScreen extends Component {
         type: 'addnew'
       }],
       isRefreshing: false,
-      currentRequestMonthTag: Utils.getMonth(),
       wallet,
       category,
       walletId,
@@ -33,16 +31,6 @@ class TransactionScreen extends Component {
     }
     Utils.log('TransactionScreen', props)
     autoBind(this)
-  }
-
-  shouldComponentUpdate (props) {
-    return props.isFocused
-  }
-
-  componentDidMount () {
-    setTimeout(() => {
-      this.refreshTransactions()
-    }, (1000))
   }
 
   componentWillReceiveProps (nextProps) {
@@ -54,44 +42,28 @@ class TransactionScreen extends Component {
     }
   }
 
+  shouldComponentUpdate (props) {
+    return props.isFocused
+  }
+
   refreshTransactions () {
     if (this.state.isRefreshing) {
       return
     }
-    this.setState({
-      isRefreshing: true
-    })
-    Utils.log('refreshTransactions')
-    const findConditions = { }
-    let wallet = this.state.wallet
 
-    if (this.state.wallet && this.state.wallet.id) {
-      wallet = Wallet.findOneWithAmount(this.state.wallet.id)
-      if (wallet.id !== Constants.DEFAULT_WALLET_ID) {
-        findConditions.wallet = this.state.wallet.id
-      }
-    }
-    if (this.state.category && this.state.category.id) {
-      findConditions.category = this.state.category.id
-    }
-
-    const transactions = Transaction.getBy(findConditions)
-    const preprocessTransactions = this.preprocessTransactions(transactions)
-    this.setState({
-      wallet,
-      preprocessTransactions,
-      isRefreshing: false
-    })
-    Utils.log('findConditions', findConditions, transactions)
+    this.getMonth(Utils.getMonth(), true)
   }
 
-  preprocessTransactions (transactions) {
+  preprocessTransactions (transactions, isNew = true) {
     let result = [{
       type: 'addnew'
     }]
+    if (!isNew) {
+      result = []
+    }
     Utils.log('processedTransactions 1', transactions)
     if (!transactions || !transactions.length) return result
-    const stickIndices = [0]
+
     const groups = _.groupBy(transactions, item => item.monthTag)
     _.each(groups, (items, monthTag) => {
       const monthTagItem = {
@@ -107,7 +79,6 @@ class TransactionScreen extends Component {
       })
       monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
       result.push(monthTagItem)
-      stickIndices.push(result.length - 1)
       result = result.concat(items)
     })
     Utils.log('processedTransactions', transactions, result)
@@ -118,25 +89,31 @@ class TransactionScreen extends Component {
     this.props.navigation.navigate('TransactionDetailScreen', { transaction })
   }
 
-  getPrevMonth () {
-    const currentMonth = this.currentRequestMonthTag
-    const prevMonthTag = Utils.getPrevMonth(currentMonth)
-    const findConditions = { monthTag: prevMonthTag }
-    let wallet = this.state.wallet
+  getMonth (monthTag, isRefresh = false) {
+    this.setState({
+      isRefreshing: true
+    })
+    const findConditions = { monthTag: monthTag }
 
     if (this.state.wallet && this.state.wallet.id) {
-      wallet = Wallet.findOneWithAmount(this.state.wallet.id)
-      findConditions.wallet = this.state.wallet.id
+      if (this.state.wallet.id !== Constants.DEFAULT_WALLET_ID) {
+        findConditions.wallet = this.state.wallet.id
+      } else {
+        findConditions.wallet = _.map(Wallet.find({ countInTotal: true }), 'id')
+      }
     }
     if (this.state.category && this.state.category.id) {
       findConditions.category = this.state.category.id
     }
 
     const transactions = Transaction.getBy(findConditions)
+    const preprocessTransactions = this.preprocessTransactions(transactions, false)
     this.setState({
-      currentRequestMonthTag: prevMonthTag,
-      wallet,
-      transactions: this.state.transactions.concat(transactions)
+      currentRequestMonthTag: monthTag,
+      isRefreshing: false,
+      preprocessTransactions: isRefresh ? [{
+        type: 'addnew'
+      }].concat(preprocessTransactions) : this.state.preprocessTransactions.concat(preprocessTransactions)
     })
     Utils.log('findConditions getPrevMonth', findConditions, transactions)
   }
@@ -164,7 +141,7 @@ class TransactionScreen extends Component {
           </View>
           <Body>
             <Text>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Text>
-            <Text note>{transactions.length} {I18n.t('transactions')}</Text>
+            <Text note>{this.state.wallet ? this.state.wallet.count : 0} {I18n.t('transactions')}</Text>
           </Body>
           <Right>
             <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
@@ -174,7 +151,7 @@ class TransactionScreen extends Component {
           transactions={transactions}
           walletId={this.state.wallet ? this.state.wallet.id : 0}
           refreshTransactions={() => this.refreshTransactions()}
-          getPrevMonth={() => this.getPrevMonth()}
+          getPrevMonth={() => this.getMonth(this.state.currentRequestMonthTag ? Utils.getPrevMonth(this.state.currentRequestMonthTag) : Utils.getMonth())}
           openTransactionDetailModal={this.openTransactionDetailModal}
         />
       </Container>
@@ -193,11 +170,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    transactionRequest: (params) => dispatch(TransactionRedux.transactionRequest(params)),
-    transactionUpdateRequest: (params) => dispatch(TransactionRedux.transactionUpdateRequest(params)),
-    transactionDeleteRequest: (params) => dispatch(TransactionRedux.transactionDeleteRequest(params)),
-    transactionCreateRequest: (params) => dispatch(TransactionRedux.transactionCreateRequest(params))
   }
 }
-const screenHook = Screen(TransactionScreen, mapStateToProps, mapDispatchToProps, ['transaction', 'category', 'wallet'])
+const screenHook = Screen(TransactionScreen, mapStateToProps, mapDispatchToProps, ['category', 'wallet'])
 export default screenHook
