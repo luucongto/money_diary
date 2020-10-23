@@ -61,7 +61,16 @@ class SettingScreen extends Component {
       transactions: Transaction.getBy()
 
     }
-    backupContents.tempCategories = lodash.map(backupContents.transactions, 'category')
+    const mapCategories = Utils.createMapFromArray(backupContents.categories, 'id')
+    backupContents.categories = lodash.uniq(lodash.map(backupContents.transactions, 'category')).map(label => {
+      if (!mapCategories[label]) {
+        return {
+          id: label, label: label, color: '#fa0770'
+        }
+      } else {
+        return mapCategories[label]
+      }
+    })
     // const walletObjects = Utils.createMapFromArray(backupContents.wallets, 'id')
     // const categoriesObjects = Utils.createMapFromArray(backupContents.categories, 'id')
     // backupContents.transactions = backupContents.transactions.map(each => {
@@ -124,9 +133,6 @@ class SettingScreen extends Component {
       Utils.log('folderRes', folderRes)
       const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
       Utils.log('fileId', currentFileId)
-      if (!currentFileId) {
-        return null
-      }
       return currentFileId
     } catch (error) {
       Utils.log(error)
@@ -154,22 +160,19 @@ class SettingScreen extends Component {
   }
 
   async download () {
-    const tokens = this.props.login
-    await this.asyncSetState({ doingDownload: true })
-    const folderRes = await GDrive.files.safeCreateFolder({
-      name: 'MoneyDairy',
-      parents: ['root']
-    })
-    const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
-    if (!currentFileId) {
-      return null
-    }
-    if (!currentFileId) {
-      await this.asyncSetState({ doingDownload: false })
-      return
-    }
-    Utils.log('downloading', currentFileId)
     try {
+      const tokens = this.props.login
+      await this.asyncSetState({ doingDownload: true })
+      const folderRes = await GDrive.files.safeCreateFolder({
+        name: 'MoneyDairy',
+        parents: ['root']
+      })
+      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      if (!currentFileId) {
+        await this.asyncSetState({ doingDownload: false })
+        return
+      }
+      Utils.log('downloading', currentFileId)
       const result = await Api.downloadFile(currentFileId, tokens.accessToken)
       Utils.log('result', result, result.wallets)
       Toast.show({
@@ -179,6 +182,7 @@ class SettingScreen extends Component {
       })
       await this.asyncSetState({ doingDownload: false })
     } catch (error) {
+      await this.asyncSetState({ doingDownload: false })
       Utils.log('download error', error)
     }
   }

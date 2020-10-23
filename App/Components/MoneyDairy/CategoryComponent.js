@@ -3,35 +3,29 @@ import React, { PureComponent } from 'react'
 import { View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import I18n from '../../I18n'
-import Utils from '../../Utils/Utils'
 export default class CategoryComponent extends PureComponent {
   render () {
-    const wallet = this.props.item
-    if (!wallet) return null
-    const amount = wallet.amount
-    const includeAmount = wallet.includeAmount
-    const includeCount = wallet.includeCount
-    const count = wallet.count
+    const item = this.props.item
+    if (!item) return null
+    const includeCount = item.includeCount
+    const count = item.count
     return (
-      <TouchableOpacity onPress={() => this.props.onPress(wallet)}>
+      <TouchableOpacity onPress={() => this.props.onPress(item)}>
         <ListItem noIndent noBorder>
           <View
             style={{
-              backgroundColor: wallet.color,
+              backgroundColor: item.color,
               width: 10,
               height: '100%'
             }}
           />
           <Body>
 
-            <Text>{wallet.label}</Text>
+            <Text>{item.label}</Text>
             <Text note>{count} {I18n.t('transactions')}</Text>
             <Text note>{includeCount} {I18n.t('transactions')}</Text>
           </Body>
-          <Right>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(includeAmount)}</Text>
-          </Right>
+          <Right />
         </ListItem>
       </TouchableOpacity>
 

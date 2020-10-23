@@ -3,12 +3,13 @@ import lodash from 'lodash'
 import { Body, Button, Col, Icon, Input, Item, Label, Picker, Text } from 'native-base'
 import React, { PureComponent } from 'react'
 import autoBind from 'react-autobind'
-import { View } from 'react-native'
+import { Alert, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import I18n from '../../I18n'
 import Api from '../../Services/Api'
 import { ApplicationStyles, Colors, Fonts } from '../../Themes'
 import Utils from '../../Utils/Utils'
+const t = I18n.t
 class TransactionCardItem extends PureComponent {
   constructor (props) {
     super(props)
@@ -24,14 +25,31 @@ class TransactionCardItem extends PureComponent {
   }
 
   delete () {
-    const transaction = this.state.transaction
-    Api.transactionDelete({ id: transaction.id })
-    this.setState({
-      transaction: {
-        ...this.state.transaction,
-        deleted: true
-      }
-    })
+    Alert.alert(
+      t('tran_delete_confirm_title'),
+      t('tran_delete_confirm_msg'),
+      [
+        {
+          text: t('cancel'),
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            const transaction = this.state.transaction
+            Api.transactionDelete({ id: transaction.id })
+            this.setState({
+              transaction: {
+                ...this.state.transaction,
+                deleted: true
+              }
+            })
+          }
+        }
+      ],
+      { cancelable: true }
+    )
   }
 
   toggleCheckInclude () {

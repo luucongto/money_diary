@@ -34,6 +34,11 @@
     "Import from File": "Nhập từ file",
     "Pick MoneyLover CSV File": "Chọn File CSV xuất từ MoneyLover",
     "imported_transactions": "Imported {{num}} transactions",
-    "exported": "Đã upload lên GDriver",
-    "uncounted_wallets": "Không tính trong tổng"
+    "exported": "Đã upload lên Google Drive",
+    "uncounted_wallets": "Không tính trong tổng",
+    "wallet_delete_confirm_title": "Xóa Ví",
+    "wallet_delete_confirm_msg": "Bạn có chắc chắn muốn xóa ví \"{{label}}\"\n{{count}} giao dịch sẽ bị xóa?",
+    "tran_delete_confirm_title": "Xóa Giao Dịch",
+    "tran_delete_confirm_msg": "Bạn có chắc chắn muốn xóa giao dịch?",
+    "cancel": "Không"
 }

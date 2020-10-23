@@ -12,13 +12,14 @@ import { Category } from '../Realm'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+import Api from '../Services/Api'
 class CategoryScreen extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
       start: {},
-      categories: Category.findWithAmount()
+      categories: Api.category()
     }
     autoBind(this)
   }
@@ -28,12 +29,11 @@ class CategoryScreen extends Component {
   }
 
   refresh () {
-    const categories = Category.findWithAmount()
+    const categories = Api.category()
     this.setState({ categories })
   }
 
   openDetailScreen (item) {
-    this.props.navigation.navigate('TransactionScreen', { category: item, useWalletTitle: true })
   }
 
   itemCreate (params) {

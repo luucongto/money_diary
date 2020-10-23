@@ -1,7 +1,7 @@
 import { Body, Button, Col, Form, Grid, Icon, Input, Item, Label, Picker, Row, Text } from 'native-base'
 import React, { PureComponent } from 'react'
 import autoBind from 'react-autobind'
-import { View } from 'react-native'
+import { Alert, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import Constants from '../../Config/Constants'
 import I18n from '../../I18n'
@@ -11,6 +11,7 @@ import { ApplicationStyles, Fonts } from '../../Themes'
 import Utils from '../../Utils/Utils'
 import FadeComponent from './FadeComponent'
 import { TransactionCardAddComponent } from './TransactionCardItem'
+const t = I18n.t
 class WalletItem extends PureComponent {
   constructor (props) {
     super(props)
@@ -39,8 +40,25 @@ class WalletItem extends PureComponent {
   }
 
   delete () {
-    Api.walletDelete(this.props.item)
-    setTimeout(() => this.props.refresh(), 1000)
+    Alert.alert(
+      t('wallet_delete_confirm_title'),
+      t('wallet_delete_confirm_msg', this.props.item),
+      [
+        {
+          text: t('cancel'),
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'OK',
+          onPress: () => {
+            Api.walletDelete(this.props.item)
+            setTimeout(() => this.props.refresh(), 1000)
+          }
+        }
+      ],
+      { cancelable: true }
+    )
   }
 
   toggleCheckInclude () {

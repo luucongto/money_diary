@@ -6,9 +6,9 @@ import React from 'react'
 import LaunchScreen from '../Containers/LaunchScreen'
 import SettingScreen from '../Containers/SettingScreen'
 import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
-import TransactionReportScreen from '../Containers/TransactionReportScreen'
 import TransactionScreen from '../Containers/TransactionScreen'
 import WalletScreen from '../Containers/WalletScreen'
+import CategoryScreen from '../Containers/CategoryScreen'
 import I18n from '../I18n'
 import Utils from '../Utils/Utils'
 
@@ -97,7 +97,7 @@ function MainScreen () {
     >
       {/* <Drawer.Screen tag='Home' name={I18n.t('Home')} component={HomeScreen} /> */}
       <Drawer.Screen tag='Wallet' name={I18n.t('Wallet')} component={WalletScreen} />
-      {/* <Drawer.Screen tag='Category' name={I18n.t('Category')} component={CategoryScreen} /> */}
+      <Drawer.Screen tag='Category' name={I18n.t('Category')} component={CategoryScreen} />
       <Drawer.Screen tag='Settings' name={I18n.t('Settings')} component={SettingScreen} />
     </Drawer.Navigator>
   )
@@ -152,7 +152,6 @@ function AppNavigation () {
         <Stack.Screen name='MainScreen' component={MainScreen} />
         <Stack.Screen name='TransactionScreen' component={TransactionScreen} />
         <Stack.Screen name='TransactionDetailScreen' component={TransactionDetailScreen} />
-        <Stack.Screen name='TransactionReportScreen' component={TransactionReportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
