@@ -27,12 +27,12 @@ class Transaction extends RealmWrapper {
       rows.forEach(row => {
         const wallet = walletObjs[row.wallet] || { label: row.wallet, amount: 0, income: 0, outcome: 0 }
         wallet.amount += row.amount
-        wallet.income += row.amount > 0 ? row.amount : 0
-        wallet.outcome += row.amount < 0 ? row.amount : 0
+        wallet.income += row.include && row.amount > 0 ? row.amount : 0
+        wallet.outcome += row.include && row.amount < 0 ? row.amount : 0
         const category = categoryObjs[row.category] || { label: row.category, amount: 0, income: 0, outcome: 0 }
         category.amount += row.amount
-        category.income += row.amount > 0 ? row.amount : 0
-        category.outcome += row.amount < 0 ? row.amount : 0
+        category.income += row.include && row.amount > 0 ? row.amount : 0
+        category.outcome += row.include && row.amount < 0 ? row.amount : 0
       })
       result = Transaction.bulkInsert(rows, true)
       Utils.log('====================bulk', walletObjs)

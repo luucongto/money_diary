@@ -386,7 +386,7 @@ class SettingScreen extends Component {
     Utils.log('render SettingScreen')
     return (
       <Container>
-        <ScreenHeader navigation={this.props.navigation} title='Setting' />
+        <ScreenHeader navigation={this.props.navigation} title='Settings' />
         <Content style={{ padding: 10 }}>
           {this._renderImportFromFile()}
           {(!this.props.login) && this._renderLoginButton()}

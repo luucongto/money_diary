@@ -11327,6 +11327,11 @@ react-native-document-picker@^3.5.4:
   resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-3.5.4.tgz#4b9f261ea0d52e91d571670caaf55923ceb80f5f"
   integrity sha512-ZKGAa8ztQ7zA1eE95OCiNsI/Q6fiq1Q3es8MyOEakBkWcX9avWNYaJUrbv/8v80Vo4RzcNxsO3wT6a2hgfpz7A==
 
+react-native-draggable-flatlist@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-draggable-flatlist/-/react-native-draggable-flatlist-2.4.0.tgz#3aa2b4762c7473315c8d10caebb05455fc3e5b9e"
+  integrity sha512-d/R7iWXgd07UuOuwEWbwy21mvvTExDBhUMSZoHssmJmEHgz4jpGn/4nVDtZfrRukB1BDC3BDPFE8cv52VkpTRA==
+
 react-native-drawer@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"

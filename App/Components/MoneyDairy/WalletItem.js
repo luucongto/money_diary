@@ -72,10 +72,11 @@ class WalletItem extends PureComponent {
     const amount = wallet.amount
     const font = Fonts.style.h6 // wallet.label.length > 8 ? Fonts.style.h6 : Fonts.style.h3
     return (
-      <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+      <View fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
         <View style={{
           ...ApplicationStyles.components.card,
-          flexDirection: 'row'
+          flexDirection: 'row',
+          borderColor: this.props.isActive ? 'red' : '#999999'
         }}
         >
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -94,7 +95,7 @@ class WalletItem extends PureComponent {
                       </Text>)}
                 </Row>
                 <Row>
-                  <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}>đ {Utils.numberWithCommas(amount)}</Text>
+                  <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}><Icon name='wallet' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> {Utils.numberWithCommas(amount, true)} đ</Text>
                 </Row>
               </Col>
               <Col style={{ alignItems: 'flex-end' }}>
@@ -105,12 +106,12 @@ class WalletItem extends PureComponent {
                 </Row>
                 <Row style={{ height: 20 }}>
                   <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
-                    đ {Utils.numberWithCommas(wallet.income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
+                    {Utils.numberWithCommas(wallet.income, true)}đ <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
                   </Text>
                 </Row>
                 <Row>
                   <Text note style={{ color: 'red', alignSelf: 'flex-start' }}>
-                    đ{Utils.numberWithCommas(wallet.outcome)} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
+                    {Utils.numberWithCommas(-1 * wallet.outcome, true)}đ <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
                   </Text>
                 </Row>
               </Col>
@@ -149,7 +150,7 @@ class WalletItem extends PureComponent {
 
         </View>
         {this.state.togglePanel && this._renderAddTransactionPanen()}
-      </FadeComponent>
+      </View>
     )
   }
 }
@@ -186,7 +187,7 @@ class WalletAddComponent extends PureComponent {
 
   render () {
     return (
-      <FadeComponent fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 10 }}>
+      <View fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 80 }}>
         <View style={{
           ...ApplicationStyles.components.card,
           flexDirection: 'row'
@@ -220,7 +221,7 @@ class WalletAddComponent extends PureComponent {
             <Text>{I18n.t('save')}</Text>
           </Button>
         </View>
-      </FadeComponent>
+      </View>
     )
   }
 }

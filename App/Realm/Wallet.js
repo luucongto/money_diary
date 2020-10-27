@@ -20,16 +20,16 @@ class Wallet extends RealmWrapper {
     const wallet = Wallet.findOne({ label: params.wallet })
     if (wallet) {
       wallet.amount += params.amount
-      wallet.income += params.amount > 0 ? params.amount : 0
-      wallet.outcome += params.amount < 0 ? params.amount : 0
+      wallet.income += params.include && params.amount > 0 ? params.amount : 0
+      wallet.outcome += params.include && params.amount < 0 ? params.amount : 0
     } else {
       Wallet.insert({
         id: params.wallet,
         label: params.wallet,
         color: '#' + Math.floor(Math.random() * 16777215).toString(16),
         amount: params.amount,
-        income: params.amount > 0 ? params.amount : 0,
-        outcome: params.amount < 0 ? params.amount : 0
+        income: params.include && params.amount > 0 ? params.amount : 0,
+        outcome: params.include && params.amount < 0 ? params.amount : 0
       }, true)
     }
   }

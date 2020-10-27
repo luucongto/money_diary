@@ -40,5 +40,6 @@
     "wallet_delete_confirm_msg": "Bạn có chắc chắn muốn xóa ví \"{{label}}\"\n{{count}} giao dịch sẽ bị xóa?",
     "tran_delete_confirm_title": "Xóa Giao Dịch",
     "tran_delete_confirm_msg": "Bạn có chắc chắn muốn xóa giao dịch?",
-    "cancel": "Không"
+    "cancel": "Không",
+    "current_amount": "Số tiền hiện tại"
 }

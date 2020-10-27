@@ -185,11 +185,16 @@ export default {
       return obj
     }
   },
-  numberWithCommas (x) {
+  numberWithCommas (x, needShorten = false) {
     if (!x) {
       return 0
     }
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    let shorten = false
+    if (needShorten && Math.abs(x) >= 10000000) {
+      shorten = true
+      x = Math.floor(x / 1000000)
+    }
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (shorten ? 'tr' : '')
   },
   validateEmail (email) {
     var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/

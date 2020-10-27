@@ -4,16 +4,19 @@ import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { RefreshControl } from 'react-native'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
+import DraggableFlatList from 'react-native-draggable-flatlist'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
 import { WalletAddComponent, WalletItem } from '../Components/MoneyDairy/WalletItem'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import Api from '../Services/Api'
-import { Colors } from '../Themes'
+import { ApplicationStyles, Colors } from '../Themes'
+import lodash, { indexOf } from 'lodash'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 const t = I18n.t
 class WalletScreen extends Component {
   constructor (props) {
@@ -36,7 +39,7 @@ class WalletScreen extends Component {
 
   refresh () {
     const wallets = Api.wallet()
-    Utils.log('Wallet Updates', wallets)
+
     const totalWallet = {
       id: Constants.DEFAULT_WALLET_ID,
       label: Constants.DEFAULT_WALLET_ID,
@@ -57,11 +60,16 @@ class WalletScreen extends Component {
       totalWallet.count += wallet.count
       totalWallet.lastUpdate = totalWallet.lastUpdate < wallet.lastUpdate ? wallet.lastUpdate : totalWallet.lastUpdate
     })
-    this.setState({ wallets: [totalWallet].concat(wallets) })
+    let sortedWallets = [totalWallet]
+    sortedWallets = sortedWallets.concat(lodash.sortBy(lodash.filter(wallets, wallet => wallet.countInTotal), ['position']))
+    sortedWallets.push({ id: 'separate', isSeparated: true })
+    sortedWallets = sortedWallets.concat(lodash.sortBy(lodash.filter(wallets, wallet => !wallet.countInTotal), ['position']))
+    sortedWallets.push({ id: 'create', isCreate: true })
+    Utils.log('Wallet Updates', sortedWallets)
+    this.setState({ wallets: sortedWallets })
   }
 
   openWalletDetailModal (wallet) {
-    Utils.log('wallet', wallet)
     this.props.navigation.navigate('TransactionScreen', { wallet: wallet })
   }
 
@@ -79,28 +87,45 @@ class WalletScreen extends Component {
     this.refresh()
   }
 
+  renderItem ({ item, index, drag, isActive }) {
+    if (item.isSeparated) {
+      return (
+        <View style={{
+          height: 50,
+          paddingHorizontal: 20,
+          marginBottom: 10,
+          backgroundColor: 'white',
+          justifyContent: 'center',
+          borderColor: '#999999',
+          elevation: 5
+        }}
+        >
+          <Label>{t('uncounted_wallets')}</Label>
+        </View>
+      )
+    }
+    if (item.isCreate) {
+      return <WalletAddComponent walletCreate={this.walletCreate.bind(this)} />
+    }
+    const display = (
+      <WalletItem
+        isActive={isActive}
+        editing={this.state.editing}
+        key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
+        transactionCreateRequest={this.transactionCreateRequest.bind(this)}
+        refresh={() => this.refresh()}
+      />)
+    if (index === 0 || !this.state.editing) {
+      return display
+    }
+    return (
+      <TouchableWithoutFeedback onLongPress={drag}>
+        {display}
+      </TouchableWithoutFeedback>
+    )
+  }
+
   renderPhone () {
-    Utils.log('wallets', this.state.wallets)
-    const renderItems = this.state.wallets.filter(each => each.countInTotal).map((item, index) => {
-      return (
-        <WalletItem
-          editing={this.state.editing}
-          key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
-          transactionCreateRequest={this.transactionCreateRequest.bind(this)}
-          refresh={() => this.refresh()}
-        />
-      )
-    })
-    const renderUncountedItems = this.state.wallets.filter(each => !each.countInTotal).map((item, index) => {
-      return (
-        <WalletItem
-          editing={this.state.editing}
-          key={item.id} item={item} index={index} openWalletDetailModal={(wallet) => this.openWalletDetailModal(wallet)}
-          transactionCreateRequest={this.transactionCreateRequest.bind(this)}
-          refresh={() => this.refresh()}
-        />
-      )
-    })
     return (
       <Container>
         <ScreenHeader
@@ -110,40 +135,47 @@ class WalletScreen extends Component {
               <Icon name='edit' type='FontAwesome' style={{ color: '#0096c7' }} />
             </Button>)}
         />
-        <Content
-          refreshControl={
-            <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
-          }
+        <DraggableFlatList
           style={{
             paddingTop: 10,
             backgroundColor: Colors.listBackground
           }}
-        >
-          {renderItems}
-          <View style={{
-            height: 50,
-            paddingHorizontal: 20,
-            marginBottom: 10,
-            backgroundColor: 'white',
-            justifyContent: 'center',
-            borderColor: '#999999',
-            elevation: 5
+          data={this.state.wallets}
+          renderItem={this.renderItem.bind(this)}
+          keyExtractor={(item, index) => `draggable-item-${item.id}`}
+          onDragEnd={({ data }) => {
+            Utils.log('===============new data', data)
+            let indexOfSeparate = data.length
+            let hasUpdate = false
+            data.forEach((wallet, index) => {
+              if (wallet.isSeparated) {
+                indexOfSeparate = index
+              }
+              if (wallet.id === Constants.DEFAULT_WALLET_ID || wallet.isCreate || wallet.isSeparated || wallet.position === index) {
+                return
+              }
+              hasUpdate = true
+              Api.walletUpdate({
+                id: wallet.id,
+                position: index,
+                countInTotal: index < indexOfSeparate
+              })
+            })
+            this.setState({ wallets: data }, () => {
+              if (hasUpdate) {
+                this.refresh()
+              }
+            })
           }}
-          >
-            <Label>{t('uncounted_wallets')}</Label>
-          </View>
-          {renderUncountedItems}
-          <WalletAddComponent walletCreate={this.walletCreate.bind(this)} />
-          <View style={{ height: 80 }} />
-        </Content>
+        />
         <Fab
           direction='up'
           containerStyle={{ }}
           style={{ backgroundColor: '#5067FF' }}
           position='bottomRight'
-          onPress={() => this.props.navigation.navigate('TransactionDetailScreen')}
+          onPress={() => this.refresh()}
         >
-          <Icon name='plus' type='FontAwesome' />
+          <Icon name='refresh' type='FontAwesome' />
         </Fab>
       </Container>
     )

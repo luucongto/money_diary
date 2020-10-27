@@ -49,6 +49,7 @@
     "react-native-charts-wrapper": "^0.5.7",
     "react-native-device-info": "^4.0.1",
     "react-native-document-picker": "^3.5.4",
+    "react-native-draggable-flatlist": "^2.4.0",
     "react-native-fast-image": "^7.0.2",
     "react-native-fbsdk": "^1.0.4",
     "react-native-fs": "^2.16.6",

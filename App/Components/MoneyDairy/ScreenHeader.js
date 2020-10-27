@@ -1,5 +1,6 @@
 import { Body, Button, Header, Icon, Left, Title, Right } from 'native-base'
 import React, { PureComponent } from 'react'
+import I18n from '../../I18n'
 export default class WalletComponent extends PureComponent {
   render () {
     return (
@@ -11,12 +12,11 @@ export default class WalletComponent extends PureComponent {
             </Button>)}
         </Left>
         <Body stye={{ justifyContent: 'center', alignItem: 'center' }}>
-          <Title style={{ color: '#0096c7' }}>{this.props.title}</Title>
+          <Title style={{ color: '#0096c7' }}>{I18n.t(this.props.title)}</Title>
         </Body>
         <Right>
           {this.props.right}
         </Right>
-
       </Header>
     )
   }
