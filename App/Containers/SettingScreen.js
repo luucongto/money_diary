@@ -1,7 +1,5 @@
 import {
-  GoogleSignin,
-  GoogleSigninButton,
-  statusCodes
+  GoogleSigninButton
 } from '@react-native-community/google-signin'
 import { Body, Button, CardItem, Container, Content, Header, Icon, Left, Row, Spinner, Text, Thumbnail, Title, Toast } from 'native-base'
 import React, { Component } from 'react'
@@ -10,12 +8,14 @@ import { ActivityIndicator, PermissionsAndroid, Platform, View } from 'react-nat
 import DocumentPicker from 'react-native-document-picker'
 import ConfirmationButton from '../Components/ConfirmationButton'
 import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
+import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import { Transaction, Wallet } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
 import GDrive from '../Services/GDrive'
-import lodash from 'lodash'
+import GoogleApi from '../Services/GoogleApi'
+import GoogleSheet from '../Services/GoogleSheet'
 import { ApplicationStyles } from '../Themes'
 // Styles
 import Utils from '../Utils/Utils'
@@ -28,19 +28,17 @@ class SettingScreen extends Component {
     this.state = {
     }
     autoBind(this)
-    GoogleSignin.configure({
-      scopes: ['https://www.googleapis.com/auth/drive.file']
-    })
-    autoBind(this)
   }
 
   async componentDidMount () {
-    await this.signIn(true)
-    await this.getFileInfo()
+    if (this.props.login) {
+      await this.signIn(true)
+      await this.getFileInfo()
+    }
   }
 
   async signOut () {
-    await GoogleSignin.signOut()
+    await GoogleApi.signOut()
     this.props.logoutSuccess()
   }
 
@@ -52,25 +50,47 @@ class SettingScreen extends Component {
     })
   }
 
-  async backup () {
-    await this.asyncSetState({ doingBackup: true })
-    const tokens = this.props.login
-    const backupContents = {
+  async _backupASheet (spreadsheetId, sheetName, data) {
+    let transactionData = []
+    let labels = null
+    transactionData = data.map(transaction => {
+      if (!labels) {
+        labels = Object.keys(Utils.clone(transaction))
+      }
+      return Object.values(Utils.clone(transaction))
+    })
+    await GoogleSheet.updateData(spreadsheetId, [labels].concat(transactionData), sheetName, labels.length)
+  }
+
+  async backupGoogleSheet () {
+    const { spreadsheetId } = await GoogleSheet.createSheet()
+    const data = {
       wallets: Wallet.findWithAmount(),
       categories: Api.category(),
       transactions: Transaction.getBy()
-
     }
-    const mapCategories = Utils.createMapFromArray(backupContents.categories, 'id')
-    backupContents.categories = lodash.uniq(lodash.map(backupContents.transactions, 'category')).map(label => {
-      if (!mapCategories[label]) {
-        return {
-          id: label, label: label, color: '#fa0770'
-        }
-      } else {
-        return mapCategories[label]
-      }
-    })
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.TRANSACTIONS, data.transactions)
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.WALLETS, data.wallets)
+  }
+
+  async backup () {
+    await this.asyncSetState({ doingBackup: true })
+    // const backupContents = {
+    //   wallets: Wallet.findWithAmount(),
+    //   categories: Api.category(),
+    //   transactions: Transaction.getBy()
+
+    // }
+    // const mapCategories = Utils.createMapFromArray(backupContents.categories, 'id')
+    // backupContents.categories = lodash.uniq(lodash.map(backupContents.transactions, 'category')).map(label => {
+    //   if (!mapCategories[label]) {
+    //     return {
+    //       id: label, label: label, color: '#fa0770'
+    //     }
+    //   } else {
+    //     return mapCategories[label]
+    //   }
+    // })
     // const walletObjects = Utils.createMapFromArray(backupContents.wallets, 'id')
     // const categoriesObjects = Utils.createMapFromArray(backupContents.categories, 'id')
     // backupContents.transactions = backupContents.transactions.map(each => {
@@ -89,25 +109,34 @@ class SettingScreen extends Component {
     //   each.id = each.label
     //   return each
     // })
-    GDrive.setAccessToken(tokens.accessToken)
-    GDrive.init()
-    Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
-    const folderRes = await GDrive.files.safeCreateFolder({
-      name: 'MoneyDairy',
-      parents: ['root']
-    })
-    const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
-    if (currentFileId) {
-      await GDrive.files.delete(currentFileId)
-    }
-    const result = await GDrive.files.createFileMultipart(
-      JSON.stringify(backupContents),
-      'application/json', {
-        parents: [folderRes],
-        name: 'money_diary.json'
-      },
-      false)
-    Utils.log('result', result)
+    // GDrive.setAccessToken(tokens.accessToken)
+    // GDrive.init()
+    // Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
+    // const folderRes = await GDrive.files.safeCreateFolder({
+    //   name: 'MoneyDairy',
+    //   parents: ['root']
+    // })
+    // const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+    // if (currentFileId) {
+    //   await GDrive.files.delete(currentFileId)
+    // }
+    // await GDrive.files.createFileMultipart(
+    //   JSON.stringify(backupContents),
+    //   'application/vnd.google-apps.spreadsheet', {
+    //     parents: [folderRes],
+    //     name: 'MoneyDairy'
+    //   },
+    //   false)
+    // const result = await GDrive.files.createFileMultipart(
+    //   JSON.stringify(backupContents),
+    //   'application/json', {
+    //     parents: [folderRes],
+    //     name: 'money_diary.json'
+    //   },
+    //   false)
+    // Utils.log('result', result)
+
+    await this.backupGoogleSheet()
     Toast.show({
       text: t('exported'),
       duration: 3000
@@ -122,18 +151,19 @@ class SettingScreen extends Component {
       if (!tokens) {
         throw new Error('Token empty')
       }
-      GDrive.setAccessToken(tokens.accessToken)
-      Utils.log('0')
-      GDrive.init()
-      Utils.log('1')
-      const folderRes = await GDrive.files.safeCreateFolder({
-        name: 'MoneyDairy',
-        parents: ['root']
-      })
-      Utils.log('folderRes', folderRes)
-      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
-      Utils.log('fileId', currentFileId)
-      return currentFileId
+      // GDrive.setAccessToken(tokens.accessToken)
+      // Utils.log('0')
+      // GDrive.init()
+      // Utils.log('1')
+      // const folderRes = await GDrive.files.safeCreateFolder({
+      //   name: 'MoneyDairy',
+      //   parents: ['root']
+      // })
+      // Utils.log('folderRes', folderRes)
+      // const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
+      // Utils.log('fileId', currentFileId)
+      const sheet = await GoogleSheet.getSheet()
+      return sheet
     } catch (error) {
       Utils.log(error)
       return null
@@ -142,39 +172,34 @@ class SettingScreen extends Component {
 
   async getFileInfo () {
     try {
-      Utils.log('getFileInfo')
       await this.asyncSetState({ isGettingFile: true })
-      const currentFileId = await this.getFileId()
-      if (!currentFileId) {
+      const sheet = await this.getFileId()
+      if (!sheet) {
         await this.asyncSetState({ isGettingFile: false })
-        Utils.log('getFileInfo fileidnull')
         return null
       }
-
-      const fileInfo = await GDrive.files.get(currentFileId, { fields: '*' })
+      const tokens = this.props.login
+      if (!tokens) {
+        throw new Error('Token empty')
+      }
+      GDrive.setAccessToken(tokens.accessToken)
+      GDrive.init()
+      const fileInfo = await GDrive.files.get(sheet.spreadsheetId, { fields: '*' })
       await this.asyncSetState({ fileInfo, isGettingFile: false })
     } catch (error) {
       await this.asyncSetState({ isGettingFile: false })
-      Utils.log('getFileInfoerror', error)
     }
   }
 
   async download () {
     try {
-      const tokens = this.props.login
       await this.asyncSetState({ doingDownload: true })
-      const folderRes = await GDrive.files.safeCreateFolder({
-        name: 'MoneyDairy',
-        parents: ['root']
-      })
-      const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
-      if (!currentFileId) {
+      const sheet = await this.getFileId()
+      if (!sheet) {
         await this.asyncSetState({ doingDownload: false })
-        return
+        return null
       }
-      Utils.log('downloading', currentFileId)
-      const result = await Api.downloadFile(currentFileId, tokens.accessToken)
-      Utils.log('result', result, result.wallets)
+      const result = await Api.downloadFile(sheet.spreadsheetId)
       Toast.show({
         text: t('imported_transactions', { num: result.transactions.length }),
         buttonText: 'OK',
@@ -189,35 +214,19 @@ class SettingScreen extends Component {
 
   async signIn (isSilent = false) {
     try {
-      await GoogleSignin.hasPlayServices()
-      let userInfo = null
-      if (isSilent) {
-        userInfo = await GoogleSignin.signInSilently()
-      } else {
-        userInfo = await GoogleSignin.signIn()
-      }
-      Utils.log('userInfo', userInfo)
-      const tokens = await GoogleSignin.getTokens()
-      Utils.log('tokens', tokens)
-      if (tokens) {
+      const { tokens, userInfo } = await GoogleApi.signIn()
+      if (tokens && userInfo) {
         this.props.loginSuccess(tokens)
         this.setState({ isSignedIn: true, user: userInfo.user })
         await this.getFileInfo()
       }
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-        Utils.log('error', error)
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        Utils.log('error', error)
-        // operation (f.e. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Utils.log('error', error)
-        // play services not available or outdated
-      } else {
-        Utils.log('error', error)
-        // some other error happened
-      }
+      Utils.log('error', error)
+      Toast.show({
+        text: t('signed_failed'),
+        buttonText: 'OK',
+        duration: 3000
+      })
     }
   };
 
@@ -232,7 +241,7 @@ class SettingScreen extends Component {
             style={{ width: '100%', height: 68 }}
             size={GoogleSigninButton.Size.Wide}
             color={GoogleSigninButton.Color.Dark}
-            onPress={this.signIn.bind(this)}
+            onPress={() => this.signIn()}
             disabled={this.state.isSigninInProgress}
           />
         </CardItem>
@@ -265,7 +274,7 @@ class SettingScreen extends Component {
     const fileInfo = this.state.fileInfo || {}
     Utils.log('fileInfo', fileInfo)
     return (
-      <View style={[ApplicationStyles.components.card, { height: 200, marginTop: 10 }]}>
+      <View style={[ApplicationStyles.components.card, { height: 260, marginTop: 10 }]}>
         <CardItem header bordered>
           <Text>{I18n.t('Backup And Download')}</Text>
         </CardItem>
@@ -273,8 +282,8 @@ class SettingScreen extends Component {
           {this.state.isGettingFile && <Row style={{ justifyContent: 'center' }}><Spinner /></Row>}
           {!this.state.isGettingFile && (
             <Body>
-              <Text>{fileInfo && fileInfo.originalFilename ? `MoneyDairy/${fileInfo.originalFilename} ${Utils.formatBytes(fileInfo.size)}` : 'No backup'}</Text>
-              <Text note>{fileInfo ? 'Last backup: ' + Utils.timeFormat(fileInfo.modifiedTime) : ''}</Text>
+              <Text>{fileInfo && fileInfo.name ? `GoogleSheet: ${fileInfo.name}` : 'No backup'}</Text>
+              <Text note>{fileInfo ? I18n.t('last_backup', { time: Utils.timeFormat(fileInfo.modifiedTime) }) : ''}</Text>
             </Body>)}
 
         </CardItem>
@@ -343,7 +352,6 @@ class SettingScreen extends Component {
       await this.asyncSetState({ doingImportFromFile: false })
     } catch (err) {
       await this.asyncSetState({ doingImportFromFile: false })
-      Utils.log('pickfile', err)
       Toast.show({
         text: 'Updated failed',
         buttonText: 'OK',

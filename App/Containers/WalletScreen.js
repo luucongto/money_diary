@@ -131,9 +131,14 @@ class WalletScreen extends Component {
         <ScreenHeader
           navigation={this.props.navigation} title={I18n.t('wallet')}
           right={(
-            <Button transparent onPress={() => this.toggleEdit()}>
-              <Icon name='edit' type='FontAwesome' style={{ color: '#0096c7' }} />
-            </Button>)}
+            <View style={{ flexDirection: 'row' }}>
+              <Button transparent onPress={() => this.props.navigation.navigate('TransactionSearchScreen')}>
+                <Icon name='search' type='FontAwesome' style={{ color: '#0096c7' }} />
+              </Button>
+              <Button transparent onPress={() => this.toggleEdit()}>
+                <Icon name='edit' type='FontAwesome' style={{ color: '#0096c7' }} />
+              </Button>
+            </View>)}
         />
         <DraggableFlatList
           style={{

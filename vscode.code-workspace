@@ -5,6 +5,14 @@
 		}
 	],
 	"settings": {
-		"standard.usePackageJson": true
+		"standard.usePackageJson": true,
+		"cSpell.words": [
+			"ctmonth",
+			"ctquarter",
+			"ctyear",
+			"nh",
+			"nhất",
+			"t"
+		]
 	}
 }

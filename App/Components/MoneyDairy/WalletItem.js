@@ -9,7 +9,6 @@ import Wallet from '../../Realm/Wallet'
 import Api from '../../Services/Api'
 import { ApplicationStyles, Fonts } from '../../Themes'
 import Utils from '../../Utils/Utils'
-import FadeComponent from './FadeComponent'
 import { TransactionCardAddComponent } from './TransactionCardItem'
 const t = I18n.t
 class WalletItem extends PureComponent {

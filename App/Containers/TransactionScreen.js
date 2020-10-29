@@ -140,7 +140,7 @@ class TransactionScreen extends Component {
             {(this.state.isGoingBack || this.state.isRefreshing) && <Spinner style={{ width: 30, alignSelf: 'center', paddingBottom: 20 }} />}
           </View>
           <Body>
-            <Text>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Text>
+            <Text>{I18n.t(this.state.wallet ? this.state.wallet.label : this.state.category.label)}</Text>
             <Text note>{this.state.wallet ? this.state.wallet.count : 0} {I18n.t('transactions')}</Text>
           </Body>
           <Right>

@@ -41,5 +41,12 @@
     "tran_delete_confirm_title": "Xóa Giao Dịch",
     "tran_delete_confirm_msg": "Bạn có chắc chắn muốn xóa giao dịch?",
     "cancel": "Không",
-    "current_amount": "Số tiền hiện tại"
+    "current_amount": "Số tiền hiện tại",
+    "include_only": "Chỉ tính trong báo cáo",
+    "include_all": "Tất cả",
+    "include_not": "Bỏ qua trong báo cáo",
+    "search": "Tìm kiếm",
+    "year": "Năm",
+    "Calendar":"Lịch",
+    "last_backup": "Sửa gần nhất: {{time}}"
 }

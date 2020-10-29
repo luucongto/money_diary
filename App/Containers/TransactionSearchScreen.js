@@ -1,45 +1,46 @@
-import _ from 'lodash'
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Container, Header, Icon, Right, Spinner, Text, View } from 'native-base'
+import { Body, Button, Card, CardItem, Col, Container, Content, Header, Icon, Item, Label, Picker, Right, Spinner, Switch, Text, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import { TransactionCardItem } from '../Components/MoneyDairy/TransactionCardItem'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import { Wallet } from '../Realm'
 import Transaction from '../Realm/Transaction'
-import { Colors } from '../Themes'
+import { ApplicationStyles, Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
-import Utils from '../Utils/Utils'
 import Screen from './Screen'
-
+import lodash from 'lodash'
+import Api from '../Services/Api'
+import Category from '../Realm/Category'
+import Utils from '../Utils/Utils'
+import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import dayjs from 'dayjs'
+const t = I18n.t
 class TransactionSearchScreen extends Component {
   constructor (props) {
     super(props)
-    Utils.log('TransactionScreen props?.route?.params', props?.route?.params)
-    const { wallet, category, walletId, categoryId } = props?.route?.params
+    const calendarItems = Utils.getAllYearsBetweenDates(dayjs('2010-01-01').unix(), dayjs().unix()).reverse()
     this.state = {
       start: {},
-      preprocessTransactions: [{
-        type: 'addnew'
-      }],
-      isRefreshing: false,
-      wallet,
-      category,
-      walletId,
-      categoryId
+      transactions: [{}],
+      include: 'include_all',
+      calendar: 'year',
+      year: calendarItems[0],
+      calendarItems,
+      isRefreshing: false
     }
-    Utils.log('TransactionScreen', props)
+    this.categories = [{
+      id: Constants.DEFAULT_WALLET_ID,
+      color: 'red',
+      label: Constants.DEFAULT_WALLET_ID
+    }].concat(lodash.sortBy(Api.category(), 'label'))
+    this.wallets = [{
+      id: Constants.DEFAULT_WALLET_ID,
+      color: 'red',
+      label: Constants.DEFAULT_WALLET_ID
+    }].concat(lodash.sortBy(Api.wallet(), 'position').filter(wallet => wallet.countInTotal))
     autoBind(this)
-  }
-
-  componentWillReceiveProps (nextProps) {
-    const prevProps = this.props
-    if ((nextProps.isFocused && prevProps.isFocused !== nextProps.isFocused)) {
-      setTimeout(() => {
-        this.refreshTransactions()
-      }, (1000))
-    }
   }
 
   shouldComponentUpdate (props) {
@@ -48,79 +49,220 @@ class TransactionSearchScreen extends Component {
 
   refreshTransactions () {
     if (this.state.isRefreshing) {
-      return
+
     }
-
-    this.getMonth(Utils.getMonth(), true)
-  }
-
-  preprocessTransactions (transactions, isNew = true) {
-    let result = [{
-      type: 'addnew'
-    }]
-    if (!isNew) {
-      result = []
-    }
-    Utils.log('processedTransactions 1', transactions)
-    if (!transactions || !transactions.length) return result
-
-    const groups = _.groupBy(transactions, item => item.monthTag)
-    _.each(groups, (items, monthTag) => {
-      const monthTagItem = {
-        type: 'monthTag',
-        title: monthTag,
-        count: items.length,
-        income: 0,
-        outcome: 0
-      }
-      items.forEach(item => {
-        monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
-        monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
-      })
-      monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
-      result.push(monthTagItem)
-      result = result.concat(items)
-    })
-    Utils.log('processedTransactions', transactions, result)
-    return result
   }
 
   openTransactionDetailModal (transaction) {
     this.props.navigation.navigate('TransactionDetailScreen', { transaction })
   }
 
-  getMonth (monthTag, isRefresh = false) {
+  search () {
     this.setState({
       isRefreshing: true
     })
-    const findConditions = { monthTag: monthTag }
+    const findConditions = { }
 
-    if (this.state.wallet && this.state.wallet.id) {
-      if (this.state.wallet.id !== Constants.DEFAULT_WALLET_ID) {
-        findConditions.wallet = this.state.wallet.id
+    if (this.state.walletId) {
+      if (this.state.walletId !== Constants.DEFAULT_WALLET_ID) {
+        findConditions.wallet = this.state.walletId
       } else {
-        findConditions.wallet = _.map(Wallet.find({ countInTotal: true }), 'id')
+        findConditions.wallet = lodash.map(Wallet.find({ countInTotal: true }), 'id')
       }
     }
-    if (this.state.category && this.state.category.id) {
-      findConditions.category = this.state.category.id
+    if (this.state.categoryId) {
+      if (this.state.categoryId !== Constants.DEFAULT_WALLET_ID) {
+        findConditions.category = this.state.categoryId
+      } else {
+        findConditions.category = lodash.map(Category.find(), 'id')
+      }
     }
-
-    const transactions = Transaction.getBy(findConditions)
-    const preprocessTransactions = this.preprocessTransactions(transactions, false)
+    if (this.state.include !== 'include_all') {
+      findConditions.include = this.state.include === 'include_only'
+    }
+    findConditions.from = this.state.year.from
+    findConditions.to = this.state.year.to
+    const transactions = [{}].concat(Api.transaction(findConditions))
+    Utils.log('search', transactions, this.state.include)
     this.setState({
-      currentRequestMonthTag: monthTag,
-      isRefreshing: false,
-      preprocessTransactions: isRefresh ? [{
-        type: 'addnew'
-      }].concat(preprocessTransactions) : this.state.preprocessTransactions.concat(preprocessTransactions)
+      transactions
     })
-    Utils.log('findConditions getPrevMonth', findConditions, transactions)
+  }
+
+  onValueChangeWallet (value) {
+    this.setState({
+      walletId: value
+    })
+  }
+
+  onValueChangeCategory (value) {
+    this.setState({
+      categoryId: value
+    })
+  }
+
+  _renderCalendar () {
+    return (
+      <CardItem>
+        <Col>
+          <Label>{t('Calendar')}</Label>
+          <View style={{
+            borderRadius: 10,
+            borderWidth: 1,
+            marginTop: 10,
+            borderColor: 'green',
+            flexDirection: 'row',
+            justifyContent: 'center'
+          }}
+          >
+            <Picker
+              mode='dropdown'
+              iosIcon={<Icon name='arrow-down' />}
+              style={{ width: undefined }}
+              placeholder='Select Category'
+              placeholderStyle={{ color: '#bfc6ea' }}
+              placeholderIconColor='#007aff'
+              selectedValue={this.state.calendar}
+              onValueChange={calendar => this.setState({ calendar })}
+            >
+              {['year', 'quarter', 'month'].map(item => <Picker.Item key={item} label={t(item)} value={item} />)}
+            </Picker>
+          </View>
+        </Col>
+        <View style={{ width: 10 }} />
+        <Col>
+          <Label>{t('')}</Label>
+          <View style={{
+            borderRadius: 10,
+            borderWidth: 1,
+            marginTop: 10,
+            borderColor: 'green',
+            flexDirection: 'row',
+            justifyContent: 'center'
+          }}
+          >
+            <Picker
+              mode='dropdown'
+              iosIcon={<Icon name='arrow-down' />}
+              style={{ width: undefined }}
+              placeholder='Select Wallet'
+              placeholderStyle={{ color: '#bfc6ea' }}
+              placeholderIconColor='#007aff'
+              itemTextStyle={{ color: 'red' }}
+              selectedValue={this.state.year}
+              onValueChange={year => this.setState({ year })}
+            >
+              {this.state.calendarItems.map(item => <Picker.Item key={item} label={item.label} value={item} />)}
+
+            </Picker>
+          </View>
+        </Col>
+      </CardItem>
+    )
+  }
+
+  _renderSearchSection () {
+    const transactions = this.state.transactions || []
+    const count = transactions.length - 1
+    return (
+      <View style={{ padding: 10 }}>
+        <Card style={[ApplicationStyles.components.card, { height: 330 }]}>
+          <CardItem>
+            <Col>
+              <Label>{t('Category')}</Label>
+              <View style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                marginTop: 10,
+                borderColor: 'green',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              >
+                <Picker
+                  mode='dropdown'
+                  iosIcon={<Icon name='arrow-down' />}
+                  style={{ width: undefined }}
+                  placeholder='Select Category'
+                  placeholderStyle={{ color: '#bfc6ea' }}
+                  placeholderIconColor='#007aff'
+                  selectedValue={this.state.categoryId}
+                  onValueChange={this.onValueChangeCategory.bind(this)}
+                >
+                  {this.categories.map(item => <Picker.Item color={item.color} key={item.id} label={item.id === Constants.DEFAULT_WALLET_ID ? t(item.label) : item.label} value={item.id} />)}
+                </Picker>
+              </View>
+            </Col>
+            <View style={{ width: 10 }} />
+            <Col>
+              <Label>{t('Wallet')}</Label>
+              <View style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                marginTop: 10,
+                borderColor: 'green',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              >
+                <Picker
+                  mode='dropdown'
+                  iosIcon={<Icon name='arrow-down' />}
+                  style={{ width: undefined }}
+                  placeholder='Select Wallet'
+                  placeholderStyle={{ color: '#bfc6ea' }}
+                  placeholderIconColor='#007aff'
+                  itemTextStyle={{ color: 'red' }}
+                  selectedValue={this.state.walletId}
+                  onValueChange={this.onValueChangeWallet.bind(this)}
+                >
+                  {this.wallets.map(item => <Picker.Item color={item.color} key={item.id} label={item.id === Constants.DEFAULT_WALLET_ID ? t(item.label) : item.label} value={item.id} />)}
+
+                </Picker>
+              </View>
+            </Col>
+          </CardItem>
+          {this._renderCalendar()}
+          <CardItem>
+            <Col>
+              <Label>{t('Included')}</Label>
+              <View style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                marginTop: 10,
+                borderColor: 'green',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              >
+                <Picker
+                  mode='dropdown'
+                  iosIcon={<Icon name='arrow-down' />}
+                  style={{ width: undefined }}
+                  placeholder='Select Category'
+                  placeholderStyle={{ color: '#bfc6ea' }}
+                  placeholderIconColor='#007aff'
+                  selectedValue={this.state.include}
+                  onValueChange={(include) => this.setState({ include })}
+                >
+                  {['include_all', 'include_only', 'include_not'].map(item => <Picker.Item key={item} label={t(item)} value={item} />)}
+                </Picker>
+              </View>
+            </Col>
+            <View style={{ width: 10 }} />
+            <Col style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 80, alignItems: 'flex-end' }}>
+              {count > 0 && <Text note>{count} {I18n.t('transactions')}</Text>}
+              <Button rounded success onPress={() => this.search()} style={{ alignSelf: 'flex-end' }}><Text>{t('search')}</Text></Button>
+            </Col>
+          </CardItem>
+
+        </Card>
+      </View>
+    )
   }
 
   renderPhone () {
-    const amount = this.state.wallet ? this.state.wallet.amount : 0
-    const transactions = this.state.preprocessTransactions || []
+    const transactions = this.state.transactions || []
     return (
       <Container style={{ backgroundColor: Colors.listBackground }}>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
@@ -139,19 +281,13 @@ class TransactionSearchScreen extends Component {
             )}
             {(this.state.isGoingBack || this.state.isRefreshing) && <Spinner style={{ width: 30, alignSelf: 'center', paddingBottom: 20 }} />}
           </View>
-          <Body>
-            <Text>{this.state.wallet ? this.state.wallet.label : this.state.category.label}</Text>
-            <Text note>{this.state.wallet ? this.state.wallet.count : 0} {I18n.t('transactions')}</Text>
-          </Body>
-          <Right>
-            <Text style={{ textAlign: 'right', width: 200, color: amount > 0 ? 'green' : 'red' }}>{Utils.numberWithCommas(amount)}</Text>
-          </Right>
         </Header>
         <LongTransactionList
+          firstItem={this._renderSearchSection()}
           transactions={transactions}
           walletId={this.state.wallet ? this.state.wallet.id : 0}
-          refreshTransactions={() => this.refreshTransactions()}
-          getPrevMonth={() => this.getMonth(this.state.currentRequestMonthTag ? Utils.getPrevMonth(this.state.currentRequestMonthTag) : Utils.getMonth())}
+          refreshTransactions={() => this.search()}
+          getPrevMonth={() => {}}
           openTransactionDetailModal={this.openTransactionDetailModal}
         />
       </Container>

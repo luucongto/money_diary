@@ -9,6 +9,8 @@ import TransactionDetailScreen from '../Containers/TransactionDetailScreen'
 import TransactionScreen from '../Containers/TransactionScreen'
 import WalletScreen from '../Containers/WalletScreen'
 import CategoryScreen from '../Containers/CategoryScreen'
+import TransactionSearchScreen from '../Containers/TransactionSearchScreen'
+
 import I18n from '../I18n'
 import Utils from '../Utils/Utils'
 
@@ -152,6 +154,7 @@ function AppNavigation () {
         <Stack.Screen name='MainScreen' component={MainScreen} />
         <Stack.Screen name='TransactionScreen' component={TransactionScreen} />
         <Stack.Screen name='TransactionDetailScreen' component={TransactionDetailScreen} />
+        <Stack.Screen name='TransactionSearchScreen' component={TransactionSearchScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )

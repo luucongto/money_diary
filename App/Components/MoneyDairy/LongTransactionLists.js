@@ -1,4 +1,4 @@
-import { Button, Container, Spinner, Text, View } from 'native-base'
+import { Button, Container, Text } from 'native-base'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
@@ -62,7 +62,7 @@ class TransactionList extends Component {
 
   _renderItem (item, index) {
     if (index === 0) {
-      return (
+      return this.props.firstItem || (
         <TransactionCardAddComponent
           wallet={this.walletObjects[this.props.walletId]} walletId={this.props.walletId} category={this.props.category}
           callback={() => this.refresh()}
@@ -115,6 +115,7 @@ class TransactionList extends Component {
 
   renderPhone () {
     const transactions = this.props.transactions
+    Utils.log('longtransactionlist length', transactions.length)
     return (
       <Container>
         <FlatList
@@ -137,14 +138,8 @@ class TransactionList extends Component {
             //   Utils.log('onEndReached', this.state.renderItems.length)
             //   this.setState(this.appendData(this.state.preprocessTransactions, this.state.renderItems.length))
             // } else if (this.state.renderItems.length) {
-
             // }
           }}
-          ListFooterComponent={(
-            <View style={{ width: '100%', flexDirection: 'row', justifyContent: 'center' }}>
-              <Spinner />
-            </View>
-          )}
           onScroll={(event) => this.handleScroll(event)}
         />
         <Animated.View

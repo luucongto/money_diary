@@ -53,7 +53,7 @@ class Transaction extends RealmWrapper {
   }
 
   static findWithFilter = (startDate, endDate, params) => {
-    const query = { wallet: params.wallet, category: params.category }
+    const query = { wallet: params.wallet, category: params.category, include: params.include }
     query.date = {
       '>=': startDate,
       '<': endDate
