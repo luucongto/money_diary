@@ -4,7 +4,7 @@ import { Body, Button, Col, Icon, Input, Item, Label, Picker, Text } from 'nativ
 import React, { PureComponent } from 'react'
 import autoBind from 'react-autobind'
 import { Alert, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import I18n from '../../I18n'
 import Api from '../../Services/Api'
 import { ApplicationStyles, Colors, Fonts } from '../../Themes'
@@ -84,21 +84,23 @@ class TransactionCardItem extends PureComponent {
     const amount = transaction.amount
     const height = 100
     return (
-      <View style={{
-        ...ApplicationStyles.components.card,
-        opacity: transaction.include ? 1 : 0.2,
-        marginTop: 10,
-        marginHorizontal: 10,
-        backgroundColor: Colors.cardBackground,
-        flexDirection: 'row',
-        borderLeftWidth: 2,
-        borderRightWidth: 0,
-        height,
-        elevation: 5,
-        paddingLeft: 10,
-        overflow: 'hidden',
-        justifyContent: 'center'
-      }}
+      <TouchableWithoutFeedback
+        style={{
+          ...ApplicationStyles.components.card,
+          opacity: transaction.include ? 1 : 0.2,
+          marginTop: 10,
+          marginHorizontal: 10,
+          backgroundColor: Colors.cardBackground,
+          flexDirection: 'row',
+          borderLeftWidth: 2,
+          borderRightWidth: 0,
+          height,
+          elevation: 5,
+          paddingLeft: 10,
+          overflow: 'hidden',
+          justifyContent: 'center'
+        }}
+        onPress={() => this.props.openTransactionDetailModal(transaction)}
       >
         {/* <View
           style={{
@@ -119,20 +121,7 @@ class TransactionCardItem extends PureComponent {
           <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
           <Text note numberOfLines={1}>{Utils.timeFormat(transaction.date)} {transaction.note}</Text>
         </Body>
-        <View style={{
-          flexDirection: 'column',
-          justifyContent: 'space-between'
-
-        }}
-        >
-          <TouchableOpacity style={{ width: 50, height: height / 2, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.props.openTransactionDetailModal(transaction)}>
-            <Icon name='pencil-square-o' type='FontAwesome' style={{ fontSize: height / 4, color: 'blue', alignSelf: 'center' }} />
-          </TouchableOpacity>
-          <TouchableOpacity style={{ width: 50, height: height / 2, flexDirection: 'row', justifyContent: 'center' }} onPress={() => this.delete()}>
-            <Icon name='trash' type='FontAwesome' style={{ alignSelf: 'center', color: 'red' }} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </TouchableWithoutFeedback>
     )
   }
 }
@@ -143,7 +132,7 @@ class TransactionMonthTag extends PureComponent {
     return (
       <View style={{
         flexDirection: 'row',
-        paddingTop: 10,
+        paddingBottom: 10,
         backgroundColor: Colors.listBackground,
         borderBottomColor: 'gray',
         borderBottomWidth: 1,

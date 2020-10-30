@@ -94,10 +94,10 @@ class WalletItem extends PureComponent {
                       </Text>)}
                 </Row>
                 <Row>
-                  <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}><Icon name='wallet' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> {Utils.numberWithCommas(amount, true)} đ</Text>
+                  <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}><Icon name='wallet' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> {Utils.numberWithCommas(amount)} đ</Text>
                 </Row>
               </Col>
-              <Col style={{ alignItems: 'flex-end' }}>
+              {/* <Col style={{ alignItems: 'flex-end' }}>
                 <Row>
                   <Text note style={{ color: 'blue', alignSelf: 'flex-end' }}>
                     {I18n.t('report_this_month')}
@@ -113,7 +113,7 @@ class WalletItem extends PureComponent {
                     {Utils.numberWithCommas(-1 * wallet.outcome, true)}đ <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
                   </Text>
                 </Row>
-              </Col>
+              </Col> */}
             </Grid>
             {wallet.count > 0 && <Text note style={{ marginBottom: 10 }}>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
           </Body>

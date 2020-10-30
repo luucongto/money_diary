@@ -11,6 +11,7 @@ import ScreenHeader from '../Components/MoneyDiary/ScreenHeader'
 import { WalletAddComponent, WalletItem } from '../Components/MoneyDiary/WalletItem'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
+import Wallet from '../Realm/Wallet'
 import Api from '../Services/Api'
 import { Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
@@ -188,7 +189,7 @@ class WalletScreen extends Component {
           containerStyle={{ }}
           style={{ backgroundColor: '#5067FF' }}
           position='bottomRight'
-          onPress={() => this.refresh()}
+          onPress={() => this._sortWallets(Wallet.findWithAmount())}
         >
           <Icon name='refresh' type='FontAwesome' />
         </Fab>

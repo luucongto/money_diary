@@ -64,7 +64,6 @@ export default {
     return date.format('YYYY-MM-DD')
   },
   getPrevMonth (timeString = dayjs().format('YYYY-MM')) {
-    this.log('getPrevMonth', timeString)
     return dayjs(timeString, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM')
   },
   getMonth (timestamp = dayjs().unix()) {

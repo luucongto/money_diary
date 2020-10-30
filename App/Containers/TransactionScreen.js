@@ -23,7 +23,7 @@ class TransactionScreen extends Component {
       preprocessTransactions: [{
         type: 'addnew'
       }],
-      isRefreshing: false,
+      refreshing: false,
       wallet,
       category,
       walletId,
@@ -33,13 +33,8 @@ class TransactionScreen extends Component {
     autoBind(this)
   }
 
-  componentWillReceiveProps (nextProps) {
-    const prevProps = this.props
-    if ((nextProps.isFocused && prevProps.isFocused !== nextProps.isFocused)) {
-      setTimeout(() => {
-        this.refreshTransactions()
-      }, (1000))
-    }
+  componentDidMount () {
+    this.refreshTransactions()
   }
 
   shouldComponentUpdate (props) {
@@ -47,7 +42,7 @@ class TransactionScreen extends Component {
   }
 
   refreshTransactions () {
-    if (this.state.isRefreshing) {
+    if (this.refreshing) {
       return
     }
 
@@ -61,7 +56,6 @@ class TransactionScreen extends Component {
     if (!isNew) {
       result = []
     }
-    Utils.log('processedTransactions 1', transactions)
     if (!transactions || !transactions.length) return result
 
     const groups = _.groupBy(transactions, item => Utils.getMonth(item.date))
@@ -79,7 +73,7 @@ class TransactionScreen extends Component {
       })
       monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
       result.push(monthTagItem)
-      result = result.concat(transactions)
+      result = result.concat(items)
     })
     Utils.log('processedTransactions', transactions, result)
     return result
@@ -90,9 +84,11 @@ class TransactionScreen extends Component {
   }
 
   getMonth (monthTag, isRefresh = false) {
-    this.setState({
-      isRefreshing: true
-    })
+    if (!isRefresh && this.count >= this.state.wallet.count) {
+      Utils.log(`getMOnth ${isRefresh} ${this.count >= this.state.wallet.count}`)
+      return
+    }
+    this.refreshing = true
     const findConditions = { monthTag: monthTag }
 
     if (this.state.wallet && this.state.wallet.id) {
@@ -105,27 +101,33 @@ class TransactionScreen extends Component {
     if (this.state.category && this.state.category.id) {
       findConditions.category = this.state.category.id
     }
-
     const transactions = Transaction.getBy(findConditions)
+    this.count = isRefresh ? transactions.length : this.count + transactions.length
+
     const preprocessTransactions = this.preprocessTransactions(transactions, false)
+    Utils.log(`TransactionScreen findConditions ${isRefresh} ${this.count} ${this.state.currentRequestMonthTag}`, findConditions, transactions)
     this.setState({
+      isEnded: this.count >= this.state.wallet.count,
       currentRequestMonthTag: monthTag,
-      isRefreshing: false,
       preprocessTransactions: isRefresh ? [{
         type: 'addnew'
       }].concat(preprocessTransactions) : this.state.preprocessTransactions.concat(preprocessTransactions)
+    }, () => {
+      this.refreshing = false
+      if ((!transactions.length || this.count < 5) && !this.state.isEnded) {
+        this.getMonth(Utils.getPrevMonth(monthTag))
+      }
     })
   }
 
   renderPhone () {
     const amount = this.state.wallet ? this.state.wallet.amount : 0
     const transactions = this.state.preprocessTransactions || []
-    Utils.log('render transactions', transactions)
     return (
       <Container style={{ backgroundColor: Colors.listBackground }}>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>
           <View style={{ width: 60 }}>
-            {(transactions.length > 1 || !this.state.isRefreshing) && (
+            {(transactions.length > 1 || !this.refreshing) && (
               <Button
                 style={{ width: 60, height: 60 }} transparent onPress={() => {
                   this.setState({
@@ -137,7 +139,7 @@ class TransactionScreen extends Component {
                 <Icon color='black' name='back' type='AntDesign' />
               </Button>
             )}
-            {(this.state.isGoingBack || this.state.isRefreshing) && <Spinner style={{ width: 30, alignSelf: 'center', paddingBottom: 20 }} />}
+            {(this.state.isGoingBack || this.refreshing) && <Spinner style={{ width: 30, alignSelf: 'center', paddingBottom: 20 }} />}
           </View>
           <Body>
             <Text>{I18n.t(this.state.wallet ? this.state.wallet.label : this.state.category.label)}</Text>
@@ -148,6 +150,7 @@ class TransactionScreen extends Component {
           </Right>
         </Header>
         <LongTransactionList
+          isEnded={this.state.isEnded}
           transactions={transactions}
           walletId={this.state.wallet ? this.state.wallet.id : 0}
           refreshTransactions={() => this.refreshTransactions()}

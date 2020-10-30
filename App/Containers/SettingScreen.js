@@ -51,13 +51,19 @@ class SettingScreen extends Component {
     })
   }
 
-  async _backupASheet (spreadsheetId, sheetName, data, labels) {
-    let outputData = []
-    outputData = data.map(item => {
-      return Object.values(Utils.clone(item))
-    })
-    Utils.log('backup', sheetName, data, outputData)
-    await GoogleSheet.updateData(spreadsheetId, [labels].concat(outputData), sheetName, labels.length)
+  async _backupASheet (spreadsheetId, sheetName, data, RealmClass) {
+    try {
+      const labels = Object.keys(RealmClass.schema.schema.properties)
+      Utils.log('_backupASheet', sheetName, data, labels)
+      let outputData = []
+      outputData = data.map(item => {
+        return RealmClass.toArray(item)
+      })
+      Utils.log('backup', sheetName, data, outputData)
+      await GoogleSheet.updateData(spreadsheetId, [labels].concat(outputData), sheetName, labels.length)
+    } catch (error) {
+      Utils.log('_backupASheet error', error)
+    }
   }
 
   async backupGoogleSheet () {
@@ -84,9 +90,9 @@ class SettingScreen extends Component {
         return mapCategories[label]
       }
     })
-    await this._backupASheet(spreadsheetId, Constants.SHEETS.TRANSACTIONS, backupContents.transactions, Object.keys(Transaction.schema.schema.properties))
-    await this._backupASheet(spreadsheetId, Constants.SHEETS.WALLETS, backupContents.wallets, Object.keys(Wallet.schema.schema.properties))
-    await this._backupASheet(spreadsheetId, Constants.SHEETS.CATEGORIES, backupContents.categories, Object.keys(Category.schema.schema.properties))
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.TRANSACTIONS, backupContents.transactions, Transaction)
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.WALLETS, backupContents.wallets, Wallet)
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.CATEGORIES, backupContents.categories, Category)
   }
 
   async backup () {

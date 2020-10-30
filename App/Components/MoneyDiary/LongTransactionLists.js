@@ -1,8 +1,8 @@
-import { Button, Container, Text } from 'native-base'
+import { Button, Container, Spinner, Text } from 'native-base'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { FlatList, RefreshControl } from 'react-native'
+import { FlatList, RefreshControl, View } from 'react-native'
 import Animated, { Easing, Value } from 'react-native-reanimated'
 import I18n from '../../I18n'
 import Api from '../../Services/Api'
@@ -76,7 +76,6 @@ class TransactionList extends Component {
         />
       )
     }
-    Utils.log('render transaction', index, item)
     const itemView = (
       <TransactionCardItem
         key={item.id}
@@ -116,30 +115,31 @@ class TransactionList extends Component {
 
   renderPhone () {
     const transactions = this.props.transactions
-    Utils.log('longtransactionlist length', transactions.length)
     return (
       <Container>
         <FlatList
           ref={ref => { this.flatListRef = ref }}
-          style={{ backgroundColor: Colors.listBackground }}
+          style={{ backgroundColor: Colors.red }}
           refreshControl={
             <RefreshControl refreshing={false} onRefresh={this.refresh.bind(this)} />
           }
           data={transactions}
           renderItem={({ item, index }) => this._renderItem(item, index)}
           keyExtractor={(item) => item.id}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.3}
           // getItemLayout={(data, index) => (
           //   { length: 160, offset: 160 * index, index }
           // )}
+          ListFooterComponent={() => {
+            return (
+              <View style={{ height: 80 }}>
+                {!this.props.isEnded && <Spinner />}
+              </View>
+            )
+          }}
           stickyHeaderIndices={this.state.stickIndices}
           onEndReached={() => {
             this.props.getPrevMonth()
-            // if (this.state.renderItems.length < this.state.preprocessTransactions.length) {
-            //   Utils.log('onEndReached', this.state.renderItems.length)
-            //   this.setState(this.appendData(this.state.preprocessTransactions, this.state.renderItems.length))
-            // } else if (this.state.renderItems.length) {
-            // }
           }}
           onScroll={(event) => this.handleScroll(event)}
         />

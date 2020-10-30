@@ -62,7 +62,6 @@ class RealmWrapper {
   static _buildFilter (filter, useOr = false) {
     const criteria = []
     const op = ['or', 'and']
-    Utils.log('=====buildfilter', filter)
     _.each(filter, (v, k) => {
       if (_.indexOf(op, k) >= 0) {
         criteria.push(this._buildFilter(v, op === 'or'))
@@ -243,6 +242,19 @@ class RealmWrapper {
       }
     })
     return _t
+  }
+
+  static toArray (item) {
+    const properties = this.schema.schema.properties
+    const result = Object.keys(properties).map((label, _i) => {
+      const property = properties[label]
+      if (item[label] !== null || item[label] !== undefined) {
+        return item[label]
+      } else {
+        return property.default
+      }
+    })
+    return result
   }
 }
 
