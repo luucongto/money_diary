@@ -8,7 +8,6 @@ const schema = {
     icon: { type: 'string', default: '' },
     color: { type: 'string', default: '' },
     amount: { type: 'int', default: 0 },
-    transactions: 'int?[]',
     lastUpdate: { type: 'int', default: 0 },
     income: { type: 'int', default: 0 },
     outcome: { type: 'int', default: 0 }

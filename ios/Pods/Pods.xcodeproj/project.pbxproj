@@ -318,7 +318,7 @@
 		280BD4D3A0706CD550494E4CD1867FDA /* RCTGIFImageDecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = EE429AE26D0301FED3E9F07D743C1CCA /* RCTGIFImageDecoder.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2848074B96217CF225BDDAC192FB51B1 /* RCTFBSDKGraphRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A6B4B423F6C9E843E31E32416269147 /* RCTFBSDKGraphRequestManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		28B5F2DD486A226C01C7F80BA2D507B3 /* react-native-fbsdk-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E81D043E28F6C82EFA215169B0D22BCA /* react-native-fbsdk-dummy.m */; };
-		28E9E737453C3E735FA5530A0E71B453 /* Pods-money_dairy-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_dairy-dummy.m */; };
+		28E9E737453C3E735FA5530A0E71B453 /* Pods-money_diary-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_diary-dummy.m */; };
 		28F938C614393C2E27ED714D9579FC8E /* rescaler_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 131662E6FBA7FA3023648D18C92124AF /* rescaler_utils.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		2975DE77D38E869D432FF7219F588236 /* FBSDKProfile+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB17EE566AEB3727CC81D1FDF2865B6 /* FBSDKProfile+Internal.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		29D3F2BF7B47DF0C4F94937B6098E6C5 /* vlog_is_on.h in Headers */ = {isa = PBXBuildFile; fileRef = 09F8CC68D8BC250953ED8B1906D0FF31 /* vlog_is_on.h */; settings = {ATTRIBUTES = (Project, ); }; };
@@ -912,7 +912,7 @@
 		8C3A4C844C73E0EB3D53E11D8C53419E /* RCTVirtualTextShadowView.h in Headers */ = {isa = PBXBuildFile; fileRef = 306E25A3BF37EDEC2FFF2B0046CB0889 /* RCTVirtualTextShadowView.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8CA624564BD56CDA821A6C12FB87DF65 /* filters_mips_dsp_r2.c in Sources */ = {isa = PBXBuildFile; fileRef = EBC1684EA5E2CD7416789A0C44A3F508 /* filters_mips_dsp_r2.c */; settings = {COMPILER_FLAGS = "-D_THREAD_SAFE -fno-objc-arc"; }; };
 		8CABF2F39A94876ED5ED39059DD5DFB4 /* GroupInterpolator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CEFE24440781250AE75F87ACC8454AF /* GroupInterpolator.swift */; };
-		8CC41368F10D193C8A3FDBAE9BEF0B5A /* Pods-money_dairy-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C07A915D326F04DC85066A735B6198BC /* Pods-money_dairy-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		8CC41368F10D193C8A3FDBAE9BEF0B5A /* Pods-money_diary-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C07A915D326F04DC85066A735B6198BC /* Pods-money_diary-umbrella.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		8CFE8B65BF88A8C9D162B199B7BBD5C6 /* FBSDKCodelessPathComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = C7D9F06D0E996A94E84885E6B43FC7F4 /* FBSDKCodelessPathComponent.m */; };
 		8D27A8B27E33CEFE36705DA27D962B1E /* FBSDKShareOpenGraphAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 225453C210A33DB65FD74D0223362692 /* FBSDKShareOpenGraphAction.m */; };
 		8DCDE6DD377E7D735ECC89252CA639FA /* REAClockNodes.m in Sources */ = {isa = PBXBuildFile; fileRef = 1105A1F45235D1DB082754F9CF32D7AC /* REAClockNodes.m */; };
@@ -2749,7 +2749,7 @@
 		14A9A07A7424E57DB8B6EF3B119487ED /* RCTConvert+Transform.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+Transform.h"; sourceTree = "<group>"; };
 		14D2AE4339D8FD9C66DEA72A45E82DAB /* SDImageHEICCoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageHEICCoder.h; path = SDWebImage/Core/SDImageHEICCoder.h; sourceTree = "<group>"; };
 		14F230BF56CA15C13AE1EEB19CC22037 /* CompositionLayersInitializer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = CompositionLayersInitializer.swift; sourceTree = "<group>"; };
-		14F6D9AE22FC8363910118C90A999EAF /* Pods-money_dairy.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-money_dairy.modulemap"; sourceTree = "<group>"; };
+		14F6D9AE22FC8363910118C90A999EAF /* Pods-money_diary.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-money_diary.modulemap"; sourceTree = "<group>"; };
 		1503FE32D6D2B4C70AAC37DC54971847 /* FBSDKCameraEffectTextures.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBSDKCameraEffectTextures.m; path = FBSDKShareKit/FBSDKShareKit/FBSDKCameraEffectTextures.m; sourceTree = "<group>"; };
 		150C57EA82B3F528B88C9241B9CC874B /* FBSDKLoginUtility.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSDKLoginUtility.h; path = FBSDKLoginKit/FBSDKLoginKit/Internal/FBSDKLoginUtility.h; sourceTree = "<group>"; };
 		1513335171B4D1B27331BB66F90775BD /* lossless_enc_sse41.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_enc_sse41.c; path = src/dsp/lossless_enc_sse41.c; sourceTree = "<group>"; };
@@ -2871,7 +2871,7 @@
 		2901992C840FC9A297A6FCB94E0EB53A /* SDAsyncBlockOperation.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDAsyncBlockOperation.m; path = SDWebImage/Private/SDAsyncBlockOperation.m; sourceTree = "<group>"; };
 		29494FE04FA52907733C82F45BD97369 /* ShapeItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShapeItem.swift; sourceTree = "<group>"; };
 		296BD9824E4A30CAC2757D35919B41EC /* RCTDevSettings.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTDevSettings.h; sourceTree = "<group>"; };
-		29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_dairy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-money_dairy.release.xcconfig"; sourceTree = "<group>"; };
+		29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_diary.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-money_diary.release.xcconfig"; sourceTree = "<group>"; };
 		29FFA990CDE84021F85494DC264EE019 /* enc_sse2.c */ = {isa = PBXFileReference; includeInIndex = 1; name = enc_sse2.c; path = src/dsp/enc_sse2.c; sourceTree = "<group>"; };
 		2A2AD45696B4A144F7CBB763B6B284EC /* StrokeRenderer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = StrokeRenderer.swift; sourceTree = "<group>"; };
 		2A32BF892DD15E262E4682F0A42EA6DF /* lossless_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = lossless_neon.c; path = src/dsp/lossless_neon.c; sourceTree = "<group>"; };
@@ -3396,7 +3396,7 @@
 		79F9237459041C33DEF96B9F0A831051 /* RCTActivityIndicatorView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTActivityIndicatorView.m; sourceTree = "<group>"; };
 		7A23D8B7FDF66DD680066373E34C4BC9 /* RCTRawTextViewManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTRawTextViewManager.h; sourceTree = "<group>"; };
 		7A37C13B46EEDA23D6E5D949526FC978 /* UIImage+GIF.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+GIF.m"; path = "SDWebImage/Core/UIImage+GIF.m"; sourceTree = "<group>"; };
-		7A44C14C868799FC128AB52B366FBFD0 /* Pods-money_dairy-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-money_dairy-resources.sh"; sourceTree = "<group>"; };
+		7A44C14C868799FC128AB52B366FBFD0 /* Pods-money_diary-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-money_diary-resources.sh"; sourceTree = "<group>"; };
 		7A6B66530179FCF9CC81988AD9F7B27D /* REANode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = REANode.h; sourceTree = "<group>"; };
 		7A8A78C31531C3860B3CC43DC749F4CB /* REATransition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = REATransition.h; sourceTree = "<group>"; };
 		7A9B11B549637C8D8B94021585061072 /* FBSDKGameRequestDialog.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSDKGameRequestDialog.h; path = FBSDKShareKit/FBSDKShareKit/FBSDKGameRequestDialog.h; sourceTree = "<group>"; };
@@ -3490,7 +3490,7 @@
 		8740E3EC8ECE6DC10FB2DC516E423888 /* RCTTransformAnimatedNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTTransformAnimatedNode.h; sourceTree = "<group>"; };
 		875E17F91431EF6BB935D957BA1D7002 /* UIImage+ForceDecode.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ForceDecode.m"; path = "SDWebImage/Core/UIImage+ForceDecode.m"; sourceTree = "<group>"; };
 		875EB1FA0761CEC0E53756832FBC9645 /* FBSDKKeychainStore.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSDKKeychainStore.h; path = FBSDKCoreKit/FBSDKCoreKit/Internal/TokenCaching/FBSDKKeychainStore.h; sourceTree = "<group>"; };
-		876995B9677ED104ACBDDF324D09A42B /* Pods-money_dairy-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-money_dairy-acknowledgements.markdown"; sourceTree = "<group>"; };
+		876995B9677ED104ACBDDF324D09A42B /* Pods-money_diary-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-money_diary-acknowledgements.markdown"; sourceTree = "<group>"; };
 		876C07146477A7BAA8E8C60B8B162716 /* RCTAnimatedNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTAnimatedNode.h; sourceTree = "<group>"; };
 		87865AC87D89D416DA2E8EBD987CC17D /* RCTView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTView.h; sourceTree = "<group>"; };
 		878D4FE44F4AA0FFA3987429928A2BC7 /* NodeProperty.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NodeProperty.swift; sourceTree = "<group>"; };
@@ -3596,7 +3596,7 @@
 		940B4DE8E0EFC66626E0DC2CC7C9E02B /* log.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = log.h; path = yoga/log.h; sourceTree = "<group>"; };
 		9423D6972FFF995D3730E794E3670C03 /* UIView+FindUIViewController.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIView+FindUIViewController.m"; path = "ios/Video/UIView+FindUIViewController.m"; sourceTree = "<group>"; };
 		94415095D9E8282EA596C12B85A9D672 /* RCTImageUtils.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTImageUtils.m; sourceTree = "<group>"; };
-		944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_dairy-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-money_dairy-dummy.m"; sourceTree = "<group>"; };
+		944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_diary-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-money_diary-dummy.m"; sourceTree = "<group>"; };
 		946B6AE58872A5C1FBAFE8C9084ACEB2 /* YGStyle.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YGStyle.h; path = yoga/YGStyle.h; sourceTree = "<group>"; };
 		947D36EC7FF0A6A669C513AA6DEBAFC9 /* Folly.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Folly.xcconfig; sourceTree = "<group>"; };
 		94AF0835E1F8D862F20B6FE774452CCB /* color_cache_utils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = color_cache_utils.h; path = src/utils/color_cache_utils.h; sourceTree = "<group>"; };
@@ -3617,7 +3617,7 @@
 		968CE6A7FE937A60A4B84629D92421E9 /* F14Table.cpp */ = {isa = PBXFileReference; includeInIndex = 1; name = F14Table.cpp; path = folly/container/detail/F14Table.cpp; sourceTree = "<group>"; };
 		9691BC015FF94B26236CE78D58281CCD /* RCTPackagerConnection.mm */ = {isa = PBXFileReference; includeInIndex = 1; path = RCTPackagerConnection.mm; sourceTree = "<group>"; };
 		969A1972CEF3C3F106CC7874EE5DD0D5 /* RCTPropsAnimatedNode.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTPropsAnimatedNode.m; sourceTree = "<group>"; };
-		96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_dairy.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-money_dairy.a"; path = "libPods-money_dairy.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_diary.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-money_diary.a"; path = "libPods-money_diary.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		96EB1012F5C1CDA73EA1EBA072AD3848 /* RCTAnimationDriver.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTAnimationDriver.h; sourceTree = "<group>"; };
 		9704C1CF7D6F92414BCB755BAD6943FC /* RCTAssert.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTAssert.m; sourceTree = "<group>"; };
 		9736C8E5C5FC2FCAF0D04842237BB32F /* RCTVirtualTextViewManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTVirtualTextViewManager.m; sourceTree = "<group>"; };
@@ -3920,7 +3920,7 @@
 		C031D1B830581165E518AC3A015E6AAE /* RCTRootView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = RCTRootView.h; sourceTree = "<group>"; };
 		C05062B0E3C5D8AB074898287CC3B51F /* Yoga-internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "Yoga-internal.h"; path = "yoga/Yoga-internal.h"; sourceTree = "<group>"; };
 		C0655619F773F71FDBFEBC11EAD6D002 /* RCTFBSDKShareAPI.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = RCTFBSDKShareAPI.h; path = ios/RCTFBSDK/share/RCTFBSDKShareAPI.h; sourceTree = "<group>"; };
-		C07A915D326F04DC85066A735B6198BC /* Pods-money_dairy-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-money_dairy-umbrella.h"; sourceTree = "<group>"; };
+		C07A915D326F04DC85066A735B6198BC /* Pods-money_diary-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-money_diary-umbrella.h"; sourceTree = "<group>"; };
 		C086117ADF9B2A8C8EEEABB12CECB4B1 /* SDWebImage-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SDWebImage-dummy.m"; sourceTree = "<group>"; };
 		C0A575C775880D4A6763DB59A8DB4D44 /* ValueContainer.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ValueContainer.swift; sourceTree = "<group>"; };
 		C0A7751C2CD4B8F0A428CF80C2D5EB48 /* REACallFuncNode.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = REACallFuncNode.h; sourceTree = "<group>"; };
@@ -4031,7 +4031,7 @@
 		CEE2D47219A861E5EE41A9816FFB0CD5 /* SDImageIOAnimatedCoder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageIOAnimatedCoder.h; path = SDWebImage/Core/SDImageIOAnimatedCoder.h; sourceTree = "<group>"; };
 		CF067D6928A1FE01180B531196A7535A /* RCTMaskedViewManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTMaskedViewManager.m; sourceTree = "<group>"; };
 		CF2342919E99E0DC9647EA25E4C9E2D8 /* RCTUIManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = RCTUIManager.m; sourceTree = "<group>"; };
-		CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_dairy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-money_dairy.debug.xcconfig"; sourceTree = "<group>"; };
+		CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_diary.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-money_diary.debug.xcconfig"; sourceTree = "<group>"; };
 		CF54334EA72B92657B9224C71B10E916 /* FBSDKShareOpenGraphValueContainer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = FBSDKShareOpenGraphValueContainer.h; path = FBSDKShareKit/FBSDKShareKit/FBSDKShareOpenGraphValueContainer.h; sourceTree = "<group>"; };
 		CF731A1D42B92CA23CBE5BE306C36B38 /* yuv_neon.c */ = {isa = PBXFileReference; includeInIndex = 1; name = yuv_neon.c; path = src/dsp/yuv_neon.c; sourceTree = "<group>"; };
 		CFA9B58F61998D647FFA0B4205ABB60A /* FBSDKGraphRequestBody.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = FBSDKGraphRequestBody.m; path = FBSDKCoreKit/FBSDKCoreKit/Internal/Network/FBSDKGraphRequestBody.m; sourceTree = "<group>"; };
@@ -4041,7 +4041,7 @@
 		CFFCAEF16A357DBF301FAF25C059EE3F /* React-RCTLinking-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "React-RCTLinking-dummy.m"; sourceTree = "<group>"; };
 		D03FDC89959ACADF7D2CBD6063A110AC /* huffman_utils.c */ = {isa = PBXFileReference; includeInIndex = 1; name = huffman_utils.c; path = src/utils/huffman_utils.c; sourceTree = "<group>"; };
 		D09A6D2365EDCB1EB102A90D6D154649 /* FBSDKServerConfigurationManager+Internal.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "FBSDKServerConfigurationManager+Internal.h"; path = "FBSDKCoreKit/FBSDKCoreKit/Internal/ServerConfiguration/FBSDKServerConfigurationManager+Internal.h"; sourceTree = "<group>"; };
-		D0A2B76A7FD1DAC7EF6C74E300C3965D /* Pods-money_dairy-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-money_dairy-acknowledgements.plist"; sourceTree = "<group>"; };
+		D0A2B76A7FD1DAC7EF6C74E300C3965D /* Pods-money_diary-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-money_diary-acknowledgements.plist"; sourceTree = "<group>"; };
 		D0A5AED258E57C0257FBEFB6BF2D1B59 /* RNI18n-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "RNI18n-dummy.m"; sourceTree = "<group>"; };
 		D0D1071AEC28A9BF657952A06619510C /* YGNodePrint.cpp */ = {isa = PBXFileReference; includeInIndex = 1; name = YGNodePrint.cpp; path = yoga/YGNodePrint.cpp; sourceTree = "<group>"; };
 		D0D13C21963BF12BF082DC83CF8646A6 /* RCTFBSDKLoginManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = RCTFBSDKLoginManager.m; path = ios/RCTFBSDK/login/RCTFBSDKLoginManager.m; sourceTree = "<group>"; };
@@ -5660,7 +5660,7 @@
 				5E4674603A5D5B9215FFA0F8E69F8B71 /* liblibwebp.a */,
 				51BA97E8B5085EFFB47BC9C0B785CEA7 /* liblottie-ios.a */,
 				0F8D5091C801A6ECB9A173DA0E385A29 /* liblottie-react-native.a */,
-				96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_dairy.a */,
+				96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_diary.a */,
 				F958876A082BF810B342435CE3FB5AF6 /* libRCTTypeSafety.a */,
 				BD71E2539823621820F84384064C253A /* libReact-Core.a */,
 				6771D231F4C8C5976470A369C474B32E /* libReact-CoreModules.a */,
@@ -6825,7 +6825,7 @@
 		889B0BE2EEA9D871061951F112B4317E /* Targets Support Files */ = {
 			isa = PBXGroup;
 			children = (
-				E0A3B35507E7F7B1399C47A86C4E29CD /* Pods-money_dairy */,
+				E0A3B35507E7F7B1399C47A86C4E29CD /* Pods-money_diary */,
 			);
 			name = "Targets Support Files";
 			sourceTree = "<group>";
@@ -8252,20 +8252,20 @@
 			path = Helpers;
 			sourceTree = "<group>";
 		};
-		E0A3B35507E7F7B1399C47A86C4E29CD /* Pods-money_dairy */ = {
+		E0A3B35507E7F7B1399C47A86C4E29CD /* Pods-money_diary */ = {
 			isa = PBXGroup;
 			children = (
-				14F6D9AE22FC8363910118C90A999EAF /* Pods-money_dairy.modulemap */,
-				876995B9677ED104ACBDDF324D09A42B /* Pods-money_dairy-acknowledgements.markdown */,
-				D0A2B76A7FD1DAC7EF6C74E300C3965D /* Pods-money_dairy-acknowledgements.plist */,
-				944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_dairy-dummy.m */,
-				7A44C14C868799FC128AB52B366FBFD0 /* Pods-money_dairy-resources.sh */,
-				C07A915D326F04DC85066A735B6198BC /* Pods-money_dairy-umbrella.h */,
-				CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_dairy.debug.xcconfig */,
-				29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_dairy.release.xcconfig */,
+				14F6D9AE22FC8363910118C90A999EAF /* Pods-money_diary.modulemap */,
+				876995B9677ED104ACBDDF324D09A42B /* Pods-money_diary-acknowledgements.markdown */,
+				D0A2B76A7FD1DAC7EF6C74E300C3965D /* Pods-money_diary-acknowledgements.plist */,
+				944A3E77024DBF27F9B5AD66E122DE27 /* Pods-money_diary-dummy.m */,
+				7A44C14C868799FC128AB52B366FBFD0 /* Pods-money_diary-resources.sh */,
+				C07A915D326F04DC85066A735B6198BC /* Pods-money_diary-umbrella.h */,
+				CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_diary.debug.xcconfig */,
+				29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_diary.release.xcconfig */,
 			);
-			name = "Pods-money_dairy";
-			path = "Target Support Files/Pods-money_dairy";
+			name = "Pods-money_diary";
+			path = "Target Support Files/Pods-money_diary";
 			sourceTree = "<group>";
 		};
 		E1526B09DEDF58C3838256B1F5C52033 /* Pod */ = {
@@ -8613,7 +8613,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8CC41368F10D193C8A3FDBAE9BEF0B5A /* Pods-money_dairy-umbrella.h in Headers */,
+				8CC41368F10D193C8A3FDBAE9BEF0B5A /* Pods-money_diary-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9725,9 +9725,9 @@
 			productReference = FCF61D9B2B75054A9A3185DDC609B7FF /* libSDWebImageWebPCoder.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		275C1579B941F5A2338467272BA8449B /* Pods-money_dairy */ = {
+		275C1579B941F5A2338467272BA8449B /* Pods-money_diary */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 227AD88828453895AC507C1DB73231C4 /* Build configuration list for PBXNativeTarget "Pods-money_dairy" */;
+			buildConfigurationList = 227AD88828453895AC507C1DB73231C4 /* Build configuration list for PBXNativeTarget "Pods-money_diary" */;
 			buildPhases = (
 				0A13D988609D335702DD6288848D6BA8 /* Headers */,
 				337B4B34BDD0C5837AF6895E93A8D27B /* Sources */,
@@ -9781,9 +9781,9 @@
 				05E3F67A7DD617C894E9F04B2BE2414D /* PBXTargetDependency */,
 				EE641760AD97757A53ACE50675C8CD67 /* PBXTargetDependency */,
 			);
-			name = "Pods-money_dairy";
-			productName = "Pods-money_dairy";
-			productReference = 96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_dairy.a */;
+			name = "Pods-money_diary";
+			productName = "Pods-money_diary";
+			productReference = 96DB84BC9D9AE3BC5521A0600759ADDB /* libPods-money_diary.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		28907903AF6DD0AD321D92CD660E7E23 /* FBSDKCoreKit */ = {
@@ -10488,7 +10488,7 @@
 				47D2E85A78C25869BB13521D8561A638 /* libwebp */,
 				0B967D7F8561D42493EE289EC8D450D1 /* lottie-ios */,
 				D0A4E77DD13672F3E2E1D9593F999DBA /* lottie-react-native */,
-				275C1579B941F5A2338467272BA8449B /* Pods-money_dairy */,
+				275C1579B941F5A2338467272BA8449B /* Pods-money_diary */,
 				E7E7CE52C8C68B17224FF8C262D80ABF /* RCTRequired */,
 				D20469A9A1E5CFB26045EAEBE3F88E5E /* RCTTypeSafety */,
 				1BEE828C124E6416179B904A9F66D794 /* React */,
@@ -10759,7 +10759,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				28E9E737453C3E735FA5530A0E71B453 /* Pods-money_dairy-dummy.m in Sources */,
+				28E9E737453C3E735FA5530A0E71B453 /* Pods-money_diary-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12916,7 +12916,7 @@
 		};
 		3282D9DECC59298D897E563AFA7719FC /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_dairy.release.xcconfig */;
+			baseConfigurationReference = 29B4C9B209B4B77E11DBC7B186BAFE02 /* Pods-money_diary.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -12925,7 +12925,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-money_dairy/Pods-money_dairy.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-money_diary/Pods-money_diary.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -14072,7 +14072,7 @@
 		};
 		BD3484920FB4D16285609BB4E068846E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_dairy.debug.xcconfig */;
+			baseConfigurationReference = CF30BE2E7F69FD76695EADC6293C372B /* Pods-money_diary.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -14081,7 +14081,7 @@
 				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-money_dairy/Pods-money_dairy.modulemap";
+				MODULEMAP_FILE = "Target Support Files/Pods-money_diary/Pods-money_diary.modulemap";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -14821,7 +14821,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		227AD88828453895AC507C1DB73231C4 /* Build configuration list for PBXNativeTarget "Pods-money_dairy" */ = {
+		227AD88828453895AC507C1DB73231C4 /* Build configuration list for PBXNativeTarget "Pods-money_diary" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				BD3484920FB4D16285609BB4E068846E /* Debug */,

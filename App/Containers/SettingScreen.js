@@ -7,16 +7,17 @@ import autoBind from 'react-autobind'
 import { ActivityIndicator, PermissionsAndroid, Platform, View } from 'react-native'
 import DocumentPicker from 'react-native-document-picker'
 import ConfirmationButton from '../Components/ConfirmationButton'
-import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
+import ScreenHeader from '../Components/MoneyDiary/ScreenHeader'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
-import { Transaction, Wallet } from '../Realm'
+import { Transaction, Wallet, Category } from '../Realm'
 import LoginRedux from '../Redux/LoginRedux'
 import Api from '../Services/Api'
 import GDrive from '../Services/GDrive'
 import GoogleApi from '../Services/GoogleApi'
 import GoogleSheet from '../Services/GoogleSheet'
 import { ApplicationStyles } from '../Themes'
+import lodash from 'lodash'
 // Styles
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
@@ -50,31 +51,63 @@ class SettingScreen extends Component {
     })
   }
 
-  async _backupASheet (spreadsheetId, sheetName, data) {
-    let transactionData = []
-    let labels = null
-    transactionData = data.map(transaction => {
-      if (!labels) {
-        labels = Object.keys(Utils.clone(transaction))
-      }
-      return Object.values(Utils.clone(transaction))
+  async _backupASheet (spreadsheetId, sheetName, data, labels) {
+    let outputData = []
+    outputData = data.map(item => {
+      return Object.values(Utils.clone(item))
     })
-    await GoogleSheet.updateData(spreadsheetId, [labels].concat(transactionData), sheetName, labels.length)
+    Utils.log('backup', sheetName, data, outputData)
+    await GoogleSheet.updateData(spreadsheetId, [labels].concat(outputData), sheetName, labels.length)
   }
 
   async backupGoogleSheet () {
     const { spreadsheetId } = await GoogleSheet.createSheet()
-    const data = {
+    const backupContents = {
       wallets: Wallet.findWithAmount(),
       categories: Api.category(),
-      transactions: Transaction.getBy()
+      transactions: Transaction.find()
     }
-    await this._backupASheet(spreadsheetId, Constants.SHEETS.TRANSACTIONS, data.transactions)
-    await this._backupASheet(spreadsheetId, Constants.SHEETS.WALLETS, data.wallets)
+    const mapCategories = Utils.createMapFromArray(backupContents.categories, 'id')
+    backupContents.categories = lodash.uniq(lodash.map(backupContents.transactions, 'category')).map(label => {
+      if (!mapCategories[label]) {
+        return {
+          id: label,
+          label: label,
+          icon: '',
+          color: '#fa0770',
+          amount: 0,
+          lastUpdate: 0,
+          income: 0,
+          outcome: 0
+        }
+      } else {
+        return mapCategories[label]
+      }
+    })
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.TRANSACTIONS, backupContents.transactions, Object.keys(Transaction.schema.schema.properties))
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.WALLETS, backupContents.wallets, Object.keys(Wallet.schema.schema.properties))
+    await this._backupASheet(spreadsheetId, Constants.SHEETS.CATEGORIES, backupContents.categories, Object.keys(Category.schema.schema.properties))
   }
 
   async backup () {
-    await this.asyncSetState({ doingBackup: true })
+    try {
+      await this.asyncSetState({ doingBackup: true })
+      await this.backupGoogleSheet()
+      Toast.show({
+        text: t('exported'),
+        duration: 3000
+      })
+      await this.getFileInfo()
+      await this.asyncSetState({ doingBackup: false })
+    } catch (error) {
+      Utils.log(error)
+      Toast.show({
+        text: t('error'),
+        duration: 3000
+      })
+      await this.asyncSetState({ doingBackup: false })
+    }
+
     // const backupContents = {
     //   wallets: Wallet.findWithAmount(),
     //   categories: Api.category(),
@@ -113,7 +146,7 @@ class SettingScreen extends Component {
     // GDrive.init()
     // Utils.log('GDrive.isInitialized()', GDrive.isInitialized())
     // const folderRes = await GDrive.files.safeCreateFolder({
-    //   name: 'MoneyDairy',
+    //   name: 'MoneyDiary',
     //   parents: ['root']
     // })
     // const currentFileId = await GDrive.files.getId('money_diary.json', [folderRes], 'application/json', false)
@@ -124,7 +157,7 @@ class SettingScreen extends Component {
     //   JSON.stringify(backupContents),
     //   'application/vnd.google-apps.spreadsheet', {
     //     parents: [folderRes],
-    //     name: 'MoneyDairy'
+    //     name: 'MoneyDiary'
     //   },
     //   false)
     // const result = await GDrive.files.createFileMultipart(
@@ -135,14 +168,6 @@ class SettingScreen extends Component {
     //   },
     //   false)
     // Utils.log('result', result)
-
-    await this.backupGoogleSheet()
-    Toast.show({
-      text: t('exported'),
-      duration: 3000
-    })
-    await this.getFileInfo()
-    await this.asyncSetState({ doingBackup: false })
   }
 
   async getFileId () {
@@ -156,7 +181,7 @@ class SettingScreen extends Component {
       // GDrive.init()
       // Utils.log('1')
       // const folderRes = await GDrive.files.safeCreateFolder({
-      //   name: 'MoneyDairy',
+      //   name: 'MoneyDiary',
       //   parents: ['root']
       // })
       // Utils.log('folderRes', folderRes)
@@ -199,6 +224,7 @@ class SettingScreen extends Component {
         await this.asyncSetState({ doingDownload: false })
         return null
       }
+      GoogleApi.authorized(this.props.login)
       const result = await Api.downloadFile(sheet.spreadsheetId)
       Toast.show({
         text: t('imported_transactions', { num: result.transactions.length }),

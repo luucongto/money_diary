@@ -72,9 +72,15 @@ class TransactionCardItem extends PureComponent {
       return null
     }
     const wallet = this.props.wallet
-    if (!wallet) return null
+    if (!wallet) {
+      Utils.log('transactionCardItem, wallet', this.props.index, 'null')
+      return null
+    }
     const category = this.props.category
-    if (!category) return null
+    if (!category) {
+      Utils.log('transactionCardItem, category', this.props.index, 'null')
+      return null
+    }
     const amount = transaction.amount
     const height = 100
     return (

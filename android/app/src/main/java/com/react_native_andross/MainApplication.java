@@ -1,4 +1,4 @@
-package com.money_dairy;
+package com.money_diary;
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;

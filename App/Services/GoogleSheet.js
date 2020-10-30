@@ -64,7 +64,8 @@ class GoogleSheet {
     }
     const sheetData = await this.sheetApi.get(`spreadsheets/${currentFileId}/values/${sheetName}!A:${col}?majorDimension=ROWS`, null, {
       params: {
-        majorDimension: 'ROWS'
+        majorDimension: 'ROWS',
+        valueRenderOption: 'UNFORMATTED_VALUE'
       }
     })
     return sheetData.data

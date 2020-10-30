@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.money_dairy"
+        applicationId "com.money_diary"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         multiDexEnabled true
@@ -177,7 +177,7 @@ android {
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
             }
 
-            outputFileName = new File("money_dairy_" + variant.versionName + ".apk");
+            outputFileName = new File("money_diary_" + variant.versionName + ".apk");
 
         }
     }

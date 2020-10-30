@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:517392397918:android:b7ccda7f408fe743de26cf",
+        "mobilesdk_app_id": "1:517392397918:android:9a20dcae00c61696de26cf",
         "android_client_info": {
-          "package_name": "com.money_dairy"
+          "package_name": "com.money_diary"
         }
       },
       "oauth_client": [
         {
-          "client_id": "517392397918-3limm6gc9p8ogq9ai72pmvu5rjboa4il.apps.googleusercontent.com",
+          "client_id": "517392397918-tglkbcuqidv65t6kripk90j1lbpasbq7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.money_dairy",
+            "package_name": "com.money_diary",
             "certificate_hash": "a22a230cd40031ee749968640997853a73ed9873"
           }
         },

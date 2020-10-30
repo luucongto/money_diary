@@ -220,6 +220,30 @@ class RealmWrapper {
     Utils.log(`ReamlWrapper ${className.name} remove ${deletingObjects.length}`)
     return deletingObjects
   }
+
+  static fromArray (item) {
+    const properties = this.schema.schema.properties
+    const _t = {}
+    Object.keys(properties).forEach((label, _i) => {
+      const property = properties[label]
+      switch (property.type) {
+        case 'int':
+          _t[label] = parseInt(item[_i])
+          break
+        case 'bool':
+          if (item[_i] === 'TRUE') {
+            _t[label] = true
+          }
+          if (item[_i] === 'FALSE') {
+            _t[label] = false
+          }
+          break
+        default:
+          _t[label] = item[_i]
+      }
+    })
+    return _t
+  }
 }
 
 export default RealmWrapper

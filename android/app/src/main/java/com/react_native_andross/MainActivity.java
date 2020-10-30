@@ -1,4 +1,4 @@
-package com.money_dairy;
+package com.money_diary;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "money_dairy";
+    return "money_diary";
   }
 }

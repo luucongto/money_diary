@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { Body, Button, Container, Header, Icon, Right, Spinner, Text, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import LongTransactionList from '../Components/MoneyDiary/LongTransactionLists'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import { Wallet } from '../Realm'
@@ -64,7 +64,7 @@ class TransactionScreen extends Component {
     Utils.log('processedTransactions 1', transactions)
     if (!transactions || !transactions.length) return result
 
-    const groups = _.groupBy(transactions, item => item.monthTag)
+    const groups = _.groupBy(transactions, item => Utils.getMonth(item.date))
     _.each(groups, (items, monthTag) => {
       const monthTagItem = {
         type: 'monthTag',
@@ -73,13 +73,13 @@ class TransactionScreen extends Component {
         income: 0,
         outcome: 0
       }
-      items.forEach(item => {
+      transactions.forEach(item => {
         monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
         monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
       })
       monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
       result.push(monthTagItem)
-      result = result.concat(items)
+      result = result.concat(transactions)
     })
     Utils.log('processedTransactions', transactions, result)
     return result
@@ -115,12 +115,12 @@ class TransactionScreen extends Component {
         type: 'addnew'
       }].concat(preprocessTransactions) : this.state.preprocessTransactions.concat(preprocessTransactions)
     })
-    Utils.log('findConditions getPrevMonth', findConditions, transactions)
   }
 
   renderPhone () {
     const amount = this.state.wallet ? this.state.wallet.amount : 0
     const transactions = this.state.preprocessTransactions || []
+    Utils.log('render transactions', transactions)
     return (
       <Container style={{ backgroundColor: Colors.listBackground }}>
         <Header style={{ backgroundColor: 'white', paddingLeft: 0, borderBottomColor: 'gray', borderBottomWidth: 1 }}>

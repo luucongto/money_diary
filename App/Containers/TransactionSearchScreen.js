@@ -2,7 +2,7 @@
 import { Body, Button, Card, CardItem, Col, Container, Content, Header, Icon, Item, Label, Picker, Right, Spinner, Switch, Text, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { TransactionCardItem } from '../Components/MoneyDairy/TransactionCardItem'
+import { TransactionCardItem } from '../Components/MoneyDiary/TransactionCardItem'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import { Wallet } from '../Realm'
@@ -14,7 +14,7 @@ import lodash from 'lodash'
 import Api from '../Services/Api'
 import Category from '../Realm/Category'
 import Utils from '../Utils/Utils'
-import LongTransactionList from '../Components/MoneyDairy/LongTransactionLists'
+import LongTransactionList from '../Components/MoneyDiary/LongTransactionLists'
 import dayjs from 'dayjs'
 const t = I18n.t
 class TransactionSearchScreen extends Component {

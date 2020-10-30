@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Pods_money_dairyVersionNumber;
-FOUNDATION_EXPORT const unsigned char Pods_money_dairyVersionString[];
+FOUNDATION_EXPORT double Pods_money_diaryVersionNumber;
+FOUNDATION_EXPORT const unsigned char Pods_money_diaryVersionString[];
 

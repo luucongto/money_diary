@@ -75,6 +75,18 @@ class Transaction extends RealmWrapper {
     return params
   }
 
+  static beforeUpdate (params) {
+    if (!params.date) {
+      params.date = dayjs().unix()
+    } else if (typeof (params.date) === 'string') {
+      params.date = dayjs(params.date).unix()
+    }
+    params.monthTag = Utils.getMonth(params.date)
+    params.quarterTag = Utils.getQuarter(params.date)
+    params.dateTag = Utils.getDateFromUnix(params.date)
+    return params
+  }
+
   static getMonths () {
     const realm = Transaction.realm
     const minDate = realm.objects(schema.name).min('date')

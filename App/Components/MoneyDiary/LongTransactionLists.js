@@ -76,6 +76,7 @@ class TransactionList extends Component {
         />
       )
     }
+    Utils.log('render transaction', index, item)
     const itemView = (
       <TransactionCardItem
         key={item.id}

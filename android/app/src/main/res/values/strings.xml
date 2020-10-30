@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Money Dairy</string>
+    <string name="app_name">Money Diary</string>
     <string name="facebook_app_id">1623948227741063</string>
     <string name="fb_login_protocol_scheme">fb1623948227741063</string>
 </resources>

@@ -226,110 +226,63 @@ class API {
   }
 
   async extractTransactions (spreadSheetId) {
-    const rawTransactions = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.TRANSACTIONS, 12)
-    Utils.log('rawTransactions', rawTransactions)
-    const transactions = []
-    if (rawTransactions) {
-      const labels = rawTransactions.values[0]
-      rawTransactions.values.forEach((transaction, index) => {
+    const rawData = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.TRANSACTIONS, 12)
+    Utils.log('rawTransactions', rawData)
+    const result = []
+    if (rawData) {
+      rawData.values.forEach((item, index) => {
         if (index === 0) {
           return
         }
-        const _t = {}
-        labels.forEach((label, _i) => {
-          switch (label) {
-            case 'date':
-            case 'amount':
-            case 'id':
-              _t[label] = parseInt(transaction[_i])
-              break
-            case 'include':
-            case 'deleted':
-              if (transaction[_i] === 'TRUE') {
-                _t[label] = true
-              }
-              if (transaction[_i] === 'FALSE') {
-                _t[label] = false
-              }
-              break
-            default:
-              _t[label] = transaction[_i]
-          }
-        })
-        transactions.push(_t)
+        result.push(Transaction.fromArray(item))
       })
     }
-    return transactions
+    return result
   }
 
   async extractWallets (spreadSheetId) {
-    const rawWallets = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.WALLETS, 12)
-    Utils.log('rawWallets', rawWallets)
+    const rawData = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.WALLETS, 12)
+    Utils.log('rawWallets', rawData)
     const wallets = []
-    if (rawWallets) {
-      const labels = rawWallets.values[0]
-      rawWallets.values.forEach((wallet, index) => {
+    if (rawData) {
+      rawData.values.forEach((item, index) => {
         if (index === 0) {
           return
         }
-        const _t = {}
-        labels.forEach((label, _i) => {
-          switch (label) {
-            case 'position':
-            case 'amount':
-            case 'count':
-            case 'lastUpdate':
-            case 'income':
-            case 'outcome':
-            case 'type':
-              _t[label] = parseInt(wallet[_i])
-              break
-            case 'countInTotal':
-              if (wallet[_i] === 'TRUE') {
-                _t[label] = true
-              }
-              if (wallet[_i] === 'FALSE') {
-                _t[label] = false
-              }
-              break
-            default:
-              _t[label] = wallet[_i]
-          }
-        })
-        wallets.push(_t)
+        wallets.push(Wallet.fromArray(item))
       })
     }
     return wallets
   }
 
+  async extractCategories (spreadSheetId) {
+    const rawData = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.CATEGORIES, 12)
+    const result = []
+    if (rawData) {
+      rawData.values.forEach((item, index) => {
+        if (index === 0) {
+          return
+        }
+        result.push(Category.fromArray(item))
+      })
+    }
+    return result
+  }
+
   async downloadFile (spreadSheetId, token) {
     const wallets = await this.extractWallets(spreadSheetId)
     const transactions = await this.extractTransactions(spreadSheetId)
+    const categories = await this.extractCategories(spreadSheetId)
     Utils.log('sync', wallets, transactions)
     realm.write(() => {
       Wallet.bulkInsert(wallets, true)
-      // const categoryCount = Category.bulkInsert(categories, true)
+      Category.bulkInsert(categories, true)
       Transaction.bulkInsert(transactions, true)
     })
     Utils.log('downloadFile', transactions)
     return {
       transactions: transactions
     }
-
-    // const api = GDrive.fileApi
-    // return api.get(spreadSheetId, { alt: 'media' }).then(data => {
-    //   const { wallets, transactions, categories } = data.data
-    //   realm.write(() => {
-    //     const walletCounts = Wallet.bulkInsert(wallets, true)
-    //     const categoryCount = Category.bulkInsert(categories, true)
-    //     const transactionCount = Transaction.bulkInsert(transactions, true)
-    //     Utils.log('sync', walletCounts, categoryCount, transactionCount)
-    //   })
-
-    //   return data.data
-    // }).catch(error => {
-    //   Utils.log('e', error)
-    // })
   }
 
   async importFromFile (uri) {

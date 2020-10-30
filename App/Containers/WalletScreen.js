@@ -1,22 +1,21 @@
 // import { Images, Metrics } from '../Themes'
-import { Button, Container, Content, Fab, Icon, Label, View } from 'native-base'
+import lodash from 'lodash'
+import { Button, Container, Fab, Icon, Label, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
-import { RefreshControl } from 'react-native'
-import ScreenHeader from '../Components/MoneyDairy/ScreenHeader'
 import DraggableFlatList from 'react-native-draggable-flatlist'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import ScreenHeader from '../Components/MoneyDiary/ScreenHeader'
 // Styles
 // import styles from './Styles/LaunchScreenStyles'
-import { WalletAddComponent, WalletItem } from '../Components/MoneyDairy/WalletItem'
+import { WalletAddComponent, WalletItem } from '../Components/MoneyDiary/WalletItem'
 import Constants from '../Config/Constants'
 import I18n from '../I18n'
 import Api from '../Services/Api'
-import { ApplicationStyles, Colors } from '../Themes'
-import lodash, { indexOf } from 'lodash'
+import { Colors } from '../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../Utils/Utils'
 import Screen from './Screen'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 const t = I18n.t
 class WalletScreen extends Component {
   constructor (props) {
@@ -37,9 +36,18 @@ class WalletScreen extends Component {
     this.refresh()
   }
 
+  componentWillReceiveProps (nextProps) {
+    if (nextProps.isFocused && !this.props.isFocused) {
+      this.refresh()
+    }
+  }
+
   refresh () {
     const wallets = Api.wallet()
+    this._sortWallets(wallets)
+  }
 
+  _sortWallets (wallets) {
     const totalWallet = {
       id: Constants.DEFAULT_WALLET_ID,
       label: Constants.DEFAULT_WALLET_ID,
@@ -75,7 +83,9 @@ class WalletScreen extends Component {
 
   walletCreate (params) {
     Api.walletCreate(params)
-    this.refresh()
+    setTimeout(() => {
+      this.refresh()
+    }, 1000)
   }
 
   toggleEdit () {
