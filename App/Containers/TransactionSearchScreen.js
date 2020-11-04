@@ -1,5 +1,5 @@
 // import { Images, Metrics } from '../Themes'
-import { Body, Button, Card, CardItem, Col, Container, Content, Header, Icon, Item, Label, Picker, Right, Spinner, Switch, Text, View } from 'native-base'
+import { Body, Button, Card, CardItem, Col, Container, Content, Header, Icon, Input, Item, Label, Picker, Right, Spinner, Switch, Text, View } from 'native-base'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
 import { TransactionCardItem } from '../Components/MoneyDiary/TransactionCardItem'
@@ -28,6 +28,7 @@ class TransactionSearchScreen extends Component {
       calendar: 'year',
       year: calendarItems[0],
       calendarItems,
+      amount: 0,
       isRefreshing: false
     }
     this.categories = [{
@@ -82,10 +83,40 @@ class TransactionSearchScreen extends Component {
     }
     findConditions.from = this.state.year.from
     findConditions.to = this.state.year.to
-    const transactions = [{}].concat(Api.transaction(findConditions))
-    Utils.log('search', transactions, this.state.include)
+    const transactions = Api.transaction(findConditions).filter(transaction => !this.state.amount || Math.abs(transaction.amount) > this.state.amount)
+    const groups = lodash.groupBy(transactions, item => Utils.getMonth(item.date))
+    let result = [{}]
+    const summary = {
+      type: 'summary',
+      total: transactions.length,
+      count: transactions.filter(transaction => transaction.include).length,
+      amount: 0,
+      income: 0,
+      outcome: 0
+    }
+    result.push(summary)
+    lodash.each(groups, (items, monthTag) => {
+      const monthTagItem = {
+        type: 'monthTag',
+        title: monthTag,
+        count: items.length,
+        income: 0,
+        outcome: 0
+      }
+      items.forEach(item => {
+        monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
+        monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
+      })
+      monthTagItem.amount = monthTagItem.income + monthTagItem.outcome
+      summary.amount += monthTagItem.amount
+      summary.income += monthTagItem.income
+      summary.outcome += monthTagItem.outcome
+      result.push(monthTagItem)
+      result = result.concat(items)
+    })
+    Utils.log('search', transactions, this.state.include, result)
     this.setState({
-      transactions
+      transactions: result
     })
   }
 
@@ -162,11 +193,9 @@ class TransactionSearchScreen extends Component {
   }
 
   _renderSearchSection () {
-    const transactions = this.state.transactions || []
-    const count = transactions.length - 1
     return (
       <View style={{ padding: 10 }}>
-        <Card style={[ApplicationStyles.components.card, { height: 330 }]}>
+        <Card style={[ApplicationStyles.components.card, { height: 420 }]}>
           <CardItem>
             <Col>
               <Label>{t('Category')}</Label>
@@ -225,6 +254,24 @@ class TransactionSearchScreen extends Component {
           {this._renderCalendar()}
           <CardItem>
             <Col>
+              <View style={{
+                borderRadius: 10,
+                borderWidth: 1,
+                marginTop: 10,
+                borderColor: 'green',
+                flexDirection: 'row',
+                justifyContent: 'center'
+              }}
+              >
+                <Input
+                  label={I18n.t('search_amount')} placeholder={I18n.t('search_amount')} value={Utils.numberWithCommas(this.state.amount)}
+                  keyboardType='number-pad' onChangeText={text => this.setState({ amount: parseInt(text.replace(/,/g, '')) })}
+                />
+              </View>
+            </Col>
+          </CardItem>
+          <CardItem>
+            <Col>
               <Label>{t('Included')}</Label>
               <View style={{
                 borderRadius: 10,
@@ -251,7 +298,6 @@ class TransactionSearchScreen extends Component {
             </Col>
             <View style={{ width: 10 }} />
             <Col style={{ flexDirection: 'column', justifyContent: 'flex-end', height: 80, alignItems: 'flex-end' }}>
-              {count > 0 && <Text note>{count} {I18n.t('transactions')}</Text>}
               <Button rounded success onPress={() => this.search()} style={{ alignSelf: 'flex-end' }}><Text>{t('search')}</Text></Button>
             </Col>
           </CardItem>
@@ -281,8 +327,11 @@ class TransactionSearchScreen extends Component {
             )}
             {(this.state.isGoingBack || this.state.isRefreshing) && <Spinner style={{ width: 30, alignSelf: 'center', paddingBottom: 20 }} />}
           </View>
+          <Body />
         </Header>
+
         <LongTransactionList
+          isEnded
           firstItem={this._renderSearchSection()}
           transactions={transactions}
           walletId={this.state.wallet ? this.state.wallet.id : 0}

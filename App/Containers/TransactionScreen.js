@@ -67,7 +67,7 @@ class TransactionScreen extends Component {
         income: 0,
         outcome: 0
       }
-      transactions.forEach(item => {
+      items.forEach(item => {
         monthTagItem.income += item.include && item.amount > 0 ? item.amount : 0
         monthTagItem.outcome += item.include && item.amount < 0 ? item.amount : 0
       })
@@ -86,6 +86,9 @@ class TransactionScreen extends Component {
   getMonth (monthTag, isRefresh = false) {
     if (!isRefresh && this.count >= this.state.wallet.count) {
       Utils.log(`getMOnth ${isRefresh} ${this.count >= this.state.wallet.count}`)
+      return
+    }
+    if (this.refreshing) {
       return
     }
     this.refreshing = true

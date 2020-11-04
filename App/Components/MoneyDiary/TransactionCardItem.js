@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import lodash from 'lodash'
-import { Body, Button, Col, Icon, Input, Item, Label, Picker, Text } from 'native-base'
+import { Body, Button, Col, Icon, Input, Item, Label, Picker, Row, Text } from 'native-base'
 import React, { PureComponent } from 'react'
 import autoBind from 'react-autobind'
 import { Alert, View } from 'react-native'
@@ -82,13 +82,13 @@ class TransactionCardItem extends PureComponent {
       return null
     }
     const amount = transaction.amount
-    const height = 100
+    const height = 65
     return (
-      <TouchableWithoutFeedback
+      <View
         style={{
           ...ApplicationStyles.components.card,
           opacity: transaction.include ? 1 : 0.2,
-          marginTop: 10,
+          marginBottom: 10,
           marginHorizontal: 10,
           backgroundColor: Colors.cardBackground,
           flexDirection: 'row',
@@ -100,28 +100,30 @@ class TransactionCardItem extends PureComponent {
           overflow: 'hidden',
           justifyContent: 'center'
         }}
-        onPress={() => this.props.openTransactionDetailModal(transaction)}
       >
-        {/* <View
-          style={{
-            backgroundColor: wallet.color,
-            width: margin,
-            height,
-            marginRight: margin
-          }}
-        /> */}
-        <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
-
-          <TouchableOpacity onPress={() => this.toggleCheckInclude()}>
-            <Text style={[Fonts.style.h5]} uppercase={false}>
-              <Icon name={transaction.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: transaction.include ? 'green' : 'gray' }} />  {category.label}
-            </Text>
+        <Body style={{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'flex-start', width: '100%' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start', width: '60%' }}>
+            <View style={{ width: 40, justifyContent: 'center' }}>
+              <Icon name={wallet.icon} type='MaterialCommunityIcons' style={{ color: wallet.color, width: 30 }} />
+            </View>
+            <View style={{ flexDirection: 'column' }}>
+              <TouchableOpacity onPress={() => this.toggleCheckInclude()}>
+                <Text style={[Fonts.style.h5]} uppercase={false} numberOfLines={1}>
+                  <Icon name={transaction.include ? 'checksquareo' : 'minussquareo'} type='AntDesign' style={{ color: transaction.include ? 'green' : 'gray' }} />  {category.label}
+                </Text>
+              </TouchableOpacity>
+              <Text note numberOfLines={1}>{transaction.note}</Text>
+            </View>
+          </View>
+          <TouchableOpacity
+            style={{ flexDirection: 'column' }}
+            onPress={() => this.props.openTransactionDetailModal(transaction)}
+          >
+            <Text style={{ alignSelf: 'flex-end' }} note numberOfLines={1}>{Utils.timeFormat(transaction.date)}</Text>
+            <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red' }}>{amount > 0 ? '+' : '-'} {Utils.numberWithCommas(Math.abs(amount))}</Text>
           </TouchableOpacity>
-
-          <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red' }}>đ {Utils.numberWithCommas(amount)}</Text>
-          <Text note numberOfLines={1}>{Utils.timeFormat(transaction.date)} {transaction.note}</Text>
         </Body>
-      </TouchableWithoutFeedback>
+      </View>
     )
   }
 }
@@ -132,31 +134,43 @@ class TransactionMonthTag extends PureComponent {
     return (
       <View style={{
         flexDirection: 'row',
-        paddingBottom: 10,
+        marginBottom: 10,
         backgroundColor: Colors.listBackground,
         borderBottomColor: 'gray',
         borderBottomWidth: 1,
+        paddingVertical: 10,
         paddingHorizontal: 25,
-        height: 100,
+        height: 80,
         zIndex: 10,
         overflow: 'hidden',
         justifyContent: 'center'
       }}
       >
         <Body style={{ justifyContent: 'flex-start', flexDirection: 'row', alignItems: 'flex-start' }}>
+
           <Col>
             <Text style={[Fonts.style.h4, { color: '#0096c7', alignSelf: 'flex-start' }]}>
               {title}
             </Text>
-            <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}>đ {Utils.numberWithCommas(amount)}</Text>
             <Text note>{count} {I18n.t('transactions')}</Text>
           </Col>
           <Col style={{ justifyContent: 'center', paddingTop: 10 }}>
             <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
-              đ {Utils.numberWithCommas(income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
+              {Utils.numberWithCommas(income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
             </Text>
             <Text note style={{ color: 'red', alignSelf: 'flex-end' }}>
-                đ{Utils.numberWithCommas(outcome)} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
+              {Utils.numberWithCommas(Math.abs(outcome))} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
+            </Text>
+            <Text
+              note
+              style={{
+                borderTopWidth: 1,
+                borderTopColor: '#666666',
+                paddingRight: 20,
+                color: amount > 0 ? 'green' : 'red',
+                alignSelf: 'flex-end'
+              }}
+            >{Utils.numberWithCommas(amount)}
             </Text>
           </Col>
         </Body>

@@ -222,6 +222,7 @@ class RealmWrapper {
 
   static fromArray (item) {
     const properties = this.schema.schema.properties
+    Utils.log('FromArray', properties)
     const _t = {}
     Object.keys(properties).forEach((label, _i) => {
       const property = properties[label]
@@ -232,9 +233,11 @@ class RealmWrapper {
         case 'bool':
           if (item[_i] === 'TRUE') {
             _t[label] = true
-          }
+          } else
           if (item[_i] === 'FALSE') {
             _t[label] = false
+          } else {
+            _t[label] = item[_i]
           }
           break
         default:

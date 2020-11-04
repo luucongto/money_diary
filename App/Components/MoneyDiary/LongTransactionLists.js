@@ -1,4 +1,4 @@
-import { Button, Container, Spinner, Text } from 'native-base'
+import { Button, Container, Icon, Spinner, Text } from 'native-base'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import autoBind from 'react-autobind'
@@ -6,7 +6,7 @@ import { FlatList, RefreshControl, View } from 'react-native'
 import Animated, { Easing, Value } from 'react-native-reanimated'
 import I18n from '../../I18n'
 import Api from '../../Services/Api'
-import { Colors } from '../../Themes'
+import { ApplicationStyles, Colors } from '../../Themes'
 // import I18n from 'react-native-i18n'
 import Utils from '../../Utils/Utils'
 // Styles
@@ -47,7 +47,7 @@ class TransactionList extends Component {
   appendData (transactions) {
     const stickIndices = []
     transactions.forEach((item, index) => {
-      if (item.type === 'monthTag' || item.type === 'addnew') {
+      if (index === 0 || item.type === 'monthTag' || item.type === 'addnew' || item.type === 'summary') {
         stickIndices.push(index)
       }
     })
@@ -60,6 +60,47 @@ class TransactionList extends Component {
     this.props.refreshTransactions()
   }
 
+  _renderSummary (item) {
+    const { total, count, income, outcome, amount } = item
+    const uncount = total - count
+    Utils.log('-----summary', item)
+    return (
+      <View style={{ ...ApplicationStyles.components.card, height: 110, marginBottom: 10, padding: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'column' }}>
+          <Text style={{
+            borderBottomWidth: 1,
+            borderColor: '#666666',
+            marginBottom: 5
+          }}
+          >{total} {I18n.t('transactions')}
+          </Text>
+          <Text><Icon name='checksquareo' type='AntDesign' style={{ color: 'green' }} /> {count}</Text>
+          <Text><Icon name='minussquareo' type='AntDesign' style={{ color: 'gray' }} /> {uncount}</Text>
+
+        </View>
+
+        <View style={{ flexDirection: 'column', alignSelf: 'center' }}>
+          <Text style={{ color: 'green', alignSelf: 'flex-end' }}>
+            {Utils.numberWithCommas(income)} <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
+          </Text>
+          <Text style={{ color: 'red', alignSelf: 'flex-end' }}>
+            {Utils.numberWithCommas(Math.abs(outcome))} <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
+          </Text>
+          <Text
+            style={{
+              borderTopWidth: 1,
+              borderTopColor: '#666666',
+              paddingRight: 20,
+              color: amount > 0 ? 'green' : 'red',
+              alignSelf: 'flex-end'
+            }}
+          >{Utils.numberWithCommas(amount)}
+          </Text>
+        </View>
+      </View>
+    )
+  }
+
   _renderItem (item, index) {
     if (index === 0) {
       return this.props.firstItem || (
@@ -68,6 +109,9 @@ class TransactionList extends Component {
           callback={() => this.refresh()}
         />
       )
+    }
+    if (item.type === 'summary') {
+      return this._renderSummary(item)
     }
     if (item.type === 'monthTag') {
       return (
@@ -115,6 +159,7 @@ class TransactionList extends Component {
 
   renderPhone () {
     const transactions = this.props.transactions
+    Utils.log('LongTransactionList', this.state.stickIndices, transactions.length)
     return (
       <Container>
         <FlatList

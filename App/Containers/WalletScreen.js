@@ -52,6 +52,7 @@ class WalletScreen extends Component {
     const totalWallet = {
       id: Constants.DEFAULT_WALLET_ID,
       label: Constants.DEFAULT_WALLET_ID,
+      icon: 'wallet-outline',
       color: '#cce2ed',
       position: 0,
       countInTotal: true,
@@ -67,6 +68,7 @@ class WalletScreen extends Component {
       totalWallet.income += wallet.income
       totalWallet.outcome += wallet.outcome
       totalWallet.count += wallet.count
+
       totalWallet.lastUpdate = totalWallet.lastUpdate < wallet.lastUpdate ? wallet.lastUpdate : totalWallet.lastUpdate
     })
     let sortedWallets = [totalWallet]

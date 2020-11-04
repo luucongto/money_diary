@@ -11,11 +11,19 @@ import { ApplicationStyles, Fonts } from '../../Themes'
 import Utils from '../../Utils/Utils'
 import { TransactionCardAddComponent } from './TransactionCardItem'
 const t = I18n.t
+const ICONS = [
+  'bank',
+  'basket',
+  'cash',
+  'air-purifier',
+  'home'
+]
 class WalletItem extends PureComponent {
   constructor (props) {
     super(props)
     this.state = {
-      togglePanel: false
+      togglePanel: false,
+      icon: this.props.item.icon
     }
   }
 
@@ -80,6 +88,26 @@ class WalletItem extends PureComponent {
         >
           <Body style={{ justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'flex-start' }}>
             <Grid>
+              <View style={{ width: 40, justifyContent: 'center' }}>
+                <Icon name={this.state.icon} type='MaterialCommunityIcons' style={{ color: wallet.color, position: 'absolute' }} />
+                {this.props.editing && wallet.id !== Constants.DEFAULT_WALLET_ID &&
+                  <Picker
+                    mode='dropdown'
+                    style={{ width: 40, height: 40, position: 'absolute' }}
+                    placeholder='Select Color'
+                    placeholderStyle={{ color: '#bfc6ea' }}
+                    placeholderIconColor='#007aff'
+                    itemTextStyle={{ color: 'red' }}
+                    selectedValue={this.state.icon}
+                    onValueChange={async (value) => {
+                      this.setState({ icon: value })
+                      await Api.walletUpdate({ ...Utils.clone(wallet), icon: value })
+                    }}
+                  >
+                    {ICONS.map(item => <Picker.Item color={item} key={item} label={item} value={item} />)}
+                  </Picker>}
+
+              </View>
               <Col>
                 <Row style={{ height: 50, flexDirection: 'column', justifyContent: 'center' }}>
                   {this.props.editing ? (
@@ -97,23 +125,6 @@ class WalletItem extends PureComponent {
                   <Text style={{ ...Fonts.style.h5, color: amount > 0 ? 'green' : 'red', alignSelf: 'flex-start' }}><Icon name='wallet' type='AntDesign' style={{ fontSize: 15, color: 'green' }} /> {Utils.numberWithCommas(amount)} đ</Text>
                 </Row>
               </Col>
-              {/* <Col style={{ alignItems: 'flex-end' }}>
-                <Row>
-                  <Text note style={{ color: 'blue', alignSelf: 'flex-end' }}>
-                    {I18n.t('report_this_month')}
-                  </Text>
-                </Row>
-                <Row style={{ height: 20 }}>
-                  <Text note style={{ color: 'green', alignSelf: 'flex-end' }}>
-                    {Utils.numberWithCommas(wallet.income, true)}đ <Icon name='download' type='AntDesign' style={{ fontSize: 15, color: 'green' }} />
-                  </Text>
-                </Row>
-                <Row>
-                  <Text note style={{ color: 'red', alignSelf: 'flex-start' }}>
-                    {Utils.numberWithCommas(-1 * wallet.outcome, true)}đ <Icon name='upload' type='AntDesign' style={{ fontSize: 15, color: 'red' }} />
-                  </Text>
-                </Row>
-              </Col> */}
             </Grid>
             {wallet.count > 0 && <Text note style={{ marginBottom: 10 }}>{wallet.count} {I18n.t('transactions')} {I18n.t('last_update')} {Utils.timeFormat(wallet.lastUpdate)}</Text>}
           </Body>
@@ -158,11 +169,14 @@ class WalletAddComponent extends PureComponent {
   constructor (props) {
     super(props)
     const colors = Utils.randomPaletteColors(100)
+
     this.state = {
       label: '',
       color: colors[0],
+      icon: ICONS[0],
       colors
     }
+
     autoBind(this)
   }
 
@@ -172,6 +186,7 @@ class WalletAddComponent extends PureComponent {
     }
     const data = {
       label: this.state.label,
+      icon: this.state.icon,
       color: this.state.color
     }
     this.setState({
@@ -184,15 +199,40 @@ class WalletAddComponent extends PureComponent {
     this.setState({ color })
   }
 
+  chooseIcon () {
+
+  }
+
   render () {
     return (
       <View fadeInTime={300 + this.props.index * 200} style={{ marginLeft: 10, marginRight: 10, marginBottom: 80 }}>
         <View style={{
           ...ApplicationStyles.components.card,
-          flexDirection: 'row'
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center'
         }}
         >
-          <Form style={{ width: '70%' }}>
+          <View
+            style={{ alignSelf: 'center', width: 50, height: 50, borderRadius: 50, borderWidth: 1, borderColor: this.state.color, justifyContent: 'center', alignItems: 'center' }}
+            onPress={this.chooseIcon.bind()}
+          >
+            <Picker
+              mode='dropdown'
+              style={{ width: 50, height: 50 }}
+              placeholder='Select Color'
+              placeholderStyle={{ color: '#bfc6ea' }}
+              placeholderIconColor='#007aff'
+              itemTextStyle={{ color: 'red' }}
+              selectedValue={this.state.icon}
+              onValueChange={(value) => this.setState({ icon: value })}
+            >
+              {ICONS.map(item => <Picker.Item color={item} key={item} label={item} value={item} />)}
+
+            </Picker>
+            <Icon name={this.state.icon} type='MaterialCommunityIcons' style={{ color: this.state.color, position: 'absolute' }} />
+          </View>
+          <Form style={{ width: '70%', height: '100%' }}>
             <Item inlineLabel>
               <Input placeholder={I18n.t('WalletName')} value={this.state.label} onChangeText={label => this.setState({ label })} />
             </Item>
@@ -215,10 +255,12 @@ class WalletAddComponent extends PureComponent {
             </Item>
           </Form>
 
-          <Button iconLeft rounded success style={{ alignSelf: 'center' }} onPress={this.insert.bind()}>
-            <Icon name='check' type='FontAwesome' />
-            <Text>{I18n.t('save')}</Text>
-          </Button>
+          <TouchableOpacity
+            style={{ alignSelf: 'center', width: 50, height: 50, borderRadius: 50, backgroundColor: '#5cb85c', justifyContent: 'center', alignItems: 'center' }}
+            onPress={this.insert.bind()}
+          >
+            <Icon name='check' type='MaterialCommunityIcons' style={{ color: 'white' }} />
+          </TouchableOpacity>
         </View>
       </View>
     )

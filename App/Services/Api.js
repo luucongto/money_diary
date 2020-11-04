@@ -135,6 +135,7 @@ class API {
 
   async walletUpdate (params) {
     const { id, ...rest } = params
+    Utils.log('walletUpdate', params, id)
     return Wallet.update({ id }, rest)
   }
 
@@ -227,7 +228,7 @@ class API {
 
   async extractTransactions (spreadSheetId) {
     const rawData = await GoogleSheet.getData(spreadSheetId, Constants.SHEETS.TRANSACTIONS, 12)
-    Utils.log('rawTransactions', rawData)
+
     const result = []
     if (rawData) {
       rawData.values.forEach((item, index) => {
@@ -237,6 +238,7 @@ class API {
         result.push(Transaction.fromArray(item))
       })
     }
+    Utils.log('rawTransactions', rawData, result)
     return result
   }
 
